@@ -75,4 +75,9 @@ class LibGUI{
       return getURL(urlString, "", "");
    }
 
+   public static long getTime(){
+      Date date = new Date();
+      return date.getTime();
+   }
+
 }

@@ -14,7 +14,9 @@ import com.sun.image.codec.jpeg.*;
 import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
-
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 class GPane extends JPanel implements ComponentListener, MouseListener, MouseMotionListener, Cloneable{
 
@@ -40,12 +42,15 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
    private boolean showCachedZoom;
    private int showCachedZoomLevel;
 
+   //selection rectangle on
+   private boolean selectionEnabled;
+
    //this alphacomposite is controls transparency
    private AlphaComposite selectionOverlayTransparency = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
 
 
    //constructor
-   public GPane(GUI gui, GPhysicalPoint center, int zoom, boolean showCachedZoom, int showCachedZoomLevel){
+   public GPane(GUI gui, GPhysicalPoint center, int zoom, boolean showCachedZoom, int showCachedZoomLevel, boolean selectionEnabled){
       //get gmap and registered objects
       this.gui = gui;
       this.gmap = gui.getGMap();
@@ -58,6 +63,9 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
       label = new JLabel();
       setLayout(null);
       add(label);
+
+      //selection enabled
+      this.selectionEnabled = selectionEnabled;
 
       //draw it
       draw();
@@ -80,11 +88,14 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
    }
 
    public GPane(GUI gui){
-      this(gui, new GPhysicalPoint(-13.123524592036453, -105.44062302343556), 13, false, -1);
+      this(gui, new GPhysicalPoint(-13.123524592036453, -105.44062302343556), 13, false, -1, false);
    }
 
 
    public void draw(){
+      //set cursor to hourglass
+      this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
       //System.out.println("fired - "+getSize().width+", "+getSize().height);
       //check to make sure size is valid
       if(getSize().width == 0 || getSize().height == 0) return;
@@ -94,51 +105,60 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
       if(!showCachedZoom) useCachedZoomLevel = -1;
 
       //get the image
+      long start = LibGUI.getTime();
       image = gmap.getImage(center, getSize().width, getSize().height, zoom, useCachedZoomLevel);
+      System.out.println("Draw time = " + (LibGUI.getTime() - start));
 
       //TEMP - DRAW TICK LINES
       BufferedImage toDraw = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
       Graphics2D g = toDraw.createGraphics();
 
       g.drawImage(image, 0, 0, image.getWidth(), getHeight(), null);
-      //g.drawLine(getSize().width/2, 0, getSize().width/2, getSize().height);
-      //g.drawLine(0, getSize().height/2, getSize().width, getSize().height/2);
+      g.drawLine(getSize().width/2, 0, getSize().width/2, getSize().height);
+      g.drawLine(0, getSize().height/2, getSize().width, getSize().height/2);
 
       //update icon bounds
       label.setBounds(0,0,getSize().width, getSize().height);
 
       image = toDraw;
-      update();
+      updateScreen();
+
+      //set cursor to hourglass
+      this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
    }
 
-   public void update(){
-      //prepare output
-      BufferedImage toDraw = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
-      Graphics2D g = toDraw.createGraphics();
+   public void updateScreen(){
+      this.paintImmediately(0,0,this.getWidth(), this.getHeight());
+   }
+
+   protected void paintComponent(Graphics g) {
+      //call superclass, although its not necessary cause this is not transparent
+      super.paintComponent(g);
+
+      Graphics2D g2d = (Graphics2D)g;
 
       //draw overlay
-      g.drawImage(image, 0, 0, image.getWidth(), getHeight(), null);
+      g2d.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 
       //rectangle
       if(mouseRectanglePosition != null){
          //draw transparent white
-         g.setColor(Color.WHITE);
-         Composite temp = g.getComposite();
-         g.setComposite(selectionOverlayTransparency);
-         g.fillRect(mouseRectanglePosition.x,mouseRectanglePosition.y,mouseRectanglePosition.width,mouseRectanglePosition.height);
-         g.setComposite(temp);
+         g2d.setColor(Color.WHITE);
+         Composite temp = g2d.getComposite();
+         g2d.setComposite(selectionOverlayTransparency);
+         g2d.fillRect(mouseRectanglePosition.x,mouseRectanglePosition.y,mouseRectanglePosition.width,mouseRectanglePosition.height);
+         g2d.setComposite(temp);
          //draw border
-         g.setColor(new Color(100,100,100));
-         g.drawRect(mouseRectanglePosition.x,mouseRectanglePosition.y,mouseRectanglePosition.width,mouseRectanglePosition.height);
+         g2d.setColor(new Color(110,110,110));
+         g2d.drawRect(mouseRectanglePosition.x,mouseRectanglePosition.y,mouseRectanglePosition.width,mouseRectanglePosition.height);
       }
 
       //notify listener
       gui.getNotifier().firePaneEvent(this);
 
-      //repaint
-      label.setIcon(new ImageIcon(toDraw));
-      repaint();
    }
+
+
 
    //getters
 
@@ -195,6 +215,11 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
    }
 
 
+   public boolean getSelectionEnabled(){
+      return selectionEnabled;
+   }
+
+
    //setters
    public void setCenter(GPhysicalPoint center){
       this.center = center;
@@ -219,6 +244,10 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
    public void setShowCachedZoom(boolean showCachedZoom){
       this.showCachedZoom = showCachedZoom;
       draw();
+   }
+
+   public void setSelectionEnabled(boolean selectionEnabled){
+      this.selectionEnabled = selectionEnabled;
    }
 
 
@@ -248,20 +277,26 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
       int mouseX = e.getX() + mouseOffset.width;
       int mouseY = e.getY() + mouseOffset.height;
 
-      //update dragged boolean
-      mouseDraggedThisClick = true;
 
       //center
       Point original = getCenterPixel();
-      mouseRectanglePosition.x = Math.min(clickLocation.x,mouseX);
-      mouseRectanglePosition.y = Math.min(clickLocation.y,mouseY);
-      mouseRectanglePosition.width = Math.max(clickLocation.x,mouseX) - mouseRectanglePosition.x;
-      mouseRectanglePosition.height = Math.max(clickLocation.y,mouseY) - mouseRectanglePosition.y;
-      update();
-//      center.setPixelPoint(new Point(original.x + (clickLocation.x - e.getX()), original.y + (clickLocation.y - e.getY())), zoom);
-//      clickLocation.x = e.getX();
-//      clickLocation.y = e.getY();
-//      draw();
+
+      if(selectionEnabled){
+         //update dragged boolean
+         mouseDraggedThisClick = true;
+         //do computations relating to selection
+         mouseRectanglePosition.x = Math.min(clickLocation.x,mouseX);
+         mouseRectanglePosition.y = Math.min(clickLocation.y,mouseY);
+         mouseRectanglePosition.width = Math.max(clickLocation.x,mouseX) - mouseRectanglePosition.x;
+         mouseRectanglePosition.height = Math.max(clickLocation.y,mouseY) - mouseRectanglePosition.y;
+         updateScreen();
+      }else{
+         //do computations relating to dragging the center
+         center.setPixelPoint(new Point(original.x + (clickLocation.x - e.getX()), original.y + (clickLocation.y - e.getY())), zoom);
+         clickLocation.x = e.getX();
+         clickLocation.y = e.getY();
+         draw();
+      }
    }
 
    public void mouseClicked(MouseEvent e){
@@ -282,7 +317,8 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
          //left click
          if(e.getClickCount() == 1){
             //single left click
-            mouseRectanglePosition = new Rectangle(clickLocation.x,clickLocation.y,clickLocation.x,clickLocation.y);
+            if(selectionEnabled)
+               mouseRectanglePosition = new Rectangle(clickLocation.x,clickLocation.y,clickLocation.x,clickLocation.y);
          }
          else if(e.getClickCount() == 2){
             //double left click
@@ -304,7 +340,7 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
    }
    public void mouseReleased(MouseEvent e){
       if(!mouseDraggedThisClick) mouseRectanglePosition = null;
-      update();
+      updateScreen();
    }
 
    //keyboard methods - use k.getKeyCode();
@@ -315,7 +351,7 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
 
    //clone
    public Object clone(){
-      return new GPane(gui, (GPhysicalPoint)center.clone(), zoom, showCachedZoom, showCachedZoomLevel);
+      return new GPane(gui, (GPhysicalPoint)center.clone(), zoom, showCachedZoom, showCachedZoomLevel, selectionEnabled);
    }
 
 }
