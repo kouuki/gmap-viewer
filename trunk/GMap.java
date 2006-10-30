@@ -1,4 +1,5 @@
 
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -111,47 +112,184 @@ class GMap{
       //find coord of our starting point
       int xCoord = x%GDataSource.sourceSize.width;
       int yCoord = y%GDataSource.sourceSize.height;
-
+      
       //load this index
       BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom);
 
       //get info about the image
       Dimension imageSize = new Dimension(image.getWidth(),image.getHeight());
-
-      //find the width of what we CAN paint
-      int paintWidth = imageSize.width - xCoord;
-      int paintHeight = imageSize.height - yCoord;
-
-      //initialize the variables that will tell us if we are done
-      boolean xDone = (paintWidth >= w);
-      boolean yDone = (paintHeight >= h);
-
-      //create buffered image for return
+	  
+	  //Holds number of row and column images needed
+	  int rowImages;
+	  int colImages;
+	  
+	  //find the width of what we CAN paint
+	  int paintWidth = imageSize.width - xCoord;
+	  int paintHeight = imageSize.height - yCoord;
+      
+	  //Calculate number of row images
+      if((h - paintHeight)%256 == 0){
+	    rowImages = 1 + (h - paintHeight)/256;
+	  }
+	  else{
+		rowImages = 2 + (h - paintHeight)/256;
+	  }
+	  
+	  //Calculate number of column images
+	  if((w - paintWidth)%256 == 0){
+	    colImages = 1 + (w - paintWidth)/256;
+	  }
+	  else{
+		colImages = 2 + (w - paintWidth)/256;
+	  }
+	  
+	  //create buffered image for return
       BufferedImage toReturn = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
       Graphics2D g = toReturn.createGraphics();
-
-      //handles the possible cases - whether or not we have reached the base
-      //case for width and height
-      if(xDone && yDone){
-         g.drawImage(image.getSubimage(xCoord, yCoord, w, h), 0, 0, w, h, null);
-      }
-      else if(!xDone && yDone){
-         g.drawImage(image.getSubimage(xCoord, yCoord, paintWidth, h), 0, 0, paintWidth, h, null);
-         g.drawImage(getImageFromDS(x+paintWidth,y,w-paintWidth,h,zoom,cachedZoom), paintWidth, 0, w-paintWidth, h, null);
-
-      }
-      else if(xDone && !yDone){
-         g.drawImage(image.getSubimage(xCoord, yCoord, w, paintHeight), 0, 0, w, paintHeight, null);
-         g.drawImage(getImageFromDS(x,y+paintHeight,w,h-paintHeight,zoom,cachedZoom), 0, paintHeight, w, h-paintHeight, null);
-      }
-      else if(!xDone && !yDone){
-         g.drawImage(image.getSubimage(xCoord, yCoord, paintWidth, paintHeight), 0, 0, paintWidth, paintHeight, null);
-         g.drawImage(getImageFromDS(x+paintWidth,y,w-paintWidth,h,zoom,cachedZoom), paintWidth, 0, w-paintWidth, h, null);
-         g.drawImage(getImageFromDS(x,y+paintHeight,paintWidth,h-paintHeight,zoom,cachedZoom), 0, paintHeight, paintWidth, h-paintHeight, null);
-      }
+	  
+	  //Overal Image coordinates
+	  int xImage = 0;
+	  int yImage = 0;
+	  
+	  //DEBUG
+	  //System.out.println(x + " " + y + " " + w + " " + h + " " + rowImages + " " + colImages);
+	  //System.out.println();
+	  
+	  //Iteratively loops through all needed images and paints them
+	  for(int row = 0; row < rowImages; row++){
+	     for(int col = 0; col < colImages; col++){
+			//draw Image to graphics object
+			
+			//DEBUG
+			//System.out.println(xIndex + " " + yIndex +  " " + xImage + " " + yImage +  " " + xCoord + " " + yCoord + " " + paintWidth + " " + paintHeight);
+			//System.out.println();
+			
+			getSpecificImage(x,y,col,row,toReturn,zoom,cachedZoom); 
+		 }
+	  }
+	  
       return toReturn;
    }
+   
+   public BufferedImage getSpecificImage(int x, int y, int imgIndexX, int imgIndexY, BufferedImage buffImg, int zoom, int cachedZoom){
+		
+		int xIndex = x/GDataSource.sourceSize.width;
+		int yIndex = y/GDataSource.sourceSize.height;
+		
+		xIndex += imgIndexX;
+		yIndex += imgIndexY;
+		
+		BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom);
+		
+		int xCoord = x%GDataSource.sourceSize.width;
+		int yCoord = y%GDataSource.sourceSize.height;
+		
+		int w = buffImg.getWidth();
+		int h = buffImg.getHeight();
+		
+		//get info about the image
+		Dimension imageSize = new Dimension(image.getWidth(),image.getHeight());
+		
+		//find the width of what we CAN paint
+		int initPaintWidth = imageSize.width - xCoord;
+		int initPaintHeight = imageSize.height - yCoord;
+		
+		int paintWidth = initPaintWidth;
+		int paintHeight = initPaintHeight;
+		
+		int rowImages = numOfRows(x,y,h,zoom,cachedZoom);
+		int colImages = numOfCols(x,y,w,zoom,cachedZoom);
+		
+		if(imgIndexX >= colImages || imgIndexY >= rowImages){
+			return null;
+		}
+		
+		int xImage = 0;
+		int yImage = 0;
+		
+		int xInitCoord = xCoord;
+		int yInitCoord = yCoord;
+		
+		if(imgIndexX > 0) {
+			xImage = initPaintWidth + (imgIndexX - 1)*imageSize.width;
+			xCoord = 0;
+			if(imgIndexX < (colImages - 1)){
+				paintWidth = imageSize.width;
+			}
+			else{
+				paintWidth = w - ((colImages - 2) * imageSize.width) - (imageSize.width - xInitCoord);
+			}
+		}
+		if(imgIndexY > 0){
+			yImage = initPaintHeight + (imgIndexY - 1)*imageSize.height;
+			yCoord = 0;
+			if(imgIndexY < (rowImages - 1)){
+				paintHeight = imageSize.height;
+			}
+			else{
+				paintHeight = h - ((rowImages - 2) * imageSize.height) - (imageSize.height - yInitCoord);
+			}
+		}
+		
+		Graphics2D g = (Graphics2D)buffImg.getGraphics();
+		
+		//DEBUG
+			System.out.println(xIndex + " " + yIndex +  " " + xImage + " " + yImage +  " " + xCoord + " " + yCoord + " " + paintWidth + " " + paintHeight);
+			System.out.println();
+		
+		g.drawImage(image.getSubimage(xCoord, yCoord, paintWidth, paintHeight), xImage, yImage, paintWidth, paintHeight, null);
+		
+		return buffImg;
+	}
+	
+	public int numOfRows(int x, int y, int h, int zoom, int cachedZoom){
+		int xIndex = x/GDataSource.sourceSize.width;
+		int yIndex = y/GDataSource.sourceSize.height;
+		
+		BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom);
 
+		int yCoord = y%GDataSource.sourceSize.height;
+		
+		//find the width of what we CAN paint
+		int paintHeight = image.getHeight() - yCoord;
+		
+		int rowImages;
+      
+		//Calculate number of row images
+	    if((h - paintHeight)%256 == 0){
+		    rowImages = 1 + (h - paintHeight)/256;
+		}
+		else{
+			rowImages = 2 + (h - paintHeight)/256;
+		}
+		
+		return rowImages;
+	}
+
+	public int numOfCols(int x, int y, int w, int zoom, int cachedZoom){
+		int xIndex = x/GDataSource.sourceSize.width;
+		int yIndex = y/GDataSource.sourceSize.height;
+		
+		BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom);
+
+		int xCoord = x%GDataSource.sourceSize.height;
+		
+		//find the width of what we CAN paint
+		int paintWidth = image.getWidth() - xCoord;
+		
+		int colImages;
+      
+		//Calculate number of row images
+	    if((w - paintWidth)%256 == 0){
+		    colImages = 1 + (w - paintWidth)/256;
+		}
+		else{
+			colImages = 2 + (w - paintWidth)/256;
+		}
+		
+		return colImages;
+	}
+	
    public void cacheImage(int x, int y, int w, int h, int zoom){
       cacheImageFromDS(x,y,w,h,zoom);
    }
@@ -203,7 +341,6 @@ class GMap{
    public BufferedImage getIndexedImage(int x, int y, int zoom, int cacheZoom){
       BufferedImage thumbImage = gDataSource.getImage(x,y,zoom);
 
-      if(thumbImage == null) return defaultImage;
       Graphics2D graphics2D = thumbImage.createGraphics();
 
       //if we dont have to paint cache, return here
