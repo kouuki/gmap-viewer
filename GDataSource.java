@@ -22,9 +22,15 @@ class GDataSource{
    //where to put files stored on the server
    private String cacheDirectory;
 
+   //private
+   private GDataImage[] ramCache;
+   private int lastPointer;
+
    //constructor
    public GDataSource(String cacheDirectory){
       this.cacheDirectory = cacheDirectory;
+      ramCache = new GDataImage[40];
+      lastPointer = 0;
       verifyCacheDirectories();
    }
 
@@ -59,6 +65,15 @@ class GDataSource{
       //create a bit for knowing if we were successful or not
       boolean loadedImage = false;
 
+
+      //try getting image from RAM
+      if(!loadedImage){
+         BufferedImage ramImage = getImageFromRAM(x,y,zoom);
+         if(ramImage != null){
+            graphics2D.drawImage(ramImage, 0, 0, sourceSize.width, sourceSize.height, null);
+            return thumbImage;
+         }
+      }
       //try accessing local image
       if(!loadedImage){
          try{
@@ -73,12 +88,14 @@ class GDataSource{
             loadedImage = !(mediaTracker.isErrorAny());
 
             graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
+            //save image to RAM cache
+            addImageToRAM(x,y,zoom,thumbImage);
          }catch(Exception e){loadedImage = false;}
       }
-
       //try accessing remote image
       if(!loadedImage){
          try{
+            System.out.print("Load remote image ("+x+","+y+") zoom="+zoom);
             //build source string
             String thisFile = makeRemoteName(x,y,zoom);
             // load image from INFILE
@@ -88,8 +105,11 @@ class GDataSource{
             mediaTracker.waitForID(0);
             loadedImage = !(mediaTracker.isErrorAny());
             graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
+            //save image to RAM cache
+            addImageToRAM(x,y,zoom,thumbImage);
             //save image to cache
             if(loadedImage) ImageIO.write(thumbImage, "png", new File(cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png"));
+            System.out.println(" [done!]");
          }catch(Exception e){loadedImage = false;}
       }
       //if still no image, fail to default image
@@ -112,6 +132,22 @@ class GDataSource{
       return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2.12&x="+x+"&y="+y+"&zoom="+zoom;
    }
 
+   //RAM Methods
+   public BufferedImage getImageFromRAM(int x, int y, int zoom){
+      for(int i=0;i<ramCache.length;i++)
+         if(ramCache[i] != null)
+            if(x == ramCache[i].getX() && y == ramCache[i].getY() && zoom == ramCache[i].getZoom())
+               return ramCache[i].getImage();
+      return null;
+   }
+
+   public void addImageToRAM(int x, int y, int zoom, BufferedImage image){
+      ramCache[lastPointer] = new GDataImage(image,x,y,zoom);
+      lastPointer++;
+      if(lastPointer >= ramCache.length) lastPointer = 0;
+   }
+
+
    //make sure cache exists
    private void verifyCacheDirectories(){
       for(int i=1;i<=15;i++){
@@ -121,3 +157,36 @@ class GDataSource{
    }
 
 }
+
+class GDataImage{
+   BufferedImage image;
+   int x;
+   int y;
+   int zoom;
+
+   public GDataImage(BufferedImage image, int x, int y, int zoom){
+      this.image = image;
+      this.x = x;
+      this.y = y;
+      this.zoom = zoom;
+   }
+
+   public BufferedImage getImage(){
+      return image;
+   }
+
+   public int getX(){
+      return x;
+   }
+
+   public int getY(){
+      return y;
+   }
+
+   public int getZoom(){
+      return zoom;
+   }
+
+
+}
+
