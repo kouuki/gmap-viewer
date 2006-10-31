@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 
-public class GUI extends JFrame implements ActionListener, KeyListener, MouseListener, MouseMotionListener{
+public class GUI extends JFrame implements ActionListener, KeyListener, MouseListener, MouseMotionListener, ComponentListener{
 
    /*
     * DATA  ELEMENTS
@@ -42,6 +42,16 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    //pane listener notifier
    private PaneListenerNotifier notifier;
 
+   //progress meter
+   private EmbeddedProgressMeter embeddedProgressMeter;
+
+
+   //build and set up the frame
+   private JPanel tabbedPanel;
+   private JPanel progressBarPanel;
+   private static final int sizeOfProgressBar = 24;
+
+
    /*
     * EXECUTABLE
     */
@@ -62,6 +72,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       setTitle(title);
       setSize(screenSize.width,screenSize.height);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+      //progress meter
+      embeddedProgressMeter = new EmbeddedProgressMeter();
 
       //notifier
       notifier = new PaneListenerNotifier();
@@ -85,15 +98,42 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       addMouseListener(this);
       addKeyListener(this);
       addMouseMotionListener(this);
+      addComponentListener(this);
    }
 
 
-   //build and set up the frame
    public void buildJFrameContents(){
+      //set layout to null
+      container.setLayout(null);
+
+      //add pane
       pane = new JTabbedPane();
       int location = JTabbedPane.TOP; // or BOTTOM, LEFT, RIGHT
       addPane(new GPane(this));
-      container.add(pane);
+
+      //add the tabbed panel
+      tabbedPanel = new JPanel();
+      tabbedPanel.add(pane);
+      tabbedPanel.setLayout(null);
+      container.add(tabbedPanel);
+
+      //add the progress bar panel
+      //progressBarPanel = new JPanel(); //change this line to get the panel from the meter
+      progressBarPanel = embeddedProgressMeter.getPanel(); //change this line to get the panel from the meter
+      //JLabel temp = new JLabel("Downloading image #1 of 1");
+      //progressBarPanel.add(temp);
+      container.add(progressBarPanel);
+
+      //initialize sizes
+      tabbedPanel.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar);
+      progressBarPanel.setBounds(0,screenSize.height - sizeOfProgressBar,screenSize.width,sizeOfProgressBar);
+      pane.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar);
+   }
+
+   public void update(){
+      tabbedPanel.setBounds(0,0,container.getWidth(),container.getHeight() - sizeOfProgressBar);
+      progressBarPanel.setBounds(0,container.getHeight() - sizeOfProgressBar,container.getWidth(),sizeOfProgressBar);
+      pane.setBounds(0,0,container.getWidth(),container.getHeight() - sizeOfProgressBar);
    }
 
    //pane counter, for default title creation
@@ -147,10 +187,25 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       return notifier;
    }
 
+   //get the progress meter
+   public EmbeddedProgressMeter getProgressMeter(){
+      return embeddedProgressMeter;
+   }
+   //public ProgressMeter getProgressMeter(){
+   //   return globalProgressMeter;
+   //}
+
 
    /*
     * LISTENERS
     */
+
+
+   //component listener
+   public void componentHidden(ComponentEvent e){update();}
+   public void componentMoved(ComponentEvent e){update();}
+   public void componentResized(ComponentEvent e){update();}
+   public void componentShown(ComponentEvent e){update();}
 
    //mouse methods - use e.getX()
    public void mouseMoved(MouseEvent e) {}
@@ -172,12 +227,12 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       //dispatch actions
       if(sourceObject instanceof JMenuAction){
          JMenuAction sourceMenuAction = (JMenuAction)sourceObject;
-         sourceMenuAction.run();
+         sourceMenuAction.start();
       }
       //dispatch radio button actions
       if(sourceObject instanceof JMenuRadioButtonAction){
          JMenuRadioButtonAction sourceMenuAction = (JMenuRadioButtonAction)sourceObject;
-         sourceMenuAction.run();
+         sourceMenuAction.start();
       }
 
    }
