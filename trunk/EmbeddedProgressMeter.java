@@ -28,7 +28,7 @@ public class EmbeddedProgressMeter extends ProgressMeter {
       messageLabel = new JLabel();
 
       panel = new JPanel();
-      panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 2));
+      panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 1));
       panel.add(progressBar);
       panel.add(messageLabel);
 
