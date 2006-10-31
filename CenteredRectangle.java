@@ -2,7 +2,7 @@
  * CenteredRectangle
  *
  * This class is a rectangle of size w,h centered on
- * a GPhysicalPoint
+ * a GPhysicalPoint.
  */
 
 class CenteredRectangle {
