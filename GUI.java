@@ -49,7 +49,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    //build and set up the frame
    private JPanel tabbedPanel;
    private JPanel progressBarPanel;
-   private static final int sizeOfProgressBar = 24;
+   private static final int sizeOfProgressBar = 23;
 
 
    /*
