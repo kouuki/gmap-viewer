@@ -62,7 +62,21 @@ abstract class JMenuAction extends JMenuItem implements PaneListener{
          //GPane pane = gui.getTopPane();
          //if(pane != null) pane.addPaneListener(this);
          gui.getNotifier().addPaneListener(this);
+      }
+   }
 
+   public void start(){
+      thisThread tt = new thisThread(this);
+      tt.start();
+   }
+
+   class thisThread extends Thread{
+      private JMenuAction codeSource;
+      public thisThread(JMenuAction codeSource){
+         this.codeSource = codeSource;
+      }
+      public void run(){
+         codeSource.run();
       }
    }
 
@@ -81,6 +95,21 @@ abstract class JMenuRadioButtonAction extends JRadioButtonMenuItem implements Pa
          GUI gui = (GUI)registeredObject;
          //GPane pane = gui.getTopPane();
          gui.getNotifier().addPaneListener(this);
+      }
+   }
+
+   public void start(){
+      thisThread tt = new thisThread(this);
+      tt.start();
+   }
+
+   class thisThread extends Thread{
+      private JMenuRadioButtonAction codeSource;
+      public thisThread(JMenuRadioButtonAction codeSource){
+         this.codeSource = codeSource;
+      }
+      public void run(){
+         codeSource.run();
       }
    }
 
