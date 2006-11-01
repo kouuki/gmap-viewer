@@ -34,6 +34,10 @@ public class GMenuBar extends JMenuBar{
       JMenuItem[] cacheRectMenu = {new JMenuActionCacheSelected("Level 1",gui,1),new JMenuActionCacheSelected("Level 2",gui,2),new JMenuActionCacheSelected("Level 3",gui,3),new JMenuActionCacheSelected("Level 4",gui,4),new JMenuActionCacheSelected("Level 5",gui,5),new JMenuActionCacheSelected("Level 6",gui,6),new JMenuActionCacheSelected("Level 7",gui,7),new JMenuActionCacheSelected("Level 8",gui,8),new JMenuActionCacheSelected("Level 9",gui,9),new JMenuActionCacheSelected("Level 10",gui,10),new JMenuActionCacheSelected("Level 11",gui,11),new JMenuActionCacheSelected("Level 12",gui,12),new JMenuActionCacheSelected("Level 13",gui,13),new JMenuActionCacheSelected("Level 14",gui,14),new JMenuActionCacheSelected("Level 15",gui,15)};
       JMenuItem[] cacheMenu = {new JMenuGroup("Cache Selected",gui,cacheRectMenu),new JMenuGroup("Set Cache Zoom",gui,cacheZoomMenu)};
       add(new JMenuGroup("Cache",gui,cacheMenu));
+
+      //pmeter
+      JMenuItem[] menu = {new JMenuActionPOC(gui), new JMenuActionClearRAM(gui)};
+      add(new JMenuGroup("Debugging",gui,menu));
    }
 
 
