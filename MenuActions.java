@@ -318,3 +318,50 @@ class JMenuActionClearRAM extends JMenuAction{
       catch(Exception e){System.out.println(e);}
    }
 }
+
+
+class JMenuRadioButtonSelectionOn extends JMenuRadioButtonAction{
+   //stuff we need to know
+
+   public JMenuRadioButtonSelectionOn(GUI registeredObject){
+      super("Turn Selection On",registeredObject);
+   }
+
+   public void run(){
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      pane.setSelectionEnabled(true);
+      super.setSelected(true);
+   }
+
+   public void paneEvent(Object object){
+      GPane pane = (GPane)object;
+      int currentZoom = pane.getShowCachedZoomLevel();
+      super.setSelected(pane.getSelectionEnabled());
+   }
+
+}
+
+
+class JMenuRadioButtonDragOn extends JMenuRadioButtonAction{
+   //stuff we need to know
+
+   public JMenuRadioButtonDragOn(GUI registeredObject){
+      super("Turn Map Dragging On",registeredObject);
+   }
+
+   public void run(){
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      pane.setSelectionEnabled(false);
+      super.setSelected(true);
+   }
+
+   public void paneEvent(Object object){
+      GPane pane = (GPane)object;
+      int currentZoom = pane.getShowCachedZoomLevel();
+      super.setSelected(!pane.getSelectionEnabled());
+   }
+
+}
+
