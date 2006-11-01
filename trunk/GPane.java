@@ -18,7 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-class GPane extends JPanel implements ComponentListener, MouseListener, MouseMotionListener, Cloneable{
+class GPane extends JPanel implements ComponentListener, MouseListener, MouseMotionListener, Cloneable, GMapListener{
 
    //available JFrame object
    private JFrame popup;
@@ -106,7 +106,8 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
 
       //get the image
       long start = LibGUI.getTime();
-      image = gmap.getImage(center, getSize().width, getSize().height, zoom, useCachedZoomLevel);
+      image = gmap.getImage(center, getSize().width, getSize().height, zoom, useCachedZoomLevel, this);
+      gui.getProgressMeter().release(this);
       System.out.println("Draw time = " + (LibGUI.getTime() - start));
 
       //TEMP - DRAW TICK LINES
@@ -353,5 +354,39 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
    public Object clone(){
       return new GPane(gui, (GPhysicalPoint)center.clone(), zoom, showCachedZoom, showCachedZoomLevel, selectionEnabled);
    }
+
+   //gmap listener
+   private int gmapCompleted;
+   private int gmapTaskSize;
+   private int messageNumber;
+
+   public void updateGMapCompleted(int completed){
+      this.gmapCompleted = completed;
+      gui.getProgressMeter().setPercent(ProgressMeter.computePercent(gmapCompleted,gmapTaskSize),this);
+   }
+
+   public void updateGMapTaskSize(int size){
+      this.gmapTaskSize = size;
+      gui.getProgressMeter().setPercent(ProgressMeter.computePercent(gmapCompleted,gmapTaskSize),this);
+   }
+
+   public void updateGMapMessage(int messageNumber){
+      if(this.messageNumber != messageNumber){
+         this.messageNumber = messageNumber;
+         String message;
+         if(messageNumber == GMap.MESSAGE_DOWNLOADING){
+            gui.getProgressMeter().grab(this);
+            message = "Downloading data...";
+         }
+         else if(messageNumber == GMap.MESSAGE_PAINTING){
+            message = "Painting image...";
+         }
+         else{
+            message = "Working...";
+         }
+         gui.getProgressMeter().setMessage(message,this);
+      }
+   }
+
 
 }
