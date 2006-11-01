@@ -88,7 +88,7 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
    }
 
    public GPane(GUI gui){
-      this(gui, new GPhysicalPoint(-13.123524592036453, -105.44062302343556), 13, false, -1, false);
+      this(gui, new GPhysicalPoint(-13.123524592036453, -105.44062302343556), 13, false, -1, true);
    }
 
 
