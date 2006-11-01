@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -155,38 +154,6 @@ class GDataSource{
          if(!thisFile.exists()) thisFile.mkdirs();
       }
    }
-
-}
-
-class GDataImage{
-   BufferedImage image;
-   int x;
-   int y;
-   int zoom;
-
-   public GDataImage(BufferedImage image, int x, int y, int zoom){
-      this.image = image;
-      this.x = x;
-      this.y = y;
-      this.zoom = zoom;
-   }
-
-   public BufferedImage getImage(){
-      return image;
-   }
-
-   public int getX(){
-      return x;
-   }
-
-   public int getY(){
-      return y;
-   }
-
-   public int getZoom(){
-      return zoom;
-   }
-
 
 }
 
