@@ -37,6 +37,11 @@ class GMap{
    //keep track of the data object
    GDataSource gDataSource;
 
+   //message
+   public static final int MESSAGE_DOWNLOADING = 0;
+   public static final int MESSAGE_PAINTING = 1;
+
+
    //constructor
    public GMap(GDataSource gDataSource){
       //data source
@@ -62,13 +67,16 @@ class GMap{
 
    //build image
    public BufferedImage getImage(GPhysicalPoint center, int width, int height, int zoom, int cachedZoom){
+      return getImage(center, width, height, zoom, cachedZoom, null);
+   }
+   public BufferedImage getImage(GPhysicalPoint center, int width, int height, int zoom, int cachedZoom, GMapListener listener){
       //convert center to pixels
       Point centerPixels = center.getPixelPoint(zoom);
       int x = centerPixels.x - (width/2);
       int y = centerPixels.y - (height/2);
 
       //load image
-      BufferedImage toReturn = getImage(x,y,width,height,zoom,cachedZoom);
+      BufferedImage toReturn = getImage(x,y,width,height,zoom,cachedZoom,listener);
       Graphics2D g = toReturn.createGraphics();
 
       //get composite to restore later
@@ -98,10 +106,18 @@ class GMap{
    */
 
    public BufferedImage getImage(int x, int y, int w, int h, int zoom, int cachedZoom){
-      return getImageFromDS(x,y,w,h,zoom,cachedZoom);
+      return getImage(x,y,w,h,zoom,cachedZoom,null);
    }
 
-   private BufferedImage getImageFromDS(int x, int y, int w, int h, int zoom, int cachedZoom){
+   public BufferedImage getImage(int x, int y, int w, int h, int zoom, int cachedZoom, GMapListener listener){
+      return getImageFromDS(x,y,w,h,zoom,cachedZoom,listener);
+   }
+
+   public BufferedImage getImageFromDS(int x, int y, int w, int h, int zoom, int cachedZoom){
+      return getImageFromDS(x,y,w,h,zoom,cachedZoom,null);
+   }
+
+   private BufferedImage getImageFromDS(int x, int y, int w, int h, int zoom, int cachedZoom, GMapListener listener){
       //validate
       if(x < 0 || y < 0 || w <= 0 || h <= 0) return getDefaultImage(w,h);
 
@@ -114,7 +130,7 @@ class GMap{
       int yCoord = y%GDataSource.sourceSize.height;
 
       //load this index
-      BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom);
+      BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom,listener);
 
       //get info about the image
       Dimension imageSize = new Dimension(image.getWidth(),image.getHeight());
@@ -155,6 +171,9 @@ class GMap{
      //System.out.println(x + " " + y + " " + w + " " + h + " " + rowImages + " " + colImages);
      //System.out.println();
 
+     //set listener
+     if(listener != null) listener.updateGMapTaskSize(rowImages*colImages);
+
      //Iteratively loops through all needed images and paints them
      for(int row = 0; row < rowImages; row++){
         for(int col = 0; col < colImages; col++){
@@ -164,14 +183,15 @@ class GMap{
          //System.out.println(xIndex + " " + yIndex +  " " + xImage + " " + yImage +  " " + xCoord + " " + yCoord + " " + paintWidth + " " + paintHeight);
          //System.out.println();
 
-         getSpecificImage(x,y,col,row,toReturn,zoom,cachedZoom);
+         getSpecificImage(x,y,col,row,toReturn,zoom,cachedZoom,listener);
+         if(listener != null) listener.updateGMapCompleted(row*colImages + col);
        }
      }
 
       return toReturn;
    }
 
-   public BufferedImage getSpecificImage(int x, int y, int imgIndexX, int imgIndexY, BufferedImage buffImg, int zoom, int cachedZoom){
+   private BufferedImage getSpecificImage(int x, int y, int imgIndexX, int imgIndexY, BufferedImage buffImg, int zoom, int cachedZoom, GMapListener listener){
 
       int xIndex = x/GDataSource.sourceSize.width;
       int yIndex = y/GDataSource.sourceSize.height;
@@ -179,7 +199,7 @@ class GMap{
       xIndex += imgIndexX;
       yIndex += imgIndexY;
 
-      BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom);
+      BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom,listener);
 
       int xCoord = x%GDataSource.sourceSize.width;
       int yCoord = y%GDataSource.sourceSize.height;
@@ -246,12 +266,12 @@ class GMap{
       int xIndex = x/GDataSource.sourceSize.width;
       int yIndex = y/GDataSource.sourceSize.height;
 
-      BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom);
+      //BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom);
 
       int yCoord = y%GDataSource.sourceSize.height;
 
       //find the width of what we CAN paint
-      int paintHeight = image.getHeight() - yCoord;
+      int paintHeight = GDataSource.sourceSize.height - yCoord;
 
       int rowImages;
 
@@ -270,12 +290,12 @@ class GMap{
       int xIndex = x/GDataSource.sourceSize.width;
       int yIndex = y/GDataSource.sourceSize.height;
 
-      BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom);
+      //BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom);
 
       int xCoord = x%GDataSource.sourceSize.height;
 
       //find the width of what we CAN paint
-      int paintWidth = image.getWidth() - xCoord;
+      int paintWidth = GDataSource.sourceSize.width - xCoord;
 
       int colImages;
 
@@ -291,55 +311,36 @@ class GMap{
    }
 
    public void cacheImage(int x, int y, int w, int h, int zoom){
-      cacheImageFromDS(x,y,w,h,zoom);
+      cacheImage(x, y, w, h, zoom, null);
    }
 
-   private void cacheImageFromDS(int x, int y, int w, int h, int zoom){
-      //find index of point
-      int xIndex = x/GDataSource.sourceSize.width;
-      int yIndex = y/GDataSource.sourceSize.height;
+   public void cacheImage(int x, int y, int w, int h, int zoom, GMapListener listener){
+      cacheImageFromDS(x,y,w,h,zoom,listener);
+   }
 
-      //find coord of our starting point
-      int xCoord = x%GDataSource.sourceSize.width;
-      int yCoord = y%GDataSource.sourceSize.height;
-
-      //actually download this thing
-      gDataSource.cache(xIndex,yIndex,zoom);
-
-      //get info about the image
-      Dimension imageSize = new Dimension(GDataSource.sourceSize.width,GDataSource.sourceSize.height);
-
-      //find the width of what we CAN paint
-      int paintWidth = imageSize.width - xCoord;
-      int paintHeight = imageSize.height - yCoord;
-
-      //initialize the variables that will tell us if we are done
-      boolean xDone = (paintWidth >= w);
-      boolean yDone = (paintHeight >= h);
-
-      //handles the possible cases - whether or not we have reached the base
-      //case for width and height
-      if(xDone && yDone){
-
-      }
-      else if(!xDone && yDone){
-         cacheImageFromDS(x+paintWidth,y,w-paintWidth,h,zoom);
-
-      }
-      else if(xDone && !yDone){
-         cacheImageFromDS(x,y+paintHeight,w,h-paintHeight,zoom);
-      }
-      else if(!xDone && !yDone){
-         cacheImageFromDS(x+paintWidth,y,w-paintWidth,h,zoom);
-         cacheImageFromDS(x,y+paintHeight,paintWidth,h-paintHeight,zoom);
-      }
+   public void cacheImageFromDS(int x, int y, int w, int h, int zoom){
+      cacheImageFromDS(x,y,w,h,zoom,null);
+   }
+   public void cacheImageFromDS(int x, int y, int w, int h, int zoom, GMapListener listener){
+      getImageFromDS(x,y,w,h,zoom,-1);
    }
 
    //this alphacomposite controls transparency
    AlphaComposite cacheGridComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
 
    public BufferedImage getIndexedImage(int x, int y, int zoom, int cacheZoom){
+      return getIndexedImage(x, y, zoom, cacheZoom, null);
+   }
+   public BufferedImage getIndexedImage(int x, int y, int zoom, int cacheZoom, GMapListener listener){
+
+      if(listener != null){
+         if(!gDataSource.isCached(x,y,zoom)) listener.updateGMapMessage(GMap.MESSAGE_DOWNLOADING);
+         else listener.updateGMapMessage(GMap.MESSAGE_PAINTING);
+      }
+
       BufferedImage thumbImage = gDataSource.getImage(x,y,zoom);
+
+      if(thumbImage == null) return defaultImage;
 
       Graphics2D graphics2D = thumbImage.createGraphics();
 
@@ -395,4 +396,10 @@ class GMap{
       graphics2D.drawRect(0,0,w-1, h-1);
       return defaultImage;
    }
+}
+
+interface GMapListener{
+   abstract void updateGMapCompleted(int completed);
+   abstract void updateGMapTaskSize(int size);
+   abstract void updateGMapMessage(int messageNumber);
 }
