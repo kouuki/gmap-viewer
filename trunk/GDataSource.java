@@ -22,13 +22,13 @@ class GDataSource{
    private String cacheDirectory;
 
    //private
-   private GDataImage[] ramCache;
+   private Hashtable<String,GDataImage> ramCache;
    private int lastPointer;
 
    //constructor
    public GDataSource(String cacheDirectory){
       this.cacheDirectory = cacheDirectory;
-      ramCache = new GDataImage[40];
+      ramCache = new Hashtable<String, GDataImage>();
       lastPointer = 0;
       verifyCacheDirectories();
    }
@@ -133,17 +133,31 @@ class GDataSource{
 
    //RAM Methods
    public BufferedImage getImageFromRAM(int x, int y, int zoom){
-      for(int i=0;i<ramCache.length;i++)
+      /*for(int i=0;i<ramCache.length;i++)
          if(ramCache[i] != null)
             if(x == ramCache[i].getX() && y == ramCache[i].getY() && zoom == ramCache[i].getZoom())
                return ramCache[i].getImage();
-      return null;
+      return null;*/
+	   BufferedImage image = null;
+	   String key = x + " " + y + " " + zoom;
+	   GDataImage imageHolder = ramCache.get(key);
+	   if (imageHolder != null){
+		   image = imageHolder.getImage();
+	   }
+	   return image;
    }
 
    public void addImageToRAM(int x, int y, int zoom, BufferedImage image){
-      ramCache[lastPointer] = new GDataImage(image,x,y,zoom);
+      /*ramCache[lastPointer] = new GDataImage(image,x,y,zoom);
       lastPointer++;
-      if(lastPointer >= ramCache.length) lastPointer = 0;
+      if(lastPointer >= ramCache.length) lastPointer = 0;*/
+	  if(ramCache.size() > 100){
+		  ramCache.clear();
+		  System.gc();
+	  }
+	  String key = x + " " + y + " " + zoom;
+	  ramCache.put(key, new GDataImage(image,x,y,zoom));
+	  System.out.println("ramCache key size: "+ ramCache.size());
    }
 
 
