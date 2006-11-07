@@ -129,6 +129,7 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
    }
 
    public void updateScreen(){
+   	  gmap.gDataSource.downloadQueue();
       this.paintImmediately(0,0,this.getWidth(), this.getHeight());
    }
 
