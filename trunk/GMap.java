@@ -337,8 +337,8 @@ class GMap{
          if(!gDataSource.isCached(x,y,zoom)) listener.updateGMapMessage(GMap.MESSAGE_DOWNLOADING);
          else listener.updateGMapMessage(GMap.MESSAGE_PAINTING);
       }
-
-      BufferedImage thumbImage = gDataSource.getImage(x,y,zoom);
+System.out.println("Painting ("+x+","+y+","+zoom+")");
+      BufferedImage thumbImage = gDataSource.getImage(x,y,zoom, true);
 
       if(thumbImage == null) return defaultImage;
 
