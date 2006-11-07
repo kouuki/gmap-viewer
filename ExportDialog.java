@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 
-class ExportDialog extends JDialog implements MouseListener, ActionListener{
+class ExportDialog extends JDialog implements MouseListener, ActionListener, ItemListener{
    //properties
    private JButton save;
    private JButton cancel;
@@ -28,8 +28,8 @@ class ExportDialog extends JDialog implements MouseListener, ActionListener{
    private JTextField centerLong;
    private JTextField centerWidth;
    private JTextField centerHeight;
-   private JList zoomLevel;
-   private JList cacheLevel;
+   private JComboBox zoomLevel;
+   private JComboBox cacheLevel;
    private JLabel fileSize;
 
    //store stuff
@@ -37,10 +37,16 @@ class ExportDialog extends JDialog implements MouseListener, ActionListener{
    private CenteredRectangle selectedRect;
    private GUI gui;
 
+   //data
+   private Dimension outputSize;
+
    public ExportDialog(GUI gui){
 
       //superclass constructor
       super(gui, "Export to PNG", true);
+
+      //set up outputsize
+      outputSize = new Dimension();
 
       //store screen data
       this.gui = gui;
@@ -133,13 +139,17 @@ class ExportDialog extends JDialog implements MouseListener, ActionListener{
       content.add(scrollPanePanel, BorderLayout.CENTER);
 
       Object[] listObj = {new ZoomListObj("Zoom Level ",1),new ZoomListObj("Zoom Level ",2),new ZoomListObj("Zoom Level ",3),new ZoomListObj("Zoom Level ",4),new ZoomListObj("Zoom Level ",5),new ZoomListObj("Zoom Level ",6),new ZoomListObj("Zoom Level ",7),new ZoomListObj("Zoom Level ",8),new ZoomListObj("Zoom Level ",9),new ZoomListObj("Zoom Level ",10),new ZoomListObj("Zoom Level ",11),new ZoomListObj("Zoom Level ",12),new ZoomListObj("Zoom Level ",13),new ZoomListObj("Zoom Level ",14),new ZoomListObj("Zoom Level ",15)};
-      zoomLevel = new JList(listObj);
-      zoomLevel.setFixedCellWidth(50);
+      zoomLevel = new JComboBox(listObj);
+//      zoomLevel.setFixedCellWidth(50);
 
-      JScrollPane scrollPane = new JScrollPane(zoomLevel);
-      scrollPanePanel.add(scrollPane);
-
-      zoomLevel.setSelectedValue(listObj[pane.getZoom()-1],true);
+//      JScrollPane scrollPane = new JScrollPane(zoomLevel);
+//      scrollPanePanel.add(scrollPane);
+      content.add(zoomLevel);
+      zoomLevel.setBounds(40,190,170,25);
+      zoomLevel.setSelectedItem(listObj[pane.getZoom()-1]);
+      zoomLevel.addItemListener(this);
+      zoomLevel.setVisible(true);
+      zoomLevel.setOpaque(true);
 
       //cache zoom scroll pane
       JPanel scrollPanePanel2 = new JPanel();
@@ -149,16 +159,20 @@ class ExportDialog extends JDialog implements MouseListener, ActionListener{
       content.add(scrollPanePanel2, BorderLayout.CENTER);
 
       Object[] listObj2 = {new ZoomListObj("No Cache Zoom ",-1,false), new ZoomListObj("Cache Zoom Level ",1),new ZoomListObj("Cache Zoom Level ",2),new ZoomListObj("Cache Zoom Level ",3),new ZoomListObj("Cache Zoom Level ",4),new ZoomListObj("Cache Zoom Level ",5),new ZoomListObj("Cache Zoom Level ",6),new ZoomListObj("Cache Zoom Level ",7),new ZoomListObj("Cache Zoom Level ",8),new ZoomListObj("Cache Zoom Level ",9),new ZoomListObj("Cache Zoom Level ",10),new ZoomListObj("Cache Zoom Level ",11),new ZoomListObj("Cache Zoom Level ",12),new ZoomListObj("Cache Zoom Level ",13),new ZoomListObj("Cache Zoom Level ",14),new ZoomListObj("Cache Zoom Level ",15)};
-      cacheLevel = new JList(listObj2);
-      cacheLevel.setFixedCellWidth(50);
+      cacheLevel = new JComboBox(listObj2);
+//      cacheLevel.setFixedCellWidth(50);
 
-      JScrollPane scrollPane2 = new JScrollPane(cacheLevel);
-      scrollPanePanel2.add(scrollPane2);
-
+//      JScrollPane scrollPane2 = new JScrollPane(cacheLevel);
+//      scrollPanePanel2.add(scrollPane2);
+      content.add(cacheLevel);
+      cacheLevel.setBounds(40,220,170,25);
+      cacheLevel.setSelectedItem(listObj[pane.getZoom()-1]);
+      cacheLevel.setVisible(true);
+      zoomLevel.addItemListener(this);
 
       //initialize scrollpane stuff
-      if(!pane.getShowCachedZoom() || pane.getShowCachedZoomLevel() == -1) cacheLevel.setSelectedValue(listObj2[0],true);
-      else cacheLevel.setSelectedValue(listObj2[pane.getShowCachedZoomLevel()],true);
+      if(!pane.getShowCachedZoom() || pane.getShowCachedZoomLevel() == -1) cacheLevel.setSelectedItem(listObj2[0]);
+      else cacheLevel.setSelectedItem(listObj2[pane.getShowCachedZoomLevel()]);
 
 
       //save button
@@ -191,8 +205,11 @@ class ExportDialog extends JDialog implements MouseListener, ActionListener{
       setEnabledCustom(false);
       centerLat.setText(screenRect.center.getX()+"");
       centerLong.setText(screenRect.center.getY()+"");
-      centerWidth.setText(screenRect.width+"");
-      centerHeight.setText(screenRect.height+"");
+
+      //update width and height
+      outputSize.width = (int)screenRect.width;
+      outputSize.height = (int)screenRect.height;
+      updateDimensions();
    }
 
    public void setUseSelected(){
@@ -200,13 +217,25 @@ class ExportDialog extends JDialog implements MouseListener, ActionListener{
       setEnabledCustom(false);
       centerLat.setText(selectedRect.center.getX()+"");
       centerLong.setText(selectedRect.center.getY()+"");
-      centerWidth.setText(selectedRect.width+"");
-      centerHeight.setText(selectedRect.height+"");
+
+      //update width and height
+      outputSize.width = (int)selectedRect.width;
+      outputSize.height = (int)selectedRect.height;
+      updateDimensions();
    }
 
    public void setUseCustom(){
       useCustom.setSelected(true);
       setEnabledCustom(true);
+   }
+
+   private void updateDimensions(){
+      ZoomListObj selectedZoom = (ZoomListObj)zoomLevel.getSelectedItem();
+      double factor =  Math.pow(2,gui.getTopPane().getZoom() - selectedZoom.getZoom());
+      int width = (int)(outputSize.width * factor);
+      int height = (int)(outputSize.height * factor);
+      centerWidth.setText(width+"");
+      centerHeight.setText(height+"");
    }
 
    private void setEnabledCustom(boolean value){
@@ -222,17 +251,25 @@ class ExportDialog extends JDialog implements MouseListener, ActionListener{
 
       try{
          GPhysicalPoint center = new GPhysicalPoint(Double.parseDouble(centerLat.getText()),Double.parseDouble(centerLong.getText()));
-         ZoomListObj selectedZoom = (ZoomListObj)zoomLevel.getSelectedValue();
-         ZoomListObj selectedCacheZoom = (ZoomListObj)cacheLevel.getSelectedValue();
+         ZoomListObj selectedZoom = (ZoomListObj)zoomLevel.getSelectedItem();
+         ZoomListObj selectedCacheZoom = (ZoomListObj)cacheLevel.getSelectedItem();
 
+      //convert center to pixels
+         Point centerPixels = center.getPixelPoint(selectedZoom.getZoom());
+         int width = (int)Double.parseDouble(centerWidth.getText());
+         int height = (int)Double.parseDouble(centerHeight.getText());
+         int x = centerPixels.x - (width/2);
+         int y = centerPixels.y - (height/2);
          BufferedImage imageToWrite = map.getImage(
-            center,
-            (int)Double.parseDouble(centerWidth.getText()),
-            (int)Double.parseDouble(centerHeight.getText()),
+            x,
+            y,
+            width,
+            height,
             selectedZoom.getZoom(),
-            selectedCacheZoom.getZoom()
+            selectedCacheZoom.getZoom(),
+            gui.getTopPane()
          );
-
+         System.out.println(gui.getProgressMeter().release(gui.getTopPane()));
          //set extension
          String extension = "png";
 
@@ -290,5 +327,7 @@ class ExportDialog extends JDialog implements MouseListener, ActionListener{
    public void mouseClicked(MouseEvent e){}
 
 
-
+   public void itemStateChanged(ItemEvent evt) {
+      updateDimensions();
+   }
 }

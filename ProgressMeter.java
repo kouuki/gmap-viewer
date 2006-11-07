@@ -9,11 +9,13 @@ class ProgressMeter{
    private Object object;
    private double percent;
    private String message;
+   private boolean stopFlag;
 
    public ProgressMeter(String object, double percent, String message){
       this.object = object;
       this.percent = percent;
       this.message = message;
+      this.stopFlag = false;
    }
 
    public ProgressMeter(){
@@ -52,6 +54,7 @@ class ProgressMeter{
    public boolean grab(Object o){
       if(object == null){
          object=o;
+         stopFlag = false;
          return true;
       }
       else{
@@ -62,11 +65,25 @@ class ProgressMeter{
    public boolean release(Object o){
       if(object== o || object == null){
          object=null;
+         stopFlag = false;
          return true;
       }
       else{
          return false;
       }
+   }
+
+   public void stop(){
+      stopFlag = true;
+   }
+
+   public boolean getStopFlag(){
+      return stopFlag;
+   }
+
+
+   public boolean isObject(Object o){
+      return o == object;
    }
 
    public void setVisible(boolean b){

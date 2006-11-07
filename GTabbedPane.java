@@ -16,10 +16,10 @@ import java.awt.geom.*;
 class GTabbedPane extends JTabbedPane implements MouseListener, ActionListener{
 
    //gui
-   GUI gui;
+   private GUI gui;
 
    //menuGroup
-   private JPopupMenu popupMenu;
+   private GPopupMenu popupMenu;
 
 
    //default
@@ -29,12 +29,13 @@ class GTabbedPane extends JTabbedPane implements MouseListener, ActionListener{
       //init gui
       this.gui = gui;
 
+      popupMenu = new GPopupMenu(gui);
       //jmenugroup init
-      JMenuAction[] array = {new JMenuActionRemovePane(gui)};
-      popupMenu = new JPopupMenu();
-      array[0].addActionListener(this);
-      for(int i=0;i<array.length;i++) popupMenu.add(array[i]);
-      this.add(popupMenu);
+      //JMenuAction[] array = {new JMenuActionRemovePane(gui)};
+      //popupMenu = new JPopupMenu();
+      //array[0].addActionListener(this);
+      //for(int i=0;i<array.length;i++) popupMenu.add(array[i]);
+      //this.add(popupMenu);
       addMouseListener(this);
 
    }
@@ -56,7 +57,7 @@ class GTabbedPane extends JTabbedPane implements MouseListener, ActionListener{
    public void mouseExited(MouseEvent e){}
    public void mousePressed(MouseEvent e){
       int m = e.getModifiers();
-      if(m == 4){
+      if(m == 4 && gui.getTopPane() != null){
          //right click
          showPopupMenu(e.getX(), e.getY());
       }
