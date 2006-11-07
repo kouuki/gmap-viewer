@@ -33,7 +33,6 @@ class JMenuGroup extends JMenu{
       //initialize and add
       for(int i=0;i<items.length;i++){
          this.add(items[i]);
-         items[i].addActionListener(registeredObject);
          //if its a button, add it to this group
          if(items[i] instanceof JRadioButtonMenuItem){
             JRadioButtonMenuItem thisButton = (JRadioButtonMenuItem)items[i];
@@ -59,6 +58,7 @@ abstract class JMenuAction extends JMenuItem implements PaneListener{
       this.registeredObject = registeredObject;
       if(registeredObject instanceof GUI){
          GUI gui = (GUI)registeredObject;
+         this.addActionListener(gui);
          //GPane pane = gui.getTopPane();
          //if(pane != null) pane.addPaneListener(this);
          gui.getNotifier().addPaneListener(this);
@@ -93,6 +93,7 @@ abstract class JMenuRadioButtonAction extends JRadioButtonMenuItem implements Pa
       this.registeredObject = registeredObject;
       if(registeredObject instanceof GUI){
          GUI gui = (GUI)registeredObject;
+         this.addActionListener(gui);
          //GPane pane = gui.getTopPane();
          gui.getNotifier().addPaneListener(this);
       }

@@ -18,7 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-class GPane extends JPanel implements ComponentListener, MouseListener, MouseMotionListener, Cloneable, GMapListener{
+class GPane extends JPanel implements ActionListener, ComponentListener, MouseListener, MouseMotionListener, Cloneable, GMapListener{
 
    //available JFrame object
    private JFrame popup;
@@ -47,6 +47,10 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
 
    //this alphacomposite is controls transparency
    private AlphaComposite selectionOverlayTransparency = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
+
+   //a thread for drawing stuff
+   private DrawThread drawingThread;
+
 
 
    //constructor
@@ -82,55 +86,116 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
       addMouseListener(this);
       addMouseMotionListener(this);
 
+
+      //initialize draw thread to null
+      drawingThread = null;
+
+
+
       //fire pane listener event
       gui.getNotifier().firePaneEvent(this);
 
    }
 
    public GPane(GUI gui){
-      this(gui, new GPhysicalPoint(-13.123524592036453, -105.44062302343556), 13, false, -1, true);
+      this(gui, new GPhysicalPoint(29.8265419861086, -82.35763549804688), 13, false, -1, true);
    }
-
 
    public void draw(){
-      //set cursor to hourglass
-      this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-      //System.out.println("fired - "+getSize().width+", "+getSize().height);
-      //check to make sure size is valid
-      if(getSize().width == 0 || getSize().height == 0) return;
-
-      //set cached zoom level
-      int useCachedZoomLevel = showCachedZoomLevel;
-      if(!showCachedZoom) useCachedZoomLevel = -1;
-
-      //get the image
-      long start = LibGUI.getTime();
-      image = gmap.getImage(center, getSize().width, getSize().height, zoom, useCachedZoomLevel, this);
-      gui.getProgressMeter().release(this);
-      System.out.println("Draw time = " + (LibGUI.getTime() - start));
-
-      //TEMP - DRAW TICK LINES
-      BufferedImage toDraw = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
-      Graphics2D g = toDraw.createGraphics();
-
-      g.drawImage(image, 0, 0, image.getWidth(), getHeight(), null);
-      g.drawLine(getSize().width/2, 0, getSize().width/2, getSize().height);
-      g.drawLine(0, getSize().height/2, getSize().width, getSize().height/2);
-
-      //update icon bounds
-      label.setBounds(0,0,getSize().width, getSize().height);
-
-      image = toDraw;
-      updateScreen();
-
-      //set cursor to hourglass
-      this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      drawThreadScheduler();
    }
 
+   private void drawThreadScheduler(){
+      boolean suppressThread = (drawingThread != null);
+      if(suppressThread) suppressThread = drawingThread.isAlive();
+
+      if(!suppressThread){
+         drawingThread = new DrawThread(this);
+         drawingThread.start();
+      }
+   }
+
+   private class DrawThread extends Thread{
+      private GPane parent;
+      public DrawThread(GPane parent){
+         this.parent = parent;
+      }
+      public void run(){
+         //set cursor to hourglass
+         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+         //System.out.println("fired - "+getSize().width+", "+getSize().height);
+         //check to make sure size is valid
+         if(getSize().width == 0 || getSize().height == 0) return;
+
+         //set cached zoom level
+         int useCachedZoomLevel = showCachedZoomLevel;
+         if(!showCachedZoom) useCachedZoomLevel = -1;
+
+         //timer start
+         long start = LibGUI.getTime();
+
+         //package data and send to scheduler
+         Point centerPixels = center.getPixelPoint(zoom);
+         int x = centerPixels.x - (getSize().width/2);
+         int y = centerPixels.y - (getSize().height/2);
+
+         //set the bit to determine if we need new image memory
+
+         boolean newImageMemory = (image == null);
+         if(!newImageMemory) newImageMemory = (image.getWidth() != getSize().width || image.getHeight() != getSize().height);
+
+
+         //make new image if necessary
+         if(newImageMemory){
+            image = new BufferedImage(getSize().width, getSize().height,BufferedImage.TYPE_INT_ARGB);
+         }
+         //else paint an overlay
+         else{
+            Graphics2D g2d = (Graphics2D)image.createGraphics();
+            Composite temp = g2d.getComposite();
+            g2d.setComposite(selectionOverlayTransparency);
+            g2d.setColor(Color.BLACK);
+            g2d.fillRect(0,0,image.getWidth(), image.getHeight());
+            g2d.setComposite(temp);
+
+         }
+
+
+         gmap.paintAsynchronousImage(image, x, y, getSize().width, getSize().height, zoom, useCachedZoomLevel, parent);
+         gui.getProgressMeter().release(parent);
+
+         //timer stop
+         System.out.println("Draw time = " + (LibGUI.getTime() - start));
+
+
+         //TEMP - DRAW TICK LINES
+         //BufferedImage toDraw = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
+         //Graphics2D g = toDraw.createGraphics();
+
+         //.drawImage(image, 0, 0, image.getWidth(), getHeight(), null);
+         //g.drawLine(getSize().width/2, 0, getSize().width/2, getSize().height);
+         //g.drawLine(0, getSize().height/2, getSize().width, getSize().height/2);
+
+         //update icon bounds
+         //label.setBounds(0,0,getSize().width, getSize().height);
+
+         //image = toDraw;
+         updateScreen();
+
+         //set cursor to hourglass
+         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+         //update flag
+         parent.drawingThread = null;
+
+      }
+   }
+
+
    public void updateScreen(){
-   	  gmap.gDataSource.downloadQueue();
       this.paintImmediately(0,0,this.getWidth(), this.getHeight());
+      gui.repaint();
    }
 
    protected void paintComponent(Graphics g) {
@@ -253,6 +318,7 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
    }
 
 
+
    //component listener
    public void componentHidden(ComponentEvent e){}
    public void componentMoved(ComponentEvent e){}
@@ -276,28 +342,30 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
    private boolean mouseDraggedThisClick = false;
 
    public void mouseDragged(MouseEvent e){
-      int mouseX = e.getX() + mouseOffset.width;
-      int mouseY = e.getY() + mouseOffset.height;
+      int m = e.getModifiers();
+      if(m == 16){
+         int mouseX = e.getX() + mouseOffset.width;
+         int mouseY = e.getY() + mouseOffset.height;
 
+         //center
+         Point original = getCenterPixel();
 
-      //center
-      Point original = getCenterPixel();
-
-      if(selectionEnabled){
-         //update dragged boolean
-         mouseDraggedThisClick = true;
-         //do computations relating to selection
-         mouseRectanglePosition.x = Math.min(clickLocation.x,mouseX);
-         mouseRectanglePosition.y = Math.min(clickLocation.y,mouseY);
-         mouseRectanglePosition.width = Math.max(clickLocation.x,mouseX) - mouseRectanglePosition.x;
-         mouseRectanglePosition.height = Math.max(clickLocation.y,mouseY) - mouseRectanglePosition.y;
-         updateScreen();
-      }else{
-         //do computations relating to dragging the center
-         center.setPixelPoint(new Point(original.x + (clickLocation.x - e.getX()), original.y + (clickLocation.y - e.getY())), zoom);
-         clickLocation.x = e.getX();
-         clickLocation.y = e.getY();
-         draw();
+         if(selectionEnabled){
+            //update dragged boolean
+            mouseDraggedThisClick = true;
+            //do computations relating to selection
+            mouseRectanglePosition.x = Math.min(clickLocation.x,mouseX);
+            mouseRectanglePosition.y = Math.min(clickLocation.y,mouseY);
+            mouseRectanglePosition.width = Math.max(clickLocation.x,mouseX) - mouseRectanglePosition.x;
+            mouseRectanglePosition.height = Math.max(clickLocation.y,mouseY) - mouseRectanglePosition.y;
+            updateScreen();
+         }else{
+            //do computations relating to dragging the center
+            center.setPixelPoint(new Point(original.x + (clickLocation.x - e.getX()), original.y + (clickLocation.y - e.getY())), zoom);
+            clickLocation.x = e.getX();
+            clickLocation.y = e.getY();
+            draw();
+         }
       }
    }
 
@@ -306,16 +374,18 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
    public void mouseEntered(MouseEvent e){}
    public void mouseExited(MouseEvent e){}
    public void mousePressed(MouseEvent e){
-      int mouseX = e.getX() + mouseOffset.width;
-      int mouseY = e.getY() + mouseOffset.height;
 
       //update mouse dragged
       mouseDraggedThisClick = false;
+
+      int mouseX = e.getX() + mouseOffset.width;
+      int mouseY = e.getY() + mouseOffset.height;
 
       clickLocation.x = mouseX;
       clickLocation.y = mouseY;
       int m = e.getModifiers();
       if(m == 16){
+
          //left click
          if(e.getClickCount() == 1){
             //single left click
@@ -336,6 +406,7 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
       }
       else if(m == 4){
          //right click
+         gui.getTabbedPane().showPopupMenu(e.getX(), e.getY());
       }
 
 
@@ -377,6 +448,7 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
          String message;
          if(messageNumber == GMap.MESSAGE_DOWNLOADING){
             gui.getProgressMeter().grab(this);
+            gui.getProgressMeter().registerThread(drawingThread, this);
             message = "Downloading data...";
          }
          else if(messageNumber == GMap.MESSAGE_PAINTING){
@@ -389,5 +461,29 @@ class GPane extends JPanel implements ComponentListener, MouseListener, MouseMot
       }
    }
 
+   public void updateGMapPainting(){
+      updateScreen();
+   }
+
+   public boolean asynchronousGMapStopFlag(){
+      return gui.getProgressMeter().getStopFlag();
+   }
+
+
+   //action dispatcher method from menubar
+   public void actionPerformed(ActionEvent e){
+      Object sourceObject = e.getSource();
+      //dispatch actions
+      if(sourceObject instanceof JMenuAction){
+         JMenuAction sourceMenuAction = (JMenuAction)sourceObject;
+         sourceMenuAction.start();
+      }
+      //dispatch radio button actions
+      if(sourceObject instanceof JMenuRadioButtonAction){
+         JMenuRadioButtonAction sourceMenuAction = (JMenuRadioButtonAction)sourceObject;
+         sourceMenuAction.start();
+      }
+
+   }
 
 }

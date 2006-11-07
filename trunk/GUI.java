@@ -30,7 +30,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    private Container container = getContentPane();
 
    //keep track of panes
-   private JTabbedPane pane;
+   private GTabbedPane pane;
    private GPane[] tabs;
 
    //popup window object
@@ -82,7 +82,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       //initialize gmap
       gmap = new GMap();
 
-      //run content builde
+      //run content build
       buildJFrameContents();
 
       //set up the menubar
@@ -107,7 +107,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       container.setLayout(null);
 
       //add pane
-      pane = new JTabbedPane();
+      pane = new GTabbedPane(this);
       int location = JTabbedPane.TOP; // or BOTTOM, LEFT, RIGHT
       addPane(new GPane(this));
 
@@ -128,6 +128,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       tabbedPanel.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar);
       progressBarPanel.setBounds(0,screenSize.height - sizeOfProgressBar,screenSize.width,sizeOfProgressBar);
       pane.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar);
+
+
+
    }
 
    public void update(){
@@ -171,7 +174,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    }
 
    //get the pane
-   public JTabbedPane getTabbedPane(){
+   public GTabbedPane getTabbedPane(){
       return pane;
    }
 

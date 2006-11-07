@@ -19,10 +19,10 @@ class GDataSource {
 
    /* The Queue for pending image downloads. */
    private Queue<GDataImage> downloadQueue;
-   
+
    /* The size of the download queue; needed because Queue.size() is not O(1). */
    private int queueSize;
-   
+
    //private
    private Hashtable<String,GDataImage> ramCache;
    private int lastPointer;
@@ -58,22 +58,22 @@ class GDataSource {
    /**
     * This method will return the image corresponding to the specified point
     * and zoom level. The image could be in any of three places: RAM, memory,
-    * or the Google servers. This method checks the RAM before the memory and 
-    * only checks remotely if it was not found locally. 
+    * or the Google servers. This method checks the RAM before the memory and
+    * only checks remotely if it was not found locally.
     * <p>
-    * Furthermore, this method will queue for download all adjacent images as 
-    * well as images at all higher zoom levels. 
-    * 
+    * Furthermore, this method will queue for download all adjacent images as
+    * well as images at all higher zoom levels.
+    *
     * @param x The horizontal point
     * @param y The vertical point
     * @param zoom The zoom level (1-15)
-    * @return A BufferedImage containing the Google Map Image or null if the 
+    * @return A BufferedImage containing the Google Map Image or null if the
     *         image could not be loaded.
     */
    public BufferedImage getImage(int x, int y, int zoom) {
-	  return getImage(x, y, zoom, false);
+     return getImage(x, y, zoom, false);
    }
-   
+
    /**
     * This method does the real work of getImage(). The findAdjacent
     * parameter is necessary because we want to have the option to not
@@ -83,20 +83,20 @@ class GDataSource {
     * images.
     */
    public BufferedImage getImage(int x, int y, int zoom, boolean findAdjacent) {
-      BufferedImage thumbImage = new BufferedImage(sourceSize.width, sourceSize.height, BufferedImage.TYPE_INT_ARGB);
-      Graphics2D graphics2D = thumbImage.createGraphics();  
-      
       /* try getting image from RAM */
       BufferedImage ramImage = getImageFromRAM(x,y,zoom);
       if (ramImage != null) {
-         graphics2D.drawImage(ramImage, 0, 0, sourceSize.width, sourceSize.height, null);
          if (findAdjacent) {
-        	 queueAdjacent(x,y,zoom);
+          queueAdjacent(x,y,zoom);
          }
          cacheHigherLevels(x, y, zoom);
-         return thumbImage;
+         return ramImage;
       }
-      
+
+      //allocate space for the return
+      BufferedImage thumbImage = new BufferedImage(sourceSize.width, sourceSize.height, BufferedImage.TYPE_INT_ARGB);
+      Graphics2D graphics2D = thumbImage.createGraphics();
+
       /* try accessing local image */
       try {
          //System.out.println("Load local image ("+x+","+y+") zoom="+zoom);
@@ -107,20 +107,20 @@ class GDataSource {
          MediaTracker mediaTracker = new MediaTracker(new Container());
          mediaTracker.addImage(image, 0);
          mediaTracker.waitForID(0);
-        
+
          if (!(mediaTracker.isErrorAny()))
          {
             graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
             addImageToRAM(x,y,zoom,thumbImage);
             if (findAdjacent) {
-           	   queueAdjacent(x,y,zoom);
+               queueAdjacent(x,y,zoom);
             }
             cacheHigherLevels(x, y, zoom);
             return thumbImage;
          }
       } catch(Exception e) {
       }
-      
+
       /* try accessing remote image */
       try{
          System.out.print("Load remote image ("+x+","+y+") zoom="+zoom);
@@ -140,29 +140,29 @@ class GDataSource {
             ImageIO.write(thumbImage, "png", new File(cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png"));
             System.out.println(" [done!]");
             if (findAdjacent) {
-           	   queueAdjacent(x,y,zoom);
+               queueAdjacent(x,y,zoom);
             }
             cacheHigherLevels(x, y, zoom);
             return thumbImage;
          }
          else
          {
-        	 System.out.println("oh we had errors");
+          System.out.println("oh we had errors");
          }
       } catch(Exception e) {
       }
-      
+
       return null;
    }
 
    private void cacheHigherLevels(int x, int y, int zoom)
    {
-	  /* cache higher zoom levels */
-	  if (zoom < GDataImage.ZOOM_MAX && !isCached(x, y, zoom)) {
+     /* cache higher zoom levels */
+     if (zoom < GDataImage.ZOOM_MAX && !isCached(x, y, zoom)) {
          queue(new GDataImage(null, x/2, y/2, zoom+1));
       }
    }
-   
+
    /**
     * Checks to see if the following squares are in the cache. If not, then
     * they are added to the download queue.
@@ -179,34 +179,34 @@ class GDataSource {
     * @param y
     * @param zoom
     */
-   private void queueAdjacent(int x, int y, int zoom) {	
+   private void queueAdjacent(int x, int y, int zoom) {
       for (int m = x-1, M = x+1; m <= M; m++) {
-    	 if (m < 0) continue;
-    	 
+       if (m < 0) continue;
+
          for (int n = y-1, N = y+1; n <= N; n++) {
-        	if (n >= 0) {
-        	   this.queue(new GDataImage(null, m, n, zoom));
-        	}
+         if (n >= 0) {
+            this.queue(new GDataImage(null, m, n, zoom));
+         }
          }
       }
       return;
    }
-   
+
    private void queue(GDataImage img) {
       synchronized (downloadQueue) {
          if (!isCached(img.getX(), img.getY(), img.getZoom()) && !downloadQueue.contains(img)) {
             while (this.queueSize >= QUEUE_MAX_SIZE) {
-        	   downloadQueue.poll();
-        	   queueSize--;
+            downloadQueue.poll();
+            queueSize--;
             }
-            
+
            downloadQueue.offer(img);
            queueSize++;
            System.out.println("Added " + img + " to download queue.");
          }
       }
    }
-   
+
    /**
     * Iterates through the download queue and caches every image. Then, it
     * removes that image from the queue.
@@ -215,13 +215,13 @@ class GDataSource {
       GDataImage img;
       synchronized (downloadQueue) {
          while ((img = downloadQueue.poll()) != null) {
-        	System.out.println("   from Q: " +img);
+         System.out.println("   from Q: " +img);
             cache(img.getX(), img.getY(), img.getZoom());
             queueSize--;
          }
       }
    }
-   
+
    private String makeCachedName(int x, int y, int zoom){
       return cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png";
    }
@@ -238,26 +238,26 @@ class GDataSource {
             if(x == ramCache[i].getX() && y == ramCache[i].getY() && zoom == ramCache[i].getZoom())
                return ramCache[i].getImage();
       return null;*/
-	   BufferedImage image = null;
-	   String key = x + " " + y + " " + zoom;
-	   GDataImage imageHolder = ramCache.get(key);
-	   if (imageHolder != null){
-		   image = imageHolder.getImage();
-	   }
-	   return image;
+      BufferedImage image = null;
+      String key = x + " " + y + " " + zoom;
+      GDataImage imageHolder = ramCache.get(key);
+      if (imageHolder != null){
+         image = imageHolder.getImage();
+      }
+      return image;
    }
 
    public void addImageToRAM(int x, int y, int zoom, BufferedImage image){
       /*ramCache[lastPointer] = new GDataImage(image,x,y,zoom);
       lastPointer++;
       if(lastPointer >= ramCache.length) lastPointer = 0;*/
-	  if(ramCache.size() > 100){
-		  ramCache.clear();
-		  System.gc();
-	  }
-	  String key = x + " " + y + " " + zoom;
-	  ramCache.put(key, new GDataImage(image,x,y,zoom));
-	  System.out.println("ramCache key size: "+ ramCache.size());
+     if(ramCache.size() > 100){
+        ramCache.clear();
+        System.gc();
+     }
+     String key = x + " " + y + " " + zoom;
+     ramCache.put(key, new GDataImage(image,x,y,zoom));
+     System.out.println("ramCache key size: "+ ramCache.size());
    }
 
    /*

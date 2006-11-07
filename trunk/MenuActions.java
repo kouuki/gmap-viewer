@@ -181,7 +181,7 @@ class JMenuActionCacheSelected extends JMenuAction{
       toCache.height = physicalPoint2.getPixelY(zoomLevel) - toCache.y;
 
       //cache it
-      gui.getGMap().cacheImage(toCache.x, toCache.y, toCache.width, toCache.height, zoomLevel);
+      gui.getGMap().cacheImage(toCache.x, toCache.y, toCache.width, toCache.height, zoomLevel, pane);
       pane.draw();
    }
 
@@ -324,7 +324,7 @@ class JMenuRadioButtonSelectionOn extends JMenuRadioButtonAction{
    //stuff we need to know
 
    public JMenuRadioButtonSelectionOn(GUI registeredObject){
-      super("Turn Selection On",registeredObject);
+      super("Selection Rectangle",registeredObject);
    }
 
    public void run(){
@@ -347,7 +347,7 @@ class JMenuRadioButtonDragOn extends JMenuRadioButtonAction{
    //stuff we need to know
 
    public JMenuRadioButtonDragOn(GUI registeredObject){
-      super("Turn Map Dragging On",registeredObject);
+      super("Map Dragging",registeredObject);
    }
 
    public void run(){

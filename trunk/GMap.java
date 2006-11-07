@@ -64,62 +64,35 @@ class GMap{
       return gDataSource;
    }
 
-
-   //build image
-   public BufferedImage getImage(GPhysicalPoint center, int width, int height, int zoom, int cachedZoom){
-      return getImage(center, width, height, zoom, cachedZoom, null);
+   //actual build image method
+   public void paintAsynchronousImage(BufferedImage image, int x, int y, int w, int h, int zoom, int cachedZoom, GMapListener listener){
+      buildImage(image, x,y,w,h,zoom,cachedZoom,listener);
    }
-   public BufferedImage getImage(GPhysicalPoint center, int width, int height, int zoom, int cachedZoom, GMapListener listener){
-      //convert center to pixels
-      Point centerPixels = center.getPixelPoint(zoom);
-      int x = centerPixels.x - (width/2);
-      int y = centerPixels.y - (height/2);
-
-      //load image
-      BufferedImage toReturn = getImage(x,y,width,height,zoom,cachedZoom,listener);
-      Graphics2D g = toReturn.createGraphics();
-
-      //get composite to restore later
-      Composite originalComposite = g.getComposite();
-      g.setComposite(googleOverlayComposite);
-
-      //draw the google icon on
-      g.drawImage(googleImage, width-googleImage.getWidth(null), height-googleImage.getHeight(null), googleImage.getWidth(null), googleImage.getHeight(null), null);
-
-      //restore composite
-
-      g.setComposite(originalComposite);
-
-      return toReturn;
-   }
-
-
-   //function generates an image from pixel point a, to pixel point b
-   /*
-   * How it works:
-   * Divide the image into 3 parts. (1) That which can be drawn from
-   * the coordinate to the edge of an available image (2) everything
-   * to the east and southeast of it (3) everything south of it
-   *
-   * Paint the part that is available, and recursively call getImage
-   * on (2) and (3) until they are empty
-   */
 
    public BufferedImage getImage(int x, int y, int w, int h, int zoom, int cachedZoom){
+     //create buffered image for return
       return getImage(x,y,w,h,zoom,cachedZoom,null);
    }
 
    public BufferedImage getImage(int x, int y, int w, int h, int zoom, int cachedZoom, GMapListener listener){
-      return getImageFromDS(x,y,w,h,zoom,cachedZoom,listener);
+      BufferedImage toReturn = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
+      buildImage(toReturn,x,y,w,h,zoom,cachedZoom,listener);
+      return toReturn;
    }
 
-   public BufferedImage getImageFromDS(int x, int y, int w, int h, int zoom, int cachedZoom){
-      return getImageFromDS(x,y,w,h,zoom,cachedZoom,null);
+   public void cacheImage(int x, int y, int w, int h, int zoom){
+      cacheImage(x,y,w,h,zoom,null);
+   }
+   public void cacheImage(int x, int y, int w, int h, int zoom, GMapListener listener){
+      paintAsynchronousImage(null,x,y,w,h,zoom,-1,listener);
    }
 
-   private BufferedImage getImageFromDS(int x, int y, int w, int h, int zoom, int cachedZoom, GMapListener listener){
+
+   public void buildImage(BufferedImage toReturn, int x, int y, int w, int h, int zoom, int cachedZoom, GMapListener listener){
       //validate
-      if(x < 0 || y < 0 || w <= 0 || h <= 0) return getDefaultImage(w,h);
+      //if(x < 0 || y < 0 || w <= 0 || h <= 0) return getDefaultImage(w,h);
+
+      //if(toReturn != null) Graphics2D g = toReturn.createGraphics();
 
       //find index of point
       int xIndex = x/GDataSource.sourceSize.width;
@@ -133,65 +106,85 @@ class GMap{
       BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom,listener);
 
       //get info about the image
-      Dimension imageSize = new Dimension(image.getWidth(),image.getHeight());
+      //Dimension imageSize = new Dimension(image.getWidth(),image.getHeight());
 
-     //Holds number of row and column images needed
-     int rowImages;
-     int colImages;
+      //Holds number of row and column images needed
+      int rowImages;
+      int colImages;
 
-     //find the width of what we CAN paint
-     int paintWidth = imageSize.width - xCoord;
-     int paintHeight = imageSize.height - yCoord;
+      //find the width of what we CAN paint
+      int paintWidth = GDataSource.sourceSize.width - xCoord;
+      int paintHeight = GDataSource.sourceSize.height - yCoord;
 
-     //Calculate number of row images
+      //Calculate number of row images
       if((h - paintHeight)%256 == 0){
-       rowImages = 1 + (h - paintHeight)/256;
-     }
-     else{
-      rowImages = 2 + (h - paintHeight)/256;
-     }
+         rowImages = 1 + (h - paintHeight)/256;
+      }
+      else{
+         rowImages = 2 + (h - paintHeight)/256;
+      }
 
-     //Calculate number of column images
-     if((w - paintWidth)%256 == 0){
-       colImages = 1 + (w - paintWidth)/256;
-     }
-     else{
-      colImages = 2 + (w - paintWidth)/256;
-     }
+      //Calculate number of column images
+      if((w - paintWidth)%256 == 0){
+         colImages = 1 + (w - paintWidth)/256;
+      }
+      else{
+         colImages = 2 + (w - paintWidth)/256;
+      }
 
-     //create buffered image for return
-      BufferedImage toReturn = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
-      Graphics2D g = toReturn.createGraphics();
+      //Overal Image coordinates
+      int xImage = 0;
+      int yImage = 0;
 
-     //Overal Image coordinates
-     int xImage = 0;
-     int yImage = 0;
+      //DEBUG
+      //System.out.println(x + " " + y + " " + w + " " + h + " " + rowImages + " " + colImages);
+      //System.out.println();
 
-     //DEBUG
-     //System.out.println(x + " " + y + " " + w + " " + h + " " + rowImages + " " + colImages);
-     //System.out.println();
+      //set listener
+      if(listener != null) listener.updateGMapTaskSize(rowImages*colImages);
 
-     //set listener
-     if(listener != null) listener.updateGMapTaskSize(rowImages*colImages);
+      //a counter for the listener
+      int completed = 0;
 
-     //Iteratively loops through all needed images and paints them
-     for(int row = 0; row < rowImages; row++){
-        for(int col = 0; col < colImages; col++){
-         //draw Image to graphics object
+      //Iteratively loops through all CACHED images and paints them
+      for(int row = 0; row < rowImages; row++){
+         for(int col = 0; col < colImages; col++){
+            int thisXIndex = x/GDataSource.sourceSize.width + col;
+            int thisYIndex = y/GDataSource.sourceSize.height + row;
 
-         //DEBUG
-         //System.out.println(xIndex + " " + yIndex +  " " + xImage + " " + yImage +  " " + xCoord + " " + yCoord + " " + paintWidth + " " + paintHeight);
-         //System.out.println();
+            if(gDataSource.isCached(thisXIndex,thisYIndex,zoom)){
+               getSpecificImage(x,y,w,h,col,row,toReturn,zoom,cachedZoom,listener);
+               if(listener != null){
+                  listener.updateGMapCompleted(completed);
+                  completed++;
+                  if(listener.asynchronousGMapStopFlag()) break;
+               }
+            }
+         }
+      }
 
-         getSpecificImage(x,y,col,row,toReturn,zoom,cachedZoom,listener);
-         if(listener != null) listener.updateGMapCompleted(row*colImages + col);
-       }
-     }
+      //do the UNCACHED IMAGES NEXT
+      for(int row = 0; row < rowImages; row++){
+         for(int col = 0; col < colImages; col++){
+            int thisXIndex = x/GDataSource.sourceSize.width + col;
+            int thisYIndex = y/GDataSource.sourceSize.height + row;
 
-      return toReturn;
+            if(!gDataSource.isCached(thisXIndex,thisYIndex,zoom)){
+               getSpecificImage(x,y,w,h,col,row,toReturn,zoom,cachedZoom,listener);
+               if(listener != null){
+                  listener.updateGMapCompleted(completed);
+                  completed++;
+                  if(listener.asynchronousGMapStopFlag()) break;
+               }
+            }
+         }
+      }
+
+
+
    }
 
-   private BufferedImage getSpecificImage(int x, int y, int imgIndexX, int imgIndexY, BufferedImage buffImg, int zoom, int cachedZoom, GMapListener listener){
+   private BufferedImage getSpecificImage(int x, int y, int w, int h, int imgIndexX, int imgIndexY, BufferedImage buffImg, int zoom, int cachedZoom, GMapListener listener){
 
       int xIndex = x/GDataSource.sourceSize.width;
       int yIndex = y/GDataSource.sourceSize.height;
@@ -203,9 +196,6 @@ class GMap{
 
       int xCoord = x%GDataSource.sourceSize.width;
       int yCoord = y%GDataSource.sourceSize.height;
-
-      int w = buffImg.getWidth();
-      int h = buffImg.getHeight();
 
       //get info about the image
       Dimension imageSize = new Dimension(image.getWidth(),image.getHeight());
@@ -251,14 +241,14 @@ class GMap{
          }
       }
 
-      Graphics2D g = (Graphics2D)buffImg.getGraphics();
+      if(buffImg != null){
+         Graphics2D g = (Graphics2D)buffImg.getGraphics();
 
-      //DEBUG
-      // System.out.println(xIndex + " " + yIndex +  " " + xImage + " " + yImage +  " " + xCoord + " " + yCoord + " " + paintWidth + " " + paintHeight);
-      // System.out.println();
-
-      g.drawImage(image.getSubimage(xCoord, yCoord, paintWidth, paintHeight), xImage, yImage, paintWidth, paintHeight, null);
-
+         //DEBUG
+         //System.out.println(xIndex + "," + yIndex +  "--- xImage=" + xImage + " yImage=" + yImage +  " xCoord=" + xCoord + " yCoord=" + yCoord + " paintWidth=" + paintWidth + " paintHeight=" + paintHeight);
+         // System.out.println();
+         g.drawImage(image.getSubimage(xCoord, yCoord, paintWidth, paintHeight), xImage, yImage, paintWidth, paintHeight, null);
+      }
       return buffImg;
    }
 
@@ -310,42 +300,35 @@ class GMap{
       return colImages;
    }
 
-   public void cacheImage(int x, int y, int w, int h, int zoom){
-      cacheImage(x, y, w, h, zoom, null);
-   }
-
-   public void cacheImage(int x, int y, int w, int h, int zoom, GMapListener listener){
-      cacheImageFromDS(x,y,w,h,zoom,listener);
-   }
-
-   public void cacheImageFromDS(int x, int y, int w, int h, int zoom){
-      cacheImageFromDS(x,y,w,h,zoom,null);
-   }
-   public void cacheImageFromDS(int x, int y, int w, int h, int zoom, GMapListener listener){
-      getImageFromDS(x,y,w,h,zoom,-1);
-   }
-
    //this alphacomposite controls transparency
-   AlphaComposite cacheGridComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
+   private AlphaComposite cacheGridComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
 
    public BufferedImage getIndexedImage(int x, int y, int zoom, int cacheZoom){
       return getIndexedImage(x, y, zoom, cacheZoom, null);
    }
+
    public BufferedImage getIndexedImage(int x, int y, int zoom, int cacheZoom, GMapListener listener){
 
       if(listener != null){
-         if(!gDataSource.isCached(x,y,zoom)) listener.updateGMapMessage(GMap.MESSAGE_DOWNLOADING);
-         else listener.updateGMapMessage(GMap.MESSAGE_PAINTING);
+         if(!gDataSource.isCached(x,y,zoom)){
+            listener.updateGMapPainting();
+            listener.updateGMapMessage(GMap.MESSAGE_DOWNLOADING);
+         }
+         else{
+            listener.updateGMapMessage(GMap.MESSAGE_PAINTING);
+         }
       }
-System.out.println("Painting ("+x+","+y+","+zoom+")");
-      BufferedImage thumbImage = gDataSource.getImage(x,y,zoom, true);
+
+      BufferedImage thumbImage = gDataSource.getImage(x,y,zoom);
 
       if(thumbImage == null) return defaultImage;
 
-      Graphics2D graphics2D = thumbImage.createGraphics();
-
       //if we dont have to paint cache, return here
       if(cacheZoom == -1 || cacheZoom >= zoom) return thumbImage;
+
+      BufferedImage paintedImage = new BufferedImage(GDataSource.sourceSize.width, GDataSource.sourceSize.height, BufferedImage.TYPE_INT_ARGB);
+      Graphics2D graphics2D = paintedImage.createGraphics();
+      graphics2D.drawImage(thumbImage, 0, 0, GDataSource.sourceSize.width, GDataSource.sourceSize.height, null);
 
       //now lets move to painting the cache
       double imageNum = Math.pow(2,zoom-cacheZoom);
@@ -382,7 +365,7 @@ System.out.println("Painting ("+x+","+y+","+zoom+")");
       //restore composite
       graphics2D.setComposite(originalComposite);
 
-      return thumbImage;
+      return paintedImage;
    }
 
 
@@ -402,4 +385,7 @@ interface GMapListener{
    abstract void updateGMapCompleted(int completed);
    abstract void updateGMapTaskSize(int size);
    abstract void updateGMapMessage(int messageNumber);
+   abstract void updateGMapPainting();
+   abstract boolean asynchronousGMapStopFlag();
+
 }
