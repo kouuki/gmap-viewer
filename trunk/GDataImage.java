@@ -9,11 +9,17 @@ import javax.imageio.*;
 import java.beans.*; //Property change stuff
 import javax.swing.table.*;
 import com.sun.image.codec.jpeg.*;
+
+import java.math.BigInteger;
 import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-class GDataImage{
+class GDataImage {
+
+   public static int ZOOM_MIN = 1;
+   public static int ZOOM_MAX = 15;
+	
    private BufferedImage image;
    private int x;
    private int y;
@@ -46,5 +52,17 @@ class GDataImage{
       this.image = image;
    }
 
+   public String toString() {
+	   return "("+x+","+y+","+zoom+")";
+   }
+
+   public boolean equals(Object obj) {
+      if (!(obj instanceof GDataImage)) {
+         return false;
+      }
+      
+      GDataImage o = (GDataImage) obj;
+      return (this.zoom == o.zoom && this.y == o.y && this.x == o.x);
+   }
 }
 
