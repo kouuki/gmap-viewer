@@ -73,24 +73,49 @@ public class GPhysicalPoint implements Cloneable{
    };
 */
 
-   public static final GCalibration[] calibrationPoints = {
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,0)),(int)(8421376*Math.pow(2,0))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,0)),(int)(11718625*Math.pow(2,0)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-1)),(int)(8421376*Math.pow(2,-1))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-1)),(int)(11718625*Math.pow(2,-1)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-2)),(int)(8421376*Math.pow(2,-2))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-2)),(int)(11718625*Math.pow(2,-2)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-3)),(int)(8421376*Math.pow(2,-3))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-3)),(int)(11718625*Math.pow(2,-3)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-4)),(int)(8421376*Math.pow(2,-4))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-4)),(int)(11718625*Math.pow(2,-4)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-5)),(int)(8421376*Math.pow(2,-5))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-5)),(int)(11718625*Math.pow(2,-5)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-6)),(int)(8421376*Math.pow(2,-6))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-6)),(int)(11718625*Math.pow(2,-6)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-7)),(int)(8421376*Math.pow(2,-7))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-7)),(int)(11718625*Math.pow(2,-7)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-8)),(int)(8421376*Math.pow(2,-8))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-8)),(int)(11718625*Math.pow(2,-8)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-9)),(int)(8421376*Math.pow(2,-9))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-9)),(int)(11718625*Math.pow(2,-9)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-10)),(int)(8421376*Math.pow(2,-10))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-10)),(int)(11718625*Math.pow(2,-10)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-11)),(int)(8421376*Math.pow(2,-11))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-11)),(int)(11718625*Math.pow(2,-11)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-12)),(int)(8421376*Math.pow(2,-12))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-12)),(int)(11718625*Math.pow(2,-12)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-13)),(int)(8421376*Math.pow(2,-13))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-13)),(int)(11718625*Math.pow(2,-13)))),
-      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-14)),(int)(8421376*Math.pow(2,-14))), new Point2D.Double(28.235106, -82.742353), new Point((int)(5375157*Math.pow(2,-14)),(int)(11718625*Math.pow(2,-14))))
-   };
 
+   public static final GCalibration[] calibrationPoints = {
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,0)),(int)(8421376*Math.pow(2,0))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,0)),(int)(6309120*Math.pow(2,0)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-1)),(int)(8421376*Math.pow(2,-1))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-1)),(int)(6309120*Math.pow(2,-1)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-2)),(int)(8421376*Math.pow(2,-2))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-2)),(int)(6309120*Math.pow(2,-2)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-3)),(int)(8421376*Math.pow(2,-3))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-3)),(int)(6309120*Math.pow(2,-3)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-4)),(int)(8421376*Math.pow(2,-4))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-4)),(int)(6309120*Math.pow(2,-4)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-5)),(int)(8421376*Math.pow(2,-5))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-5)),(int)(6309120*Math.pow(2,-5)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-6)),(int)(8421376*Math.pow(2,-6))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-6)),(int)(6309120*Math.pow(2,-6)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-7)),(int)(8421376*Math.pow(2,-7))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-7)),(int)(6309120*Math.pow(2,-7)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-8)),(int)(8421376*Math.pow(2,-8))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-8)),(int)(6309120*Math.pow(2,-8)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-9)),(int)(8421376*Math.pow(2,-9))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-9)),(int)(6309120*Math.pow(2,-9)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-10)),(int)(8421376*Math.pow(2,-10))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-10)),(int)(6309120*Math.pow(2,-10)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-11)),(int)(8421376*Math.pow(2,-11))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-11)),(int)(6309120*Math.pow(2,-11)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-12)),(int)(8421376*Math.pow(2,-12))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-12)),(int)(6309120*Math.pow(2,-12)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-13)),(int)(8421376*Math.pow(2,-13))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-13)),(int)(6309120*Math.pow(2,-13)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-14)),(int)(8421376*Math.pow(2,-14))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-14)),(int)(6309120*Math.pow(2,-14))))
+   };
+   
+/*
+   4945779,6303939
+   40.7773237,-73.8751358
+*/
+
+/*
+public static final GCalibration[] calibrationPoints = {
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,0)),(int)(8421376*Math.pow(2,0))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,0)),(int)(6309120*Math.pow(2,0))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,0)),(int)(7005696*Math.pow(2,0))) ),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-1)),(int)(8421376*Math.pow(2,-1))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-1)),(int)(6309120*Math.pow(2,-1))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-1)),(int)(7005696*Math.pow(2,-1)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-2)),(int)(8421376*Math.pow(2,-2))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-2)),(int)(6309120*Math.pow(2,-2))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-2)),(int)(7005696*Math.pow(2,-2)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-3)),(int)(8421376*Math.pow(2,-3))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-3)),(int)(6309120*Math.pow(2,-3))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-3)),(int)(7005696*Math.pow(2,-3)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-4)),(int)(8421376*Math.pow(2,-4))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-4)),(int)(6309120*Math.pow(2,-4))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-4)),(int)(7005696*Math.pow(2,-4)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-5)),(int)(8421376*Math.pow(2,-5))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-5)),(int)(6309120*Math.pow(2,-5))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-5)),(int)(7005696*Math.pow(2,-5)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-6)),(int)(8421376*Math.pow(2,-6))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-6)),(int)(6309120*Math.pow(2,-6))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-6)),(int)(7005696*Math.pow(2,-6)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-7)),(int)(8421376*Math.pow(2,-7))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-7)),(int)(6309120*Math.pow(2,-7))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-7)),(int)(7005696*Math.pow(2,-7)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-8)),(int)(8421376*Math.pow(2,-8))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-8)),(int)(6309120*Math.pow(2,-8))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-8)),(int)(7005696*Math.pow(2,-8)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-9)),(int)(8421376*Math.pow(2,-9))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-9)),(int)(6309120*Math.pow(2,-9))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-9)),(int)(7005696*Math.pow(2,-9)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-10)),(int)(8421376*Math.pow(2,-10))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-10)),(int)(6309120*Math.pow(2,-10))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-10)),(int)(7005696*Math.pow(2,-10)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-11)),(int)(8421376*Math.pow(2,-11))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-11)),(int)(6309120*Math.pow(2,-11))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-11)),(int)(7005696*Math.pow(2,-11)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-12)),(int)(8421376*Math.pow(2,-12))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-12)),(int)(6309120*Math.pow(2,-12))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-12)),(int)(7005696*Math.pow(2,-12)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-13)),(int)(8421376*Math.pow(2,-13))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-13)),(int)(6309120*Math.pow(2,-13))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-13)),(int)(7005696*Math.pow(2,-13)))),
+      new GCalibration(new Point2D.Double(0.0,0.0), new Point((int)(8388608*Math.pow(2,-14)),(int)(8421376*Math.pow(2,-14))), new Point2D.Double(40.6931341533081, -74.0478515625), new Point((int)(4937728*Math.pow(2,-14)),(int)(6309120*Math.pow(2,-14))), new Point2D.Double(28.4300528923357,-81.3153076171875), new Point((int)(4598784*Math.pow(2,-14)),(int)(7005696*Math.pow(2,-14))))
+   };
+*/
 
    //constructors
    public GPhysicalPoint(Point2D.Double point){
@@ -207,6 +232,7 @@ class GCalibration{
    private Point pixelOnEquator;
    private Point2D.Double physical2;
    private Point pixel2;
+   
 
    //mercator projection data
    private double M;
@@ -222,8 +248,38 @@ class GCalibration{
       //compute M and B
       B = pixelOnEquator.y;
       M = (pixel2.y - B)/((0.5)*Math.log( (-1.0)* (Math.sin(degToRad(physical2.x)) + 1.0)/(Math.sin(degToRad(physical2.x)) - 1.0)));
+      
 
+   }
+   
+   //Test method
+   public GCalibration(Point2D.Double physicalOnEquator, Point pixelOnEquator, Point2D.Double physical2, Point pixel2, Point2D.Double physical3, Point pixel3){
+      //store input
+      this.physicalOnEquator = physicalOnEquator;
+      this.pixelOnEquator = pixelOnEquator;
+      this.physical2 = physical2;
+      this.pixel2 = pixel2;
+	  
 
+      //compute M and B
+      B = pixelOnEquator.y;
+	  double M1;
+	  double M2;
+	  
+      //M1 = (pixel2.y - B)/((0.5)*Math.log( (-1.0)* (Math.sin(degToRad(physical2.x)) + 1.0)/(Math.sin(degToRad(physical2.x)) - 1.0)));
+	  
+	  //M2 = (pixel3.y - B)/((0.5)*Math.log( (-1.0)* (Math.sin(degToRad(physical3.x)) + 1.0)/(Math.sin(degToRad(physical3.x)) - 1.0)));
+
+      M1 = (pixel2.y - B)/((0.5)*Math.log( (1.0)* (Math.sin(degToRad(physical2.x)) + 1.0)/(1.0 - Math.sin(degToRad(physical2.x)))));
+	  
+	  M2 = (pixel3.y - B)/((0.5)*Math.log( (1.0)* (Math.sin(degToRad(physical3.x)) + 1.0)/(1.0 - Math.sin(degToRad(physical3.x)))));
+
+	  
+	  M = M1;
+	  	  
+	  System.out.println("M1: " + M1);
+	  System.out.println("M2: " + M2);
+	  System.out.println("M: " + M);
    }
 
 
