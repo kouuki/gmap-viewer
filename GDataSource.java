@@ -257,7 +257,6 @@ class GDataSource {
      }
      String key = x + " " + y + " " + zoom;
      ramCache.put(key, new GDataImage(image,x,y,zoom));
-     System.out.println("ramCache key size: "+ ramCache.size());
    }
 
    /*
