@@ -183,9 +183,6 @@ class JMenuActionCacheSelected extends JMenuAction{
       //cache it
       gui.getGMap().cacheImage(toCache.x, toCache.y, toCache.width, toCache.height, zoomLevel, pane);
       pane.draw();
-
-      gui.getGMap().getGDataSource().downloadQueue();
-
    }
 
    public void paneEvent(Object object){
@@ -365,6 +362,30 @@ class JMenuRadioButtonDragOn extends JMenuRadioButtonAction{
       int currentZoom = pane.getShowCachedZoomLevel();
       super.setSelected(!pane.getSelectionEnabled());
    }
+
+
+class JMenuActionRemoveGDrawableObject extends JMenuAction{
+   public JMenuActionRemoveGDrawableObject(GUI registeredObject) {
+      super("Remove Object",registeredObject);
+   }
+
+   public void run(){
+      //remove the GDrawableObject returned
+      System.out.println("RemoveGDrawableObject called in MenuActions");
+   }
+}
+
+class JMenuActionAddGDrawableObject extends JMenuAction{
+   public JMenuActionAddGDrawableObject(GUI registeredObject) {
+      super("Add Object",registeredObject);
+   }
+
+   public void run(){
+      //create new GDrawableObject
+      System.out.println("AddGDrawableObject called in MenuActions");
+   }
+}
+
 
 }
 
