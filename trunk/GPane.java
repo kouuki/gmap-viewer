@@ -412,9 +412,12 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
    }
    public void mouseReleased(MouseEvent e){
-      if(!mouseDraggedThisClick) mouseRectanglePosition = null;
+      if(!mouseDraggedThisClick){
+         mouseRectanglePosition = null;
+         gmap.getGDataSource().downloadQueue();
+      }
       updateScreen();
-   }
+  }
 
    //keyboard methods - use k.getKeyCode();
    public void keyTyped(KeyEvent k){}
