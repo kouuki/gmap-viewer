@@ -183,10 +183,14 @@ class JMenuActionCacheSelected extends JMenuAction{
       //cache it
       gui.getGMap().cacheImage(toCache.x, toCache.y, toCache.width, toCache.height, zoomLevel, pane);
       pane.draw();
+
+      gui.getGMap().getGDataSource().downloadQueue();
+
    }
 
    public void paneEvent(Object object){
-      GPane pane = (GPane)object;
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
       int paneZoom = pane.getZoom();
       if(zoomLevel >= paneZoom) this.setEnabled(false);
       else this.setEnabled(true);
@@ -228,7 +232,8 @@ class JMenuRadioButtonActionCache extends JMenuRadioButtonAction{
    }
 
    public void paneEvent(Object object){
-      GPane pane = (GPane)object;
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
       int currentZoom = pane.getShowCachedZoomLevel();
       if(zoomLevel == -1 && !pane.getShowCachedZoom()) super.setSelected(true);
       else if(currentZoom == zoomLevel) super.setSelected(true);
@@ -262,7 +267,8 @@ class JMenuRadioButtonActionZoom extends JMenuRadioButtonAction{
    }
 
    public void paneEvent(Object object){
-      GPane pane = (GPane)object;
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
       int currentZoom = pane.getZoom();
       if(currentZoom == zoomLevel) super.setSelected(true);
       else super.setSelected(false);
@@ -330,14 +336,18 @@ class JMenuRadioButtonSelectionOn extends JMenuRadioButtonAction{
    public void run(){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
-      pane.setSelectionEnabled(true);
+      pane.setMode(GPane.SELECTION_MODE);
       super.setSelected(true);
+      gui.getNotifier().firePaneEvent(this);
+      gui.getProgressMeter().getPanel().repaint();
    }
 
    public void paneEvent(Object object){
-      GPane pane = (GPane)object;
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      if(pane == null) return;
       int currentZoom = pane.getShowCachedZoomLevel();
-      super.setSelected(pane.getSelectionEnabled());
+      super.setSelected(pane.getMode() == GPane.SELECTION_MODE);
    }
 
 }
@@ -353,15 +363,21 @@ class JMenuRadioButtonDragOn extends JMenuRadioButtonAction{
    public void run(){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
-      pane.setSelectionEnabled(false);
+      pane.setMode(GPane.DRAGGING_MODE);
       super.setSelected(true);
+      gui.getNotifier().firePaneEvent(this);
+      gui.getProgressMeter().getPanel().repaint();
    }
 
    public void paneEvent(Object object){
-      GPane pane = (GPane)object;
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      if(pane == null) return;
       int currentZoom = pane.getShowCachedZoomLevel();
-      super.setSelected(!pane.getSelectionEnabled());
+      super.setSelected(pane.getMode() == GPane.DRAGGING_MODE);
    }
+
+}
 
 
 class JMenuActionRemoveGDrawableObject extends JMenuAction{
@@ -371,7 +387,9 @@ class JMenuActionRemoveGDrawableObject extends JMenuAction{
 
    public void run(){
       //remove the GDrawableObject returned
-      System.out.println("RemoveGDrawableObject called in MenuActions");
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      gui.getGMap().getGDraw().remove(gui.getGMap().getGDraw().getSelected());
    }
 }
 
@@ -382,10 +400,13 @@ class JMenuActionAddGDrawableObject extends JMenuAction{
 
    public void run(){
       //create new GDrawableObject
-      System.out.println("AddGDrawableObject called in MenuActions");
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      gui.getGMap().getGDraw().add(new GMarker((GPhysicalPoint)pane.getCenter().clone()));
+      pane.draw();
    }
 }
 
 
-}
+
 
