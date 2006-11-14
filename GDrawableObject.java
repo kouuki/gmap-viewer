@@ -1,7 +1,8 @@
-public interface GDrawableObject {
+import java.awt.*;
+import java.awt.image.*;
 
-	public void draw(BufferedImage image, GPhysicalPoint p, int zoom);
-	
-	public Rectangle getRectangle(GPhysicalPoint p, int zoom);
-	
+interface GDrawableObject{
+   public abstract void draw(BufferedImage image, GPhysicalPoint p, int zoom);
+   public abstract Rectangle getRectangle(GPhysicalPoint p, int zoom);
 }
+
