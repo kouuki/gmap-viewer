@@ -390,6 +390,7 @@ class JMenuActionRemoveGDrawableObject extends JMenuAction{
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
       gui.getGMap().getGDraw().remove(gui.getGMap().getGDraw().getSelected());
+      pane.draw();
    }
 }
 
