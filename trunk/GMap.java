@@ -37,6 +37,9 @@ class GMap{
    //keep track of the data object
    GDataSource gDataSource;
 
+   //GDraw handles the work of painting data NOT in the database
+   GDraw gDraw;
+
    //message
    public static final int MESSAGE_DOWNLOADING = 0;
    public static final int MESSAGE_PAINTING = 1;
@@ -50,6 +53,14 @@ class GMap{
       //build default image
       defaultImage = getDefaultImage(GDataSource.sourceSize.width, GDataSource.sourceSize.height);
 
+      //init gdraw draw object
+      this.gDraw = new GDraw();
+
+      //TEMPORARY CODE
+      //gDraw.add(new GSample());
+      //gDraw.setSelected(0);
+      //END TEMP
+
       //icon
       ImageIcon loadImage = new ImageIcon("images/google.png");
       googleImage = loadImage.getImage();
@@ -62,6 +73,10 @@ class GMap{
    //getters
    public GDataSource getGDataSource(){
       return gDataSource;
+   }
+
+   public GDraw getGDraw(){
+      return gDraw;
    }
 
    //actual build image method
@@ -180,8 +195,8 @@ class GMap{
          }
       }
 
-
-
+      //the dispatch to GDraw object
+      gDraw.draw(toReturn, new GPhysicalPoint(x,y,zoom), zoom);
    }
 
    private BufferedImage getSpecificImage(int x, int y, int w, int h, int imgIndexX, int imgIndexY, BufferedImage buffImg, int zoom, int cachedZoom, GMapListener listener){
