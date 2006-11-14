@@ -7,8 +7,10 @@ import javax.swing.*;
 
 class GPopupMenu extends JPopupMenu{
    private JPopupMenu popup;
-   private final GUI gui; 
+   private final GUI gui;
    private int objectIndex;
+
+   private JMenuAction removeObject;
 
    public GPopupMenu(GUI gui) {
       //save the gui
@@ -22,16 +24,14 @@ class GPopupMenu extends JPopupMenu{
       menuItem = new JMenuActionRemovePane(gui);
       this.add(menuItem);
 
-      // New menu item for adding a new GDrawableObject 
+      // New menu item for adding a new GDrawableObject
       menuItem = new JMenuActionAddGDrawableObject(gui);
       this.add(menuItem);
- 
+
       // If GDrawableObject returned, add a new menu item for removing the object
-      objectIndex = GDraw.isClickOnObject();
-      if( objectIndex >= 0 ) { 	
-         menuItem = new JMenuActionRemoveGDrawableObject(gui);
-	 this.add(menuItem);
-      }
+      removeObject = new JMenuActionRemoveGDrawableObject(gui);
+      this.add(removeObject);
+
 
       this.add( new JSeparator() );
       ButtonGroup group = new ButtonGroup();
@@ -47,6 +47,20 @@ class GPopupMenu extends JPopupMenu{
       this.add(rb2);
 
    }
+
+   public void show(Component invoker, int x, int y){
+      update();
+      super.show(invoker,x,y);
+   }
+
+   public void update(){
+      if(gui.getGMap().getGDraw().getSelected() == -1){
+         removeObject.setEnabled(false);
+      }else{
+         removeObject.setEnabled(true);
+      }
+   }
+
 }
 
 
