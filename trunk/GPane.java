@@ -42,19 +42,23 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    private boolean showCachedZoom;
    private int showCachedZoomLevel;
 
-   //selection rectangle on
-   private boolean selectionEnabled;
-
    //this alphacomposite is controls transparency
    private AlphaComposite selectionOverlayTransparency = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
 
    //a thread for drawing stuff
    private DrawThread drawingThread;
 
+   //boolean mode
+   public static final int SELECTION_MODE = 0;
+   public static final int DRAGGING_MODE = 1;
+   public static final int DRAW_LINE_MODE = 2;
+   public static final int DRAW_MARKER_MODE = 3;
+   public static final int DRAW_STRING_MODE = 4;
+   private int mode;
 
 
    //constructor
-   public GPane(GUI gui, GPhysicalPoint center, int zoom, boolean showCachedZoom, int showCachedZoomLevel, boolean selectionEnabled){
+   public GPane(GUI gui, GPhysicalPoint center, int zoom, boolean showCachedZoom, int showCachedZoomLevel, int mode){
       //get gmap and registered objects
       this.gui = gui;
       this.gmap = gui.getGMap();
@@ -68,8 +72,8 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       setLayout(null);
       add(label);
 
-      //selection enabled
-      this.selectionEnabled = selectionEnabled;
+      //set mode
+      this.mode = mode;
 
       //draw it
       draw();
@@ -91,14 +95,13 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       drawingThread = null;
 
 
-
       //fire pane listener event
       gui.getNotifier().firePaneEvent(this);
 
    }
 
    public GPane(GUI gui){
-      this(gui, new GPhysicalPoint(29.8265419861086, -82.35763549804688), 13, false, -1, true);
+      this(gui, new GPhysicalPoint(29.8265419861086, -82.35763549804688), 13, false, -1, SELECTION_MODE);
    }
 
    public void draw(){
@@ -281,11 +284,9 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       return showCachedZoom;
    }
 
-
-   public boolean getSelectionEnabled(){
-      return selectionEnabled;
+   public int getMode(){
+      return mode;
    }
-
 
    //setters
    public void setCenter(GPhysicalPoint center){
@@ -313,10 +314,9 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       draw();
    }
 
-   public void setSelectionEnabled(boolean selectionEnabled){
-      this.selectionEnabled = selectionEnabled;
+   public void setMode(int mode){
+      this.mode=mode;
    }
-
 
 
    //component listener
@@ -350,7 +350,7 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          //center
          Point original = getCenterPixel();
 
-         if(selectionEnabled){
+         if(mode == SELECTION_MODE){
             //update dragged boolean
             mouseDraggedThisClick = true;
             //do computations relating to selection
@@ -359,7 +359,7 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
             mouseRectanglePosition.width = Math.max(clickLocation.x,mouseX) - mouseRectanglePosition.x;
             mouseRectanglePosition.height = Math.max(clickLocation.y,mouseY) - mouseRectanglePosition.y;
             updateScreen();
-         }else{
+         }else if(mode == DRAGGING_MODE){
             //do computations relating to dragging the center
             center.setPixelPoint(new Point(original.x + (clickLocation.x - e.getX()), original.y + (clickLocation.y - e.getY())), zoom);
             clickLocation.x = e.getX();
@@ -370,6 +370,23 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    }
 
    public void mouseClicked(MouseEvent e){
+      //single left click
+      if(e.getModifiers() == 16){
+         //single left click
+
+         //get upper left coord
+         Point centerPixels = center.getPixelPoint(zoom);
+         int x = centerPixels.x - (getSize().width/2);
+         int y = centerPixels.y - (getSize().height/2);
+
+         if(mode == SELECTION_MODE || mode == DRAGGING_MODE){
+            int clicked = gmap.getGDraw().inside(new Point(e.getX(),e.getY()), new GPhysicalPoint(x,y,zoom), zoom);
+            if(clicked != gmap.getGDraw().getSelected()){
+               gmap.getGDraw().setSelected(clicked);
+               draw();
+            }
+         }
+      }
    }
    public void mouseEntered(MouseEvent e){}
    public void mouseExited(MouseEvent e){}
@@ -389,7 +406,7 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          //left click
          if(e.getClickCount() == 1){
             //single left click
-            if(selectionEnabled)
+            if(mode == SELECTION_MODE)
                mouseRectanglePosition = new Rectangle(clickLocation.x,clickLocation.y,clickLocation.x,clickLocation.y);
          }
          else if(e.getClickCount() == 2){
@@ -427,7 +444,7 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
    //clone
    public Object clone(){
-      return new GPane(gui, (GPhysicalPoint)center.clone(), zoom, showCachedZoom, showCachedZoomLevel, selectionEnabled);
+      return new GPane(gui, (GPhysicalPoint)center.clone(), zoom, showCachedZoom, showCachedZoomLevel, mode);
    }
 
    //gmap listener
@@ -488,5 +505,7 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       }
 
    }
+
+
 
 }
