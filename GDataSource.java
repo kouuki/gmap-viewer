@@ -6,7 +6,7 @@ import java.awt.image.*;
 import java.net.*;
 import javax.imageio.ImageIO;
 
-class GDataSource {
+abstract class GDataSource {
    //dimension of source files
    public static final Dimension sourceSize = new Dimension(256,256);
    /**
@@ -226,10 +226,8 @@ class GDataSource {
       return cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png";
    }
 
-   private String makeRemoteName(int x, int y, int zoom){
-      int serverNumber = (int)Math.round(Math.random()*3.0);
-      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2.12&x="+x+"&y="+y+"&zoom="+zoom;
-   }
+   //abstract makeRemoteNameMethod
+   protected abstract String makeRemoteName(int x, int y, int zoom);
 
    //RAM Methods
    public BufferedImage getImageFromRAM(int x, int y, int zoom){
@@ -270,3 +268,30 @@ class GDataSource {
    }
 }
 
+class GDataSourceSatellite extends GDataSource{
+
+   public GDataSourceSatellite(String cacheDirectory){
+      super(cacheDirectory);
+   }
+
+   protected String makeRemoteName(int x, int y, int zoom){
+      int serverNumber = (int)Math.round(Math.random()*3.0);
+      String pathToNode = "tqtsr";
+      return "http://kh"+serverNumber+".google.com/kh?n=404&v=11&t="+pathToNode;
+   }
+
+}
+
+
+class GDataSourceMap extends GDataSource{
+
+   public GDataSourceMap(String cacheDirectory){
+      super(cacheDirectory);
+   }
+
+   protected String makeRemoteName(int x, int y, int zoom){
+      int serverNumber = (int)Math.round(Math.random()*3.0);
+      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2.12&x="+x+"&y="+y+"&zoom="+zoom;
+   }
+
+}

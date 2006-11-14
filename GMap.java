@@ -26,29 +26,35 @@ class GMap{
 
 
    //defaultImage
-   BufferedImage defaultImage;
+   private BufferedImage defaultImage;
 
    //transparency
-   AlphaComposite googleOverlayComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f);
+   private AlphaComposite googleOverlayComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f);
 
    //google icon
    Image googleImage;
 
    //keep track of the data object
-   GDataSource gDataSource;
+   private GDataSource gDataSourceMap;
+   private GDataSource gDataSourceSatellite;
 
    //GDraw handles the work of painting data NOT in the database
-   GDraw gDraw;
+   private GDraw gDraw;
 
    //message
    public static final int MESSAGE_DOWNLOADING = 0;
    public static final int MESSAGE_PAINTING = 1;
 
+   //modes
+   public static final int SATELLITE_MODE = 2;
+   public static final int MAP_MODE = 3;
+   private int mode;
 
    //constructor
-   public GMap(GDataSource gDataSource){
+   public GMap(){
       //data source
-      this.gDataSource = gDataSource;
+      this.gDataSourceMap = new GDataSourceMap("map_cache");
+      this.gDataSourceSatellite = new GDataSourceSatellite("sat_cache");
 
       //build default image
       defaultImage = getDefaultImage(GDataSource.sourceSize.width, GDataSource.sourceSize.height);
@@ -56,27 +62,36 @@ class GMap{
       //init gdraw draw object
       this.gDraw = new GDraw();
 
-      //TEMPORARY CODE
-      //gDraw.add(new GSample());
-      //gDraw.setSelected(0);
-      //END TEMP
+      //mode
+      this.mode = MAP_MODE;
 
       //icon
       ImageIcon loadImage = new ImageIcon("images/google.png");
       googleImage = loadImage.getImage();
    }
 
-   public GMap(){
-      this(new GDataSource("cache"));
-   }
-
    //getters
    public GDataSource getGDataSource(){
-      return gDataSource;
+      return getGDataSource(mode);
+   }
+
+   public GDataSource getGDataSource(int mode){
+      if(mode == MAP_MODE) return gDataSourceMap;
+      else if(mode == SATELLITE_MODE) return gDataSourceSatellite;
+      return null;
    }
 
    public GDraw getGDraw(){
       return gDraw;
+   }
+
+   public int getMode(){
+      return mode;
+   }
+
+   //setters
+   public void setMode(int mode){
+      this.mode = mode;
    }
 
    //actual build image method
@@ -167,7 +182,7 @@ class GMap{
             int thisXIndex = x/GDataSource.sourceSize.width + col;
             int thisYIndex = y/GDataSource.sourceSize.height + row;
 
-            if(gDataSource.isCached(thisXIndex,thisYIndex,zoom)){
+            if(getGDataSource().isCached(thisXIndex,thisYIndex,zoom)){
                getSpecificImage(x,y,w,h,col,row,toReturn,zoom,cachedZoom,listener);
                if(listener != null){
                   listener.updateGMapCompleted(completed);
@@ -184,7 +199,7 @@ class GMap{
             int thisXIndex = x/GDataSource.sourceSize.width + col;
             int thisYIndex = y/GDataSource.sourceSize.height + row;
 
-            if(!gDataSource.isCached(thisXIndex,thisYIndex,zoom)){
+            if(!getGDataSource().isCached(thisXIndex,thisYIndex,zoom)){
                getSpecificImage(x,y,w,h,col,row,toReturn,zoom,cachedZoom,listener);
                if(listener != null){
                   listener.updateGMapCompleted(completed);
@@ -325,7 +340,7 @@ class GMap{
    public BufferedImage getIndexedImage(int x, int y, int zoom, int cacheZoom, GMapListener listener){
 
       if(listener != null){
-         if(!gDataSource.isCached(x,y,zoom)){
+         if(!getGDataSource().isCached(x,y,zoom)){
             listener.updateGMapPainting();
             listener.updateGMapMessage(GMap.MESSAGE_DOWNLOADING);
          }
@@ -334,7 +349,7 @@ class GMap{
          }
       }
 
-      BufferedImage thumbImage = gDataSource.getImage(x,y,zoom);
+      BufferedImage thumbImage = getGDataSource().getImage(x,y,zoom);
 
       if(thumbImage == null) return defaultImage;
 
@@ -369,7 +384,7 @@ class GMap{
             graphics2D.drawLine(upperLeft.x,upperLeft.y,upperLeft.x,upperLeft.y+size.height);
 
             //check if file exists
-            if(gDataSource.isCached(startX+i,startY+j,cacheZoom)) graphics2D.setColor(Color.RED);
+            if(getGDataSource().isCached(startX+i,startY+j,cacheZoom)) graphics2D.setColor(Color.RED);
             else graphics2D.setColor(new Color(155,155,155));
 
             //shade rectangle
