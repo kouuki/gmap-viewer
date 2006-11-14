@@ -154,7 +154,16 @@ public class GLine{
 	}
 	
 	public Rectangle getRectangle(GPhysicalPoint p, int zoom){
-		//Implementation goes here
+		int width = (int)line.getX2() - (int)line.getX1();
+		int height = (int)line.getY2() - (int)line.getY1();
+		
+		Point gPoint = p.getPoint();
+		int x = (int)gPoint.x - (int)line.getX1();
+		int y = (int)gPoint.y - (int)line.getY1();
+		
+		Rectangle rect = new Rectangle(x, y, width, height);
+		
+		return rect;
 	}
 	
 }
