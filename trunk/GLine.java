@@ -15,16 +15,16 @@ public class GLine{
    public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
       Point2D pCorner = new Point2D.Double(p.getPixelX(zoom), p.getPixelY(zoom));
       Dimension imageDim = new Dimension(image.getWidth(), image.getHeight());
-      Rectangle imageRect = new Rectangle((int)p.getPoint().getX() - 1, (int)p.getPoint().getY() - 1, imageDim.width - 2, imageDim.height - 2);
+      Rectangle imageRect = new Rectangle((int)p.getPixelX(zoom) - 1, (int)p.getPixelY(zoom) - 1, imageDim.width - 2, imageDim.height - 2);
       Graphics g = image.getGraphics();
 
       int power = this.zoom - zoom;
       Line2D cLine = new Line2D.Double(line.getX1()*Math.pow(2, power), line.getY1()*Math.pow(2,power), line.getX2()*Math.pow(2,power), line.getY2()*Math.pow(2,power));
 
       //DEBUG
-      System.out.println("Method Running");
-      System.out.println(p.getPoint().getX() + " "  + p.getPoint().getY() + " " + imageDim.width + " " + imageDim.height);
-      System.out.println("(" + cLine.getX1() + "," + cLine.getY1() + ") (" + cLine.getX2() + "," + cLine.getY2() + ")");
+      //System.out.println("Method Running");
+      //System.out.println(p.getPoint().getX() + " "  + p.getPoint().getY() + " " + imageDim.width + " " + imageDim.height);
+      //System.out.println("(" + cLine.getX1() + "," + cLine.getY1() + ") (" + cLine.getX2() + "," + cLine.getY2() + ")");
 
       //If line does not intersect the image, return image w/o modification
       if(cLine.intersects(imageRect)){
