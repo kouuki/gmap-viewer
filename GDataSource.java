@@ -228,6 +228,65 @@ abstract class GDataSource {
 
    //abstract makeRemoteNameMethod
    protected abstract String makeRemoteName(int x, int y, int zoom);
+   
+   	//This method returns the string representing the path through the tree to the correct child node
+	//representing the desired map;
+	public String makeRemoteSatName(int x, int y, int zoom){
+		 //generate random server
+      int ServerNumber = (int)Math.round(Math.random()*3.0);
+
+      char[] sat = new char[15];
+      int i = 1;
+      int curZoom = 16 - zoom;
+      int xTiles = (int)Math.pow(2,(curZoom - 1));
+	  int yTiles = xTiles;
+	  
+      StringBuffer sb = new StringBuffer();
+      sb.append("t");
+      BufferedImage currentImage;
+
+      //checks that the given point is within map and converts x, y, zoom to Tree Node Path
+      while( curZoom != 0){
+		System.out.println(xTiles + " " + yTiles);
+         if( x >= 0 &&  y >= 0){
+            if( x >= xTiles){
+               xTiles = (3*xTiles)/2;
+               if( y >= yTiles){
+                  sat[i] = 't';
+                  yTiles = (3*yTiles)/2;
+               }
+               else{
+                  sat[i] = 'r';
+				  yTiles = yTiles/2;
+               }
+            }
+            else if( x < xTiles){
+			   xTiles = xTiles/2;
+               if( y >= yTiles){
+				  yTiles = (3*yTiles)/2;
+                  sat[i] = 's';
+               }
+               else{
+                  sat[i] = 'q';
+				  yTiles = yTiles/2;
+               }
+            }
+            String s = new Character(sat[i]).toString();
+            sb.append(s);
+            i++;
+            curZoom--;
+         }
+         else{
+            System.out.println("Chosen Point outside Map Area.");
+         }
+      }
+
+      //Converted Tree Node Path String
+      String satImage = sb.toString();
+		
+      //Build the URL
+      return satImage;
+   }
 
    //RAM Methods
    public BufferedImage getImageFromRAM(int x, int y, int zoom){
