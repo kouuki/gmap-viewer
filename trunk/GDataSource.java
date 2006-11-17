@@ -147,9 +147,12 @@ abstract class GDataSource {
          }
          else
          {
-          System.out.println("oh we had errors");
+          System.out.println(" [error!]");
          }
       } catch(Exception e) {
+
+          System.out.println("{"+e+"}");
+
       }
 
       return null;
@@ -228,26 +231,26 @@ abstract class GDataSource {
 
    //abstract makeRemoteNameMethod
    protected abstract String makeRemoteName(int x, int y, int zoom);
-   
-   	//This method returns the string representing the path through the tree to the correct child node
-	//representing the desired map;
-	public String makeRemoteSatName(int x, int y, int zoom){
-		 //generate random server
+
+      //This method returns the string representing the path through the tree to the correct child node
+   //representing the desired map;
+   public String makeRemoteSatName(int x, int y, int zoom){
+       //generate random server
       int ServerNumber = (int)Math.round(Math.random()*3.0);
 
       char[] sat = new char[15];
       int i = 1;
       int curZoom = 16 - zoom;
       int xTiles = (int)Math.pow(2,(curZoom - 1));
-	  int yTiles = xTiles;
-	  
+     int yTiles = xTiles;
+
       StringBuffer sb = new StringBuffer();
       sb.append("t");
       BufferedImage currentImage;
 
       //checks that the given point is within map and converts x, y, zoom to Tree Node Path
       while( curZoom != 0){
-		System.out.println(xTiles + " " + yTiles);
+      System.out.println(xTiles + " " + yTiles);
          if( x >= 0 &&  y >= 0){
             if( x >= xTiles){
                xTiles = (3*xTiles)/2;
@@ -257,18 +260,18 @@ abstract class GDataSource {
                }
                else{
                   sat[i] = 'r';
-				  yTiles = yTiles/2;
+              yTiles = yTiles/2;
                }
             }
             else if( x < xTiles){
-			   xTiles = xTiles/2;
+            xTiles = xTiles/2;
                if( y >= yTiles){
-				  yTiles = (3*yTiles)/2;
+              yTiles = (3*yTiles)/2;
                   sat[i] = 's';
                }
                else{
                   sat[i] = 'q';
-				  yTiles = yTiles/2;
+              yTiles = yTiles/2;
                }
             }
             String s = new Character(sat[i]).toString();
@@ -283,7 +286,7 @@ abstract class GDataSource {
 
       //Converted Tree Node Path String
       String satImage = sb.toString();
-		
+
       //Build the URL
       return satImage;
    }
@@ -335,6 +338,7 @@ class GDataSourceSatellite extends GDataSource{
 
    protected String makeRemoteName(int x, int y, int zoom){
       int serverNumber = (int)Math.round(Math.random()*3.0);
+      //System.out.print(" [satellite]");
       String pathToNode = "tqtsr";
       return "http://kh"+serverNumber+".google.com/kh?n=404&v=11&t="+pathToNode;
    }
@@ -350,7 +354,9 @@ class GDataSourceMap extends GDataSource{
 
    protected String makeRemoteName(int x, int y, int zoom){
       int serverNumber = (int)Math.round(Math.random()*3.0);
-      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2.12&x="+x+"&y="+y+"&zoom="+zoom;
+      //System.out.print(" [map]");
+      //System.out.print("{http://mt"+serverNumber+".google.com/mt?n=404&v=w2.79&x="+x+"&y="+y+"&zoom="+zoom+"}");
+      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2.79&x="+x+"&y="+y+"&zoom="+zoom;
    }
 
 }
