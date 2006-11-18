@@ -45,6 +45,8 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    //progress meter
    private EmbeddedProgressMeter embeddedProgressMeter;
 
+   /* ZoomSlider */
+   private GZoomSlider zoomSlider;
 
    //build and set up the frame
    private JPanel tabbedPanel;
@@ -93,7 +95,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       ImageIcon iconImage = new ImageIcon("images/ico.png");
       Image iconImageObject = iconImage.getImage();
       setIconImage(iconImageObject);
-
+      
       //add listeners
       addMouseListener(this);
       addKeyListener(this);
@@ -106,11 +108,15 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       //set layout to null
       container.setLayout(null);
 
+      zoomSlider = new GZoomSlider(this);
+      container.add(zoomSlider);
+      zoomSlider.setBounds(15, 2*sizeOfProgressBar, 25, 25);
+      
       //add pane
       pane = new GTabbedPane(this);
       int location = JTabbedPane.TOP; // or BOTTOM, LEFT, RIGHT
       addPane(new GPane(this));
-
+      
       //add the tabbed panel
       tabbedPanel = new JPanel();
       tabbedPanel.add(pane);

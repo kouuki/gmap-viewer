@@ -326,6 +326,78 @@ class JMenuActionClearRAM extends JMenuAction{
 }
 
 
+class JMenuRadioButtonAddPoints extends JMenuRadioButtonAction {
+
+   static final long serialVersionUID = 42643948;
+
+   public JMenuRadioButtonAddPoints(GUI registeredObject) {
+      super("Add Points",registeredObject);
+   }
+
+   public void run() {
+      GUI gui = (GUI) registeredObject;
+      GPane pane = gui.getTopPane();
+      pane.setMode(GPane.DRAW_MARKER_MODE);
+      super.setSelected(true);
+      gui.getNotifier().firePaneEvent(this);
+      gui.getProgressMeter().getPanel().repaint();
+   }
+}
+
+class JMenuRadioButtonAddLines extends JMenuRadioButtonAction {
+
+   static final long serialVersionUID = 42643949;
+
+   public JMenuRadioButtonAddLines(GUI registeredObject) {
+      super("Add Lines",registeredObject);
+   }
+
+   public void run() {
+      GUI gui = (GUI) registeredObject;
+      GPane pane = gui.getTopPane();
+      pane.setMode(GPane.DRAW_LINE_MODE);
+      super.setSelected(true);
+      gui.getNotifier().firePaneEvent(this);
+      gui.getProgressMeter().getPanel().repaint();
+   }
+}
+
+class JMenuRadioButtonAddText extends JMenuRadioButtonAction {
+
+   static final long serialVersionUID = 42643950;
+
+   public JMenuRadioButtonAddText(GUI registeredObject) {
+      super("Add Text",registeredObject);
+   }
+
+   public void run() {
+      GUI gui = (GUI) registeredObject;
+      GPane pane = gui.getTopPane();
+      pane.setMode(GPane.DRAW_STRING_MODE);
+      super.setSelected(true);
+      gui.getNotifier().firePaneEvent(this);
+      gui.getProgressMeter().getPanel().repaint();
+   }
+}
+
+class JMenuRadioButtonCalculateDistance extends JMenuRadioButtonAction {
+
+   static final long serialVersionUID = 42643951;
+
+   public JMenuRadioButtonCalculateDistance(GUI registeredObject) {
+      super("Calculate Distance",registeredObject);
+   }
+
+   public void run() {
+      GUI gui = (GUI) registeredObject;
+      GPane pane = gui.getTopPane();
+      pane.setMode(GPane.DRAW_STRING_MODE);
+      super.setSelected(true);
+      gui.getNotifier().firePaneEvent(this);
+      gui.getProgressMeter().getPanel().repaint();
+   }
+}
+
 class JMenuRadioButtonSelectionOn extends JMenuRadioButtonAction{
    //stuff we need to know
 

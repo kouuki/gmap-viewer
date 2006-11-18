@@ -46,6 +46,23 @@ class GPopupMenu extends JPopupMenu{
       group.add(rb2);
       this.add(rb2);
 
+      rb = new JMenuRadioButtonCalculateDistance(gui);
+      group.add(rb);
+      this.add(rb);
+      
+      rb = new JMenuRadioButtonAddPoints(gui);
+      group.add(rb);
+      this.add(rb);
+      
+      rb = new JMenuRadioButtonAddLines(gui);
+      group.add(rb);
+      this.add(rb);
+      
+      rb = new JMenuRadioButtonAddText(gui);
+      group.add(rb);
+      this.add(rb);
+      
+      this.setSelected(rb2);
    }
 
    public void show(Component invoker, int x, int y){
