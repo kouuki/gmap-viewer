@@ -241,8 +241,15 @@ abstract class GDataSource {
       char[] sat = new char[15];
       int i = 1;
       int curZoom = 16 - zoom;
-      int xTiles = (int)Math.pow(2,(curZoom - 1));
-     int yTiles = xTiles;
+	  
+      int midxTiles = (int)Math.pow(2,(curZoom - 1));
+      int midyTiles = midxTiles;
+	  
+	  int maxxTiles = midxTiles*2;
+	  int maxyTiles = midyTiles*2;
+	  
+	  int minxTiles = 0;
+	  int minyTiles = 0;
 
       StringBuffer sb = new StringBuffer();
       sb.append("t");
@@ -250,30 +257,32 @@ abstract class GDataSource {
 
       //checks that the given point is within map and converts x, y, zoom to Tree Node Path
       while( curZoom != 0){
-      System.out.println(xTiles + " " + yTiles);
+         System.out.println(midxTiles + " " + midyTiles);
          if( x >= 0 &&  y >= 0){
-            if( x >= xTiles){
-               xTiles = (3*xTiles)/2;
-               if( y >= yTiles){
+            if( x >= midxTiles){
+			   minxTiles = midxTiles;
+               if( y >= midyTiles){
                   sat[i] = 't';
-                  yTiles = (3*yTiles)/2;
+				  minyTiles = midyTiles;
                }
                else{
                   sat[i] = 'r';
-              yTiles = yTiles/2;
+				  maxyTiles = midyTiles;
                }
             }
-            else if( x < xTiles){
-            xTiles = xTiles/2;
-               if( y >= yTiles){
-              yTiles = (3*yTiles)/2;
+            else if( x < midxTiles){
+			   maxxTiles = midxTiles;
+               if( y >= midyTiles){
                   sat[i] = 's';
+				  minyTiles = midyTiles;
                }
                else{
                   sat[i] = 'q';
-              yTiles = yTiles/2;
+                  maxyTiles = midyTiles;
                }
             }
+			midxTiles = minxTiles + (maxxTiles - minxTiles)/2;
+            midyTiles = minyTiles + (maxyTiles - minyTiles)/2;
             String s = new Character(sat[i]).toString();
             sb.append(s);
             i++;
@@ -339,7 +348,7 @@ class GDataSourceSatellite extends GDataSource{
    protected String makeRemoteName(int x, int y, int zoom){
       int serverNumber = (int)Math.round(Math.random()*3.0);
       //System.out.print(" [satellite]");
-      String pathToNode = "tqtsr";
+      String pathToNode = makeRemoteSatName(x,y,zoom);	  
       return "http://kh"+serverNumber+".google.com/kh?n=404&v=11&t="+pathToNode;
    }
 
