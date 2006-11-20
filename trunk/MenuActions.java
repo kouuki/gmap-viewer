@@ -484,32 +484,44 @@ class JMenuActionAddGDrawableObject extends JMenuAction{
 class JMenuRadioButtonActionSat extends JMenuRadioButtonAction{
    /** Constructor for JMenuRadioButtonActionSat class.*/
    public JMenuRadioButtonActionSat(String name, GUI registeredObject){
-      super(name,registeredObject);	  
+      super(name,registeredObject);
    }
    /**create new GDrawableObject for the sattelite type images*/
    public void run(){
       GUI gui = (GUI)registeredObject;
-	  int sattype = gui.getGMap().SATELLITE_MODE;
-	  gui.getGMap().setMode(sattype);
+      int sattype = gui.getGMap().SATELLITE_MODE;
+      gui.getGMap().setMode(sattype);
       GPane pane = gui.getTopPane();
       pane.draw();
+   }
+
+   public void paneEvent(Object object){
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      super.setSelected(gui.getGMap().getMode() == GMap.SATELLITE_MODE);
    }
 }
 
 /** It is the radio button action when map type data is needed.*/
 class JMenuRadioButtonActionMap extends JMenuRadioButtonAction{
-   
+
    /** Constructor for JMenuRadioButtonActionMap class.*/
    public JMenuRadioButtonActionMap(String name, GUI registeredObject){
-      super(name,registeredObject);  
+      super(name,registeredObject);
    }
    /**create new GDrawableObject for the map type images*/
    public void run(){
       GUI gui = (GUI)registeredObject;
-	  int maptype = gui.getGMap().MAP_MODE;
+      int maptype = gui.getGMap().MAP_MODE;
       gui.getGMap().setMode(maptype);
-	  GPane pane = gui.getTopPane();
+      GPane pane = gui.getTopPane();
       pane.draw();
+   }
+
+   public void paneEvent(Object object){
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      super.setSelected(gui.getGMap().getMode() == GMap.MAP_MODE);
    }
 }
 
