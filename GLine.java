@@ -2,7 +2,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 
-public class GLine{
+public class GLine implements GDrawableObject{
 
    Line2D line;
    int zoom;
