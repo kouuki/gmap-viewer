@@ -38,6 +38,12 @@ public class GMenuBar extends JMenuBar{
       //pmeter
       JMenuItem[] menu = {new JMenuActionPOC(gui), new JMenuActionClearRAM(gui), new JMenuRadioButtonSelectionOn(gui), new JMenuRadioButtonDragOn(gui)};
       add(new JMenuGroup("Debugging",gui,menu));
+
+	  //data type 
+	  JMenuItem[] datatype = {new JMenuRadioButtonActionSat("Satellite",gui), new JMenuRadioButtonActionMap("Map",gui)};
+	  add(new JMenuGroup("Data Type",gui,datatype));
+
+   
    }
 
 
