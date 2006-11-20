@@ -56,6 +56,10 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    public static final int DRAW_STRING_MODE = 4;
    private int mode;
 
+   //GZoomslider object
+   private GZoomSlider slider;
+
+
 
    //constructor
    public GPane(GUI gui, GPhysicalPoint center, int zoom, boolean showCachedZoom, int showCachedZoomLevel, int mode){
@@ -91,12 +95,17 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       addMouseMotionListener(this);
 
 
+      //GZoomSlider
+      slider = new GZoomSlider(gui);
+
+
       //initialize draw thread to null
       drawingThread = null;
 
 
       //fire pane listener event
       gui.getNotifier().firePaneEvent(this);
+      
 
    }
 
