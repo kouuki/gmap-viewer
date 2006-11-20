@@ -20,6 +20,7 @@ public class GLine implements GDrawableObject{
 
    public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
       Dimension imageDim = new Dimension(image.getWidth(), image.getHeight());
+	  //imageRect is the currently viewable image window.
       Rectangle imageRect = new Rectangle(p.getPixelX(zoom) - 1, p.getPixelY(zoom) - 1, imageDim.width - 2, imageDim.height - 2);
       Graphics g = image.getGraphics();
 
@@ -54,6 +55,7 @@ public class GLine implements GDrawableObject{
          }
          double yIntercept = -(int)cLine.getY2() - slope*(int)cLine.getX2();
 	*/
+		//Represents the lines of the edges of the imageRect object
 		Line2D upLine =  new Line2D.Double(imageRect.x, imageRect.y, imageRect.x + imageRect.width, imageRect.y);
 		Line2D rightLine = new Line2D.Double(imageRect.x + imageRect.width, imageRect.y, imageRect.x + imageRect.width, imageRect.y + imageRect.height);
 		Line2D downLine = new Line2D.Double(imageRect.x + imageRect.width, imageRect.y + imageRect.height, imageRect.x, imageRect.y + imageRect.height);
@@ -161,6 +163,8 @@ public class GLine implements GDrawableObject{
          //Polygon polyLine = new Polygon(xPoints, yPoints, nPoints);
 		 
 		 g.setColor(new Color(0,0,155));
+		 
+		 //Draws a line b/w each pixel of a 3 by 3 square surrounding the center pixel.
          g.drawLine(x1,y1,x2,y2);
 		 g.drawLine(x1-1,y1,x2-1,y2);
 		 g.drawLine(x1,y1-1,x2,y2-1);
