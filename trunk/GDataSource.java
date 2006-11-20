@@ -238,7 +238,7 @@ abstract class GDataSource {
        //generate random server
       int ServerNumber = (int)Math.round(Math.random()*3.0);
 
-      char[] sat = new char[15];
+      char[] sat = new char[20];
       int i = 1;
       int curZoom = 16 - (zoom-1);
 	  
@@ -348,7 +348,9 @@ class GDataSourceSatellite extends GDataSource{
    protected String makeRemoteName(int x, int y, int zoom){
       int serverNumber = (int)Math.round(Math.random()*3.0);
       //System.out.print(" [satellite]");
-      String pathToNode = makeRemoteSatName(x,y,zoom);	  
+      String pathToNode = makeRemoteSatName(x,y,zoom);
+
+		System.out.println(pathToNode);
       return "http://kh"+serverNumber+".google.com/kh?n=404&v=11&t="+pathToNode;
    }
 
