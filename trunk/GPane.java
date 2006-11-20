@@ -97,7 +97,10 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
       //GZoomSlider
       slider = new GZoomSlider(gui);
-
+      this.add(slider);
+      /*I don't know why the initializePaneListener is commented out, but until it's fixed
+       *I'll comment out the following.*/
+      //slider.addPaneListener(this);
 
       //initialize draw thread to null
       drawingThread = null;
