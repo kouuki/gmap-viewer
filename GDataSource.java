@@ -240,7 +240,7 @@ abstract class GDataSource {
 
       char[] sat = new char[15];
       int i = 1;
-      int curZoom = 16 - zoom;
+      int curZoom = 16 - (zoom-1);
 	  
       int midxTiles = (int)Math.pow(2,(curZoom - 1));
       int midyTiles = midxTiles;
@@ -262,7 +262,7 @@ abstract class GDataSource {
             if( x >= midxTiles){
 			   minxTiles = midxTiles;
                if( y >= midyTiles){
-                  sat[i] = 't';
+                  sat[i] = 's';
 				  minyTiles = midyTiles;
                }
                else{
@@ -273,7 +273,7 @@ abstract class GDataSource {
             else if( x < midxTiles){
 			   maxxTiles = midxTiles;
                if( y >= midyTiles){
-                  sat[i] = 's';
+                  sat[i] = 't';
 				  minyTiles = midyTiles;
                }
                else{
