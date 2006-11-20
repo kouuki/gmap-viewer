@@ -13,7 +13,7 @@ public class GLine implements GDrawableObject{
    }
    
    public GLine(GPhysicalPoint p1, GPhysicalPoint p2){
-	  this.zoom = 12;
+	  this.zoom = 1;
 	  //System.out.println("(" + p1.getPixelPoint(zoom).x + ", " + p1.getPixelPoint(zoom).y + ") " + "(" + p2.getPixelPoint(zoom).x + ", " + p2.getPixelPoint(zoom).y);
 	  line = new Line2D.Double(p1.getPixelPoint(zoom), p2.getPixelPoint(zoom));
    }
