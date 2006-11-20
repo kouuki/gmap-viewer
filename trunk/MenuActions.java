@@ -480,6 +480,36 @@ class JMenuActionAddGDrawableObject extends JMenuAction{
    }
 }
 
+/** It is the radio button action when sattelite type data is needed.*/
+class JMenuRadioButtonActionSat extends JMenuRadioButtonAction{
+   /** Constructor for JMenuRadioButtonActionSat class.*/
+   public JMenuRadioButtonActionSat(String name, GUI registeredObject){
+      super(name,registeredObject);	  
+   }
+   /**create new GDrawableObject for the sattelite type images*/
+   public void run(){
+      GUI gui = (GUI)registeredObject;
+	  int sattype = gui.getGMap().SATELLITE_MODE;
+	  gui.getGMap().setMode(sattype);
+      GPane pane = gui.getTopPane();
+      pane.draw();
+   }
+}
 
-
+/** It is the radio button action when map type data is needed.*/
+class JMenuRadioButtonActionMap extends JMenuRadioButtonAction{
+   
+   /** Constructor for JMenuRadioButtonActionMap class.*/
+   public JMenuRadioButtonActionMap(String name, GUI registeredObject){
+      super(name,registeredObject);  
+   }
+   /**create new GDrawableObject for the map type images*/
+   public void run(){
+      GUI gui = (GUI)registeredObject;
+	  int maptype = gui.getGMap().MAP_MODE;
+      gui.getGMap().setMode(maptype);
+	  GPane pane = gui.getTopPane();
+      pane.draw();
+   }
+}
 
