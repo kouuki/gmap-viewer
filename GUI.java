@@ -13,50 +13,84 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-
+/**
+* Class for the Google Map Viewer application. Graphical User Interface that
+* uses/implements the following Listener classes: 
+* <ul>
+* <li> ActionListener 
+* <li> KeyListener
+* <li> MouseListener 
+* <li> MouseMotionListener
+* <li> ComponentListener</ul>
+*/
 public class GUI extends JFrame implements ActionListener, KeyListener, MouseListener, MouseMotionListener, ComponentListener{
 
-   /*
-    * DATA  ELEMENTS
+   /**
+    * The global parameter for the Google Map Viewer title.
     */
-
-   //global parameters
    private String title = "Google Map Viewer 1.0";
 
-   //screen size
+   /**
+    * The global parameter for the initial screen size.
+    */
    private Dimension screenSize = new Dimension(500,500);
 
-   //containers for stuff
+   /**
+    * The global parameter for containers for stuff.
+    */
    private Container container = getContentPane();
 
-   //keep track of panes
+   /**
+    * The global parameter for panes.
+    */
    private GTabbedPane pane;
-   private GPane[] tabs;
+   
+   /**
+    * The global parameter for tabs.
+    */
+    private GPane[] tabs;
 
-   //popup window object
+   /**
+    * The global parameter for popup window object.
+    */
    JFrame frame;
 
-   //map object
+   /**
+    * The global parameter for map object.
+    */
    private GMap gmap;
 
-   //pane listener notifier
+   /**
+    * The global parameter for pane listener notifier.
+    */
    private PaneListenerNotifier notifier;
 
-   //progress meter
+   /**
+    * The global parameter for progress meter.
+    */
    private EmbeddedProgressMeter embeddedProgressMeter;
 
-
-   //build and set up the frame
+   /**
+    * The global parameter for tabbed panel for building and setting up the frame.
+    */
    private JPanel tabbedPanel;
+   
+   /**
+    * The global parameter for progress bar panel for building and setting up the frame.
+    */
    private JPanel progressBarPanel;
+   
+   /**
+    * The global parameter for progress panel size for building and setting up the frame.
+    */
    private static final int sizeOfProgressBar = 23;
 
 
-   /*
-    * EXECUTABLE
+   /**
+    * The main method that creates a new window with the GUI class characteristics.
+    * 
+    * @param args	the string array
     */
-
-   //executable code
    public static void main(String[] args){
       GUI newWindow = new GUI();
       newWindow.setVisible(true);
@@ -66,7 +100,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
     * OBJECT
     */
 
-   //constructor
+   /**
+    * The GUI constructor.
+    */
    public GUI(){
       //set parameters
       setTitle(title);
@@ -101,7 +137,10 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       addComponentListener(this);
    }
 
-
+   /**
+    * The method for buildFrameContents will set layout to null, add pane, 
+    * add tabbed panel, add progress bar panel and initializes sizes. 
+    */
    public void buildJFrameContents(){
       //set layout to null
       container.setLayout(null);
@@ -133,27 +172,45 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
 
    }
 
+   /**
+    * It is the method that updates the tabbed panel, progress bar panel and pane.
+    */
    public void update(){
       tabbedPanel.setBounds(0,0,container.getWidth(),container.getHeight() - sizeOfProgressBar);
       progressBarPanel.setBounds(0,container.getHeight() - sizeOfProgressBar,container.getWidth(),sizeOfProgressBar);
       pane.setBounds(0,0,container.getWidth(),container.getHeight() - sizeOfProgressBar);
    }
 
-   //pane counter, for default title creation
+   /**
+    * It is used for pane counter, for default title creation.
+    */
    private int paneNumber = 1;
 
-   //pane addition with title
+   /**
+    * It is used for pane addition with title. 
+    *
+    * @param paneToAdd	The pane that is to be added.
+    * @param title	The string title of the pane.
+    */
    public void addPane(GPane paneToAdd, String title){
       pane.add(paneToAdd, title);
    }
 
-   //pane addition without title, defaults to "Untitled Pane #"
+   /**
+    * It is the pane addition without title, defaults to "Untitled Pane #".
+    *
+    * @param paneToAdd	The pane that is to be added.
+    */
    public void addPane(GPane paneToAdd){
       addPane(paneToAdd, "Untitled Pane "+paneNumber);
       paneNumber++;
    }
 
-   //pane removal methods
+   /**
+    * It is the pane removal method.
+    *
+    *@param paneToRemove	The pane tha is to be removed.
+    */
    public void removePane(GPane paneToRemove){
       pane.remove(paneToRemove);
    }
@@ -163,34 +220,59 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
     * GETTERS
     */
 
-   //get the gmap object
+   /**
+    * It gets the gmap object.
+    *
+    *@return gmap	is the returned gmap object.
+    */
    public GMap getGMap(){
       return gmap;
    }
 
-   //get the current size of the JFrame
+   /**
+    * It gets the current size of the JFrame. 
+    *
+    *@return screenSize	is the returned screen size of JFrame. 
+    */
    public Dimension getScreenSize(){
       return screenSize;
    }
 
-   //get the pane
+   /**
+    * It gets the tabbed pane.
+    *
+    *@return pane	a GTabbedPane when method is called. 
+    */
    public GTabbedPane getTabbedPane(){
       return pane;
    }
 
-   //get top pane component
+   /**
+    * It gets the top pane component.
+    *
+    *@return null if the selected index equal -1.
+    *@return pane if the selected index is not null.
+    */
    public GPane getTopPane(){
       int selected = pane.getSelectedIndex();
       if(selected == -1) return null;
       else return (GPane)pane.getComponentAt(selected);
    }
 
-   //get the notifier
+   /**
+    * It gets the notifier.
+    *
+    *@return notifier is the returned PaneListenerNotifier.
+    */
    public PaneListenerNotifier getNotifier(){
       return notifier;
    }
 
-   //get the progress meter
+   /**
+    * It gets the progress meter. 
+    * 
+    *@return embeddedProgressMeter is the returned EmbeddedProgressMeter.  
+    */
    public EmbeddedProgressMeter getProgressMeter(){
       return embeddedProgressMeter;
    }
@@ -205,26 +287,115 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
 
 
    //component listener
+   /**
+    * It hides the Component.
+    * 
+    *@param e	is the component event to be hidden.
+    */   
    public void componentHidden(ComponentEvent e){update();}
+
+   /**
+    * It moves the Component.
+    * 
+    *@param e	is the component event to be moved.
+    */   
    public void componentMoved(ComponentEvent e){update();}
+   
+   /**
+    * It resizes the Component.
+    * 
+    *@param e 	is the component event to be resized.
+    */
    public void componentResized(ComponentEvent e){update();}
+   
+   /**
+    * It shows the Component. 
+    * 
+    *@param e 	is the component event to be shown.
+    */
    public void componentShown(ComponentEvent e){update();}
 
    //mouse methods - use e.getX()
+   
+   /**
+   * It shows the mouse being moved.
+   *
+   *@param e	is the mouse event action
+   */
    public void mouseMoved(MouseEvent e) {}
+
+   /**
+   * It shows the mouse being dragged
+   *
+   *@param e	is the mouse event action
+   */
    public void mouseDragged(MouseEvent e){}
+
+   /**
+   * It shows the mouse being clicked.
+   *
+   *@param e	is the mouse event action
+   */
    public void mouseClicked(MouseEvent e){}
+
+   /**
+   *It shows the mouse being entered.
+   *
+   *@param e	is the mouse event action
+   */
    public void mouseEntered(MouseEvent e){}
+
+   /**
+   *It shows the mouse being exited.
+   *
+   *@param e	is the mouse event action
+   */
    public void mouseExited(MouseEvent e){}
+
+   /**
+   *It shows the mouse being pressed.
+   *
+   *@param e	is the mouse event action
+   */
    public void mousePressed(MouseEvent e){}
+
+   /**
+   *It shows the mouse being released.
+   *
+   *@param e	is the mouse event action
+   */
    public void mouseReleased(MouseEvent e){}
 
    //keyboard methods - use k.getKeyCode();
+
+   /**
+   *It shows the key being typed.
+   *
+   *@param e	is the key event action
+   */
    public void keyTyped(KeyEvent k){}
+
+   /**
+   *It shows the key being released.
+   *
+   *@param e	is the key event action
+   */
    public void keyReleased(KeyEvent k){}
+
+   /**
+   *It shows the key being pressed.
+   *
+   *@param e	is the key event action
+   */
    public void keyPressed(KeyEvent k){}
 
    //action dispatcher method from menubar
+
+   /**
+   *It shows the action performed.
+   *
+   *@param e	is the action event being deciphered.
+   */
    public void actionPerformed(ActionEvent e){
       Object sourceObject = e.getSource();
       //dispatch actions
