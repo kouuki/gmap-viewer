@@ -36,7 +36,7 @@ public class GMenuBar extends JMenuBar{
       add(new JMenuGroup("Cache",gui,cacheMenu));
 
       //pmeter
-      JMenuItem[] menu = {new JMenuActionPOC(gui), new JMenuActionClearRAM(gui), new JMenuRadioButtonSelectionOn(gui), new JMenuRadioButtonDragOn(gui)};
+      JMenuItem[] menu = {new JMenuActionPOC(gui), new JMenuActionClearRAM(gui), new JMenuRadioButtonSelectionOn(gui), new JMenuRadioButtonDragOn(gui), new JMenuRadioButtonCalculateDistance(gui), new JMenuRadioButtonAddPoints(gui) ,new JMenuRadioButtonAddLines(gui),new JMenuRadioButtonAddText(gui)};
       add(new JMenuGroup("Debugging",gui,menu));
 
 	  //data type 
