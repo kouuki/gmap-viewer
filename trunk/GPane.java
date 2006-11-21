@@ -54,10 +54,12 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    public static final int DRAW_LINE_MODE = 2;
    public static final int DRAW_MARKER_MODE = 3;
    public static final int DRAW_STRING_MODE = 4;
+   public static final int DISTANCE_MODE = 5;
    private int mode;
 
    //GZoomslider object
    private GZoomSlider slider;
+
 
 
    //constructor
@@ -78,15 +80,6 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       //set mode
       this.mode = mode;
 
-      //GZoomSlider
-      slider = new GZoomSlider(gui);
-      add(slider);
-
-      
-
-
-
-
       //draw it
       draw();
 
@@ -97,17 +90,14 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       //start pane listener
       //initializePaneListener();
 
-      //slider.addPaneListener(this);
-
-
-
-
       //add component listener
       addComponentListener(this);
       addMouseListener(this);
       addMouseMotionListener(this);
 
 
+      //GZoomSlider
+      slider = new GZoomSlider(gui);
 
 
       //initialize draw thread to null
@@ -116,7 +106,7 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
       //fire pane listener event
       gui.getNotifier().firePaneEvent(this);
-      
+
 
    }
 
@@ -335,7 +325,12 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    }
 
    public void setMode(int mode){
+      //clean up tracking variables for mouse actions
+      clickCount = 0;
+      gui.getGMap().getGDraw().remove(tempMarkerA);
+      mouseRectanglePosition = null;
       this.mode=mode;
+      draw();
    }
 
 
@@ -410,7 +405,17 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    }
    public void mouseEntered(MouseEvent e){}
    public void mouseExited(MouseEvent e){}
+
+   private int clickCount = 0;
+   private GPhysicalPoint tempA;
+   private GPhysicalPoint tempB;
+   private GMarker tempMarkerA;
+   private GMarker tempMarkerB;
+
    public void mousePressed(MouseEvent e){
+
+            System.out.println("mode="+mode);
+
 
       //update mouse dragged
       mouseDraggedThisClick = false;
@@ -425,9 +430,68 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
          //left click
          if(e.getClickCount() == 1){
+            //get this click location
+            Point c = getCenterPixel();
+            c.x += clickLocation.x - (getSize().width/2);
+            c.y += clickLocation.y - (getSize().height/2);
+
             //single left click
             if(mode == SELECTION_MODE)
                mouseRectanglePosition = new Rectangle(clickLocation.x,clickLocation.y,clickLocation.x,clickLocation.y);
+            else if(mode == DRAW_LINE_MODE && clickCount == 0){
+               clickCount = 1;
+               tempA = new GPhysicalPoint(c.x, c.y,zoom);
+               tempMarkerA = new GMarker(tempA);
+               gui.getGMap().getGDraw().add(tempMarkerA);
+               draw();
+            }
+            else if(mode == DRAW_LINE_MODE && clickCount == 1){
+               clickCount = 0;
+               tempB = new GPhysicalPoint(c.x, c.y,zoom);
+               gui.getGMap().getGDraw().remove(tempMarkerA);
+               gui.getGMap().getGDraw().add(new GLine(tempA, tempB));
+               draw();
+            }
+            else if(mode == DISTANCE_MODE && clickCount == 0){
+               clickCount = 1;
+               tempA = new GPhysicalPoint(c.x, c.y,zoom);
+               tempMarkerA = new GMarker(tempA);
+               gui.getGMap().getGDraw().add(tempMarkerA);
+               draw();
+            }
+            else if(mode == DISTANCE_MODE && clickCount == 1){
+               clickCount = 0;
+               tempB = new GPhysicalPoint(c.x, c.y,zoom);
+               gui.getGMap().getGDraw().remove(tempMarkerA);
+               gui.getGMap().getGDraw().add(new GLine(tempA, tempB));
+               GText distance = new GText(tempB, ""+Math.round(GLib.computeDistance(tempA, tempB)*1000)/1000);
+               gui.getGMap().getGDraw().add(distance);
+               draw();
+            }
+            else if(mode == DRAW_MARKER_MODE){
+               clickCount = 0;
+               tempB = new GPhysicalPoint(c.x, c.y,zoom);
+               gui.getGMap().getGDraw().add(new GMarker(tempB));
+               draw();
+            }
+            else if(mode == DRAW_STRING_MODE){
+               clickCount = 0;
+               tempA = new GPhysicalPoint(c.x, c.y,zoom);
+               tempMarkerA = new GMarker(tempA);
+               gui.getGMap().getGDraw().add(tempMarkerA);
+               draw();
+
+               String in = (String)JOptionPane.showInputDialog(gui.frame, "Enter the text to place on the map.","Add Text",JOptionPane.PLAIN_MESSAGE,null,null,"");
+               gui.getGMap().getGDraw().remove(tempMarkerA);
+
+               if(in == null) return;
+
+               tempB = new GPhysicalPoint(c.x, c.y,zoom);
+               gui.getGMap().getGDraw().add(new GText(tempB, in));
+               draw();
+            }
+
+
          }
          else if(e.getClickCount() == 2){
             //double left click
