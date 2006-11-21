@@ -13,7 +13,7 @@ public class GToolBar extends JToolBar implements ActionListener, PaneListener {
     {
     	this.gui = gui;
     	
-        String[] imageFiles = { "hand_grab.png", "selection_cursor.gif", "point_marker.gif", "line_marker1.gif", "text_marker.jpg" };
+        String[] imageFiles = { "hand_grab.png", "selection_cursor.gif", "point_marker.gif", "line_marker1.gif", "text_marker.gif" };
         String[] toolbarLabels = { "Map Dragging", "Selection Rectangle", "Add Points", "Add Lines", "Add Text"};
         Insets margins = new Insets(0, 0, 0, 0);
         for(int i=0; i<toolbarLabels.length; i++) {
