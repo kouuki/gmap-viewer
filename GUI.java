@@ -81,6 +81,11 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    private JPanel progressBarPanel;
    
    /**
+    * The global parameter for the toolbar
+    */
+   private GToolBar toolbar;
+   
+   /**
     * The global parameter for progress panel size for building and setting up the frame.
     */
    private static final int sizeOfProgressBar = 23;
@@ -145,6 +150,14 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       //set layout to null
       container.setLayout(null);
 
+      //add GToolBar
+      toolbar = new GToolBar(this);
+//      container.add(toolbar);
+      
+      JFrame toolbarFrame = new JFrame();
+      toolbarFrame.getContentPane().add(toolbar, BorderLayout.NORTH);
+      toolbarFrame.setVisible(true);
+      
       //add pane
       pane = new GTabbedPane(this);
       int location = JTabbedPane.TOP; // or BOTTOM, LEFT, RIGHT
