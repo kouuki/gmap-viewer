@@ -310,8 +310,10 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    }
 
    public void setZoom(int zoom){
-      this.zoom = zoom;
-      draw();
+      if (zoom >= GDataImage.ZOOM_MIN && zoom <= GDataImage.ZOOM_MAX) {
+         this.zoom = zoom;
+         draw();
+      }
    }
 
    public void setShowCachedZoomLevel(int showCachedZoomLevel){

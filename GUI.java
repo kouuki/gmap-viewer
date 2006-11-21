@@ -90,7 +90,11 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
     */
    private static final int sizeOfProgressBar = 23;
 
-
+   /**
+    * An instance of GZoomSlider.
+    */
+   private GZoomSlider slider;
+   
    /**
     * The main method that creates a new window with the GUI class characteristics.
     * 
@@ -154,6 +158,10 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       toolbar = new GToolBar(this);
 //      container.add(toolbar);
       
+      // add GZoomSlider
+      slider = new GZoomSlider(this);
+      container.add(slider);
+      
       JFrame toolbarFrame = new JFrame();
       toolbarFrame.getContentPane().add(toolbar, BorderLayout.NORTH);
       toolbarFrame.setVisible(true);
@@ -180,9 +188,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       tabbedPanel.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar);
       progressBarPanel.setBounds(0,screenSize.height - sizeOfProgressBar,screenSize.width,sizeOfProgressBar);
       pane.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar);
-
-
-
+      slider.setBounds(10, 30, 50, 50);
    }
 
    /**
@@ -192,6 +198,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       tabbedPanel.setBounds(0,0,container.getWidth(),container.getHeight() - sizeOfProgressBar);
       progressBarPanel.setBounds(0,container.getHeight() - sizeOfProgressBar,container.getWidth(),sizeOfProgressBar);
       pane.setBounds(0,0,container.getWidth(),container.getHeight() - sizeOfProgressBar);
+      slider.setBounds(10, 30, 50, 50);
    }
 
    /**
