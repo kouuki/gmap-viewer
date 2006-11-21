@@ -31,6 +31,7 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener, 
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		this.addMouseListener(this);
+		this.addMouseWheelListener(this);
 		gui.getNotifier().addPaneListener(this);
 	}
 
