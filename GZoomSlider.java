@@ -4,6 +4,8 @@ import java.awt.Polygon;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -13,8 +15,7 @@ import javax.swing.JPanel;
  * by clicking on the up or down arrows.
  * @author taeber
  */
-public class GZoomSlider extends JPanel implements PaneListener, MouseListener,
-		MouseMotionListener {
+public class GZoomSlider extends JPanel implements PaneListener, MouseListener, MouseWheelListener {
 
 	private GUI gui;
 	
@@ -30,7 +31,6 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener,
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		this.addMouseListener(this);
-		this.addMouseMotionListener(this);
 		gui.getNotifier().addPaneListener(this);
 	}
 
@@ -105,23 +105,22 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener,
 		// TODO Auto-generated method stub
 
 	}
-
+	
 	/*
 	 * (non-Javadoc)
-	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+	 * @see java.awt.event.MouseWheelListener#mouseWheelMoved(java.awt.event.MouseWheelEvent)
 	 */
-	public void mouseDragged(MouseEvent arg0) {
+	public void mouseWheelMoved(MouseWheelEvent e) {
 		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-	 */
-	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
+		int notches = e.getWheelRotation();
+		
+		if(notches < 0) {
+			// Mouse wheel moved up
+			this.gui.getTopPane().setZoom(this.gui.getTopPane().getZoom() - 1);
+		} else {
+			// Mouse wheel moved down
+			this.gui.getTopPane().setZoom(this.gui.getTopPane().getZoom() + 1);
+		}
 	}
 
 	/**
