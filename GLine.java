@@ -178,10 +178,16 @@ public class GLine implements GDrawableObject{
    }
 
    public Rectangle getRectangle(GPhysicalPoint p, int zoom){
-
-      //implementation???
-
-      return new Rectangle(10,10,50,50);
+		int width = (int)line.getX2() - (int)line.getX1();
+		int height = (int)line.getY2() - (int)line.getY1();
+		
+		Point2D gPoint = p.getPoint();
+		int x = (int)gPoint.getX() - (int)line.getX1();
+		int y = (int)gPoint.getY() - (int)line.getY1();
+		
+		Rectangle rect = new Rectangle(x, y, width, height);
+		
+		return rect;
    }
 
 }
