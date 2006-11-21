@@ -25,12 +25,14 @@ abstract class GDataSource {
 
    //private
    private Hashtable<String,GDataImage> ramCache;
+   private ArrayList<String> ramCacheQueue;
    private int lastPointer;
 
    //constructor
    public GDataSource(String cacheDirectory){
       this.cacheDirectory = cacheDirectory;
       ramCache = new Hashtable<String, GDataImage>();
+      ramCacheQueue = new ArrayList<String>();
       lastPointer = 0;
       this.downloadQueue = new ConcurrentLinkedQueue<GDataImage>();
       this.queueSize = 0;
@@ -321,11 +323,12 @@ abstract class GDataSource {
       lastPointer++;
       if(lastPointer >= ramCache.length) lastPointer = 0;*/
      if(ramCache.size() > 100){
-        ramCache.clear();
+        ramCache.remove(ramCacheQueue.remove(0));
         System.gc();
      }
      String key = x + " " + y + " " + zoom;
      ramCache.put(key, new GDataImage(image,x,y,zoom));
+     ramCacheQueue.add(key);
    }
 
    /*
