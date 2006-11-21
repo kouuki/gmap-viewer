@@ -60,7 +60,6 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    private GZoomSlider slider;
 
 
-
    //constructor
    public GPane(GUI gui, GPhysicalPoint center, int zoom, boolean showCachedZoom, int showCachedZoomLevel, int mode){
       //get gmap and registered objects
@@ -79,6 +78,15 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       //set mode
       this.mode = mode;
 
+      //GZoomSlider
+      slider = new GZoomSlider(gui);
+      add(slider);
+
+      
+
+
+
+
       //draw it
       draw();
 
@@ -89,18 +97,18 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       //start pane listener
       //initializePaneListener();
 
+      //slider.addPaneListener(this);
+
+
+
+
       //add component listener
       addComponentListener(this);
       addMouseListener(this);
       addMouseMotionListener(this);
 
 
-      //GZoomSlider
-      slider = new GZoomSlider(gui);
-      this.add(slider);
-      /*I don't know why the initializePaneListener is commented out, but until it's fixed
-       *I'll comment out the following.*/
-      //slider.addPaneListener(this);
+
 
       //initialize draw thread to null
       drawingThread = null;
