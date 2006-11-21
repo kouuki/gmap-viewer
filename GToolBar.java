@@ -48,7 +48,7 @@ public class GToolBar extends JToolBar implements ActionListener, PaneListener {
     	      pane.setMode(GPane.DRAW_LINE_MODE);
     	      gui.getNotifier().firePaneEvent(this);
     	      gui.getProgressMeter().getPanel().repaint();
-    	} else if (arg0.getActionCommand() == "text_marker.jpg") {
+    	} else if (arg0.getActionCommand() == "text_marker.gif") {
     	      GPane pane = gui.getTopPane();
     	      pane.setMode(GPane.DRAW_STRING_MODE);
     	      gui.getNotifier().firePaneEvent(this);
