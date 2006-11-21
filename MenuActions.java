@@ -342,6 +342,14 @@ class JMenuRadioButtonAddPoints extends JMenuRadioButtonAction {
       gui.getNotifier().firePaneEvent(this);
       gui.getProgressMeter().getPanel().repaint();
    }
+
+   public void paneEvent(Object object){
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      if(pane == null) return;
+      super.setSelected(pane.getMode() == GPane.DRAW_MARKER_MODE);
+   }
+
 }
 
 class JMenuRadioButtonAddLines extends JMenuRadioButtonAction {
@@ -360,6 +368,14 @@ class JMenuRadioButtonAddLines extends JMenuRadioButtonAction {
       gui.getNotifier().firePaneEvent(this);
       gui.getProgressMeter().getPanel().repaint();
    }
+
+   public void paneEvent(Object object){
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      if(pane == null) return;
+      super.setSelected(pane.getMode() == GPane.DRAW_LINE_MODE);
+   }
+
 }
 
 class JMenuRadioButtonAddText extends JMenuRadioButtonAction {
@@ -378,6 +394,14 @@ class JMenuRadioButtonAddText extends JMenuRadioButtonAction {
       gui.getNotifier().firePaneEvent(this);
       gui.getProgressMeter().getPanel().repaint();
    }
+
+   public void paneEvent(Object object){
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      if(pane == null) return;
+      super.setSelected(pane.getMode() == GPane.DRAW_STRING_MODE);
+   }
+
 }
 
 class JMenuRadioButtonCalculateDistance extends JMenuRadioButtonAction {
@@ -391,10 +415,17 @@ class JMenuRadioButtonCalculateDistance extends JMenuRadioButtonAction {
    public void run() {
       GUI gui = (GUI) registeredObject;
       GPane pane = gui.getTopPane();
-      pane.setMode(GPane.DRAW_STRING_MODE);
+      pane.setMode(GPane.DISTANCE_MODE);
       super.setSelected(true);
       gui.getNotifier().firePaneEvent(this);
       gui.getProgressMeter().getPanel().repaint();
+   }
+
+   public void paneEvent(Object object){
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      if(pane == null) return;
+      super.setSelected(pane.getMode() == GPane.DISTANCE_MODE);
    }
 }
 
