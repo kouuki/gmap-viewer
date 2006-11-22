@@ -181,9 +181,12 @@ public class GLine implements GDrawableObject{
 		int width = (int)line.getX2() - (int)line.getX1();
 		int height = (int)line.getY2() - (int)line.getY1();
 		
+		width *= Math.pow(2, this.zoom - zoom);
+		height *= Math.pow(2, this.zoom - zoom);
+		
 		Point2D gPoint = p.getPoint();
-		int x = (int)gPoint.getX() - (int)line.getX1();
-		int y = (int)gPoint.getY() - (int)line.getY1();
+		int x = (int)gPoint.getX() - (int)(line.getX1()*Math.pow(2, this.zoom - zoom));
+		int y = (int)gPoint.getY() - (int)(line.getY1()*Math.pow(2, this.zoom - zoom));
 		
 		Rectangle rect = new Rectangle(x, y, width, height);
 		
