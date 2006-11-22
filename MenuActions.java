@@ -182,9 +182,8 @@ class JMenuActionCacheSelected extends JMenuAction{
 
       //cache it
       gui.getGMap().cacheImage(toCache.x, toCache.y, toCache.width, toCache.height, zoomLevel, pane);
-      pane.draw();
-
       gui.getGMap().getGDataSource().downloadQueue();
+      pane.draw();
 
    }
 
