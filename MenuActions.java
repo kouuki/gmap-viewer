@@ -555,3 +555,27 @@ class JMenuRadioButtonActionMap extends JMenuRadioButtonAction{
    }
 }
 
+
+/** It is the radio button action when map type data is needed.*/
+class JMenuRadioButtonActionHybrid extends JMenuRadioButtonAction{
+
+   /** Constructor for JMenuRadioButtonActionMap class.*/
+   public JMenuRadioButtonActionHybrid(String name, GUI registeredObject){
+      super(name,registeredObject);
+   }
+   /**create new GDrawableObject for the map type images*/
+   public void run(){
+      GUI gui = (GUI)registeredObject;
+      int maptype = gui.getGMap().HYBRID_MODE;
+      gui.getGMap().setMode(maptype);
+      GPane pane = gui.getTopPane();
+      pane.draw();
+   }
+
+   public void paneEvent(Object object){
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+      super.setSelected(gui.getGMap().getMode() == GMap.HYBRID_MODE);
+   }
+}
+

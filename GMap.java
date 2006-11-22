@@ -37,6 +37,7 @@ class GMap{
    //keep track of the data object
    private GDataSource gDataSourceMap;
    private GDataSource gDataSourceSatellite;
+   private GDataSource gDataSourceHybrid;
 
    //GDraw handles the work of painting data NOT in the database
    private GDraw gDraw;
@@ -48,6 +49,7 @@ class GMap{
    //modes
    public static final int SATELLITE_MODE = 2;
    public static final int MAP_MODE = 3;
+   public static final int HYBRID_MODE = 4;
    private int mode;
 
    //constructor
@@ -55,6 +57,8 @@ class GMap{
       //data source
       this.gDataSourceMap = new GDataSourceMap("map_cache");
       this.gDataSourceSatellite = new GDataSourceSatellite("sat_cache");
+      GDataSource gDataSourceOverlay = new GDataSourceOverlay("overlay_cache");
+      this.gDataSourceHybrid = new GDataSourceHybrid("hybrid_cache",gDataSourceSatellite);
 
       //build default image
       defaultImage = getDefaultImage(GDataSource.sourceSize.width, GDataSource.sourceSize.height);
@@ -78,6 +82,7 @@ class GMap{
    public GDataSource getGDataSource(int mode){
       if(mode == MAP_MODE) return gDataSourceMap;
       else if(mode == SATELLITE_MODE) return gDataSourceSatellite;
+      else if(mode == HYBRID_MODE) return gDataSourceHybrid;
       return null;
    }
 
