@@ -19,6 +19,7 @@ class GText implements GDrawableObject{
    private String text;
    private Rectangle2D textRectangle;
    private int maxDescent;
+   private static final int padding = 2;
 
    public GText(GPhysicalPoint point, String text){
       this.point = point;
@@ -53,7 +54,7 @@ class GText implements GDrawableObject{
       //get the coordinate of the point on our visible screen
       Point pointOnScreen = new Point(point.getPixelX(zoom) - screen.x, point.getPixelY(zoom) - screen.y);
 
-      return new Rectangle(pointOnScreen.x,(int)(pointOnScreen.y-textRectangle.getHeight()+maxDescent),(int)textRectangle.getWidth(),(int)textRectangle.getHeight()+maxDescent);
+      return new Rectangle(pointOnScreen.x - padding,(int)(pointOnScreen.y-textRectangle.getHeight()+maxDescent) - padding,(int)textRectangle.getWidth() + 2*padding,(int)textRectangle.getHeight()+maxDescent+2*padding);
    }
 
    public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
@@ -81,9 +82,17 @@ class GText implements GDrawableObject{
       //get the coordinate of the point on our visible screen
       Point pointOnScreen = new Point(pixelLocation.x - screen.x, pixelLocation.y - screen.y);
 
+      //draw bg
+      Rectangle bgRect = getRectangle(p,zoom);
+      g.setColor(Color.WHITE);
+      g.fillRect(bgRect.x,bgRect.y,bgRect.width,bgRect.height);
+      g.setColor(Color.BLACK);
+      g.drawRect(bgRect.x,bgRect.y,bgRect.width,bgRect.height);
+
       //draw it
       g.setColor(new Color(0,0,155));
       g.drawString(text,pointOnScreen.x,pointOnScreen.y);
+
    }
 
 

@@ -219,11 +219,14 @@ abstract class GDataSource {
    public void downloadQueue() {
       GDataImage img;
       synchronized (downloadQueue) {
+         System.out.println(downloadQueue.size());
          while ((img = downloadQueue.poll()) != null) {
          System.out.println("   from Q: " +img);
             cache(img.getX(), img.getY(), img.getZoom());
             queueSize--;
          }
+
+
       }
    }
 
@@ -243,15 +246,15 @@ abstract class GDataSource {
       char[] sat = new char[20];
       int i = 1;
       int curZoom = 16 - (zoom-1);
-	  
+
       int midxTiles = (int)Math.pow(2,(curZoom - 1));
       int midyTiles = midxTiles;
-	  
-	  int maxxTiles = midxTiles*2;
-	  int maxyTiles = midyTiles*2;
-	  
-	  int minxTiles = 0;
-	  int minyTiles = 0;
+
+     int maxxTiles = midxTiles*2;
+     int maxyTiles = midyTiles*2;
+
+     int minxTiles = 0;
+     int minyTiles = 0;
 
       StringBuffer sb = new StringBuffer();
       sb.append("t");
@@ -262,28 +265,28 @@ abstract class GDataSource {
          System.out.println(midxTiles + " " + midyTiles);
          if( x >= 0 &&  y >= 0){
             if( x >= midxTiles){
-			   minxTiles = midxTiles;
+            minxTiles = midxTiles;
                if( y >= midyTiles){
                   sat[i] = 's';
-				  minyTiles = midyTiles;
+              minyTiles = midyTiles;
                }
                else{
                   sat[i] = 'r';
-				  maxyTiles = midyTiles;
+              maxyTiles = midyTiles;
                }
             }
             else if( x < midxTiles){
-			   maxxTiles = midxTiles;
+            maxxTiles = midxTiles;
                if( y >= midyTiles){
                   sat[i] = 't';
-				  minyTiles = midyTiles;
+              minyTiles = midyTiles;
                }
                else{
                   sat[i] = 'q';
                   maxyTiles = midyTiles;
                }
             }
-			midxTiles = minxTiles + (maxxTiles - minxTiles)/2;
+         midxTiles = minxTiles + (maxxTiles - minxTiles)/2;
             midyTiles = minyTiles + (maxyTiles - minyTiles)/2;
             String s = new Character(sat[i]).toString();
             sb.append(s);
@@ -353,7 +356,7 @@ class GDataSourceSatellite extends GDataSource{
       //System.out.print(" [satellite]");
       String pathToNode = makeRemoteSatName(x,y,zoom);
 
-		System.out.println(pathToNode);
+      System.out.println(pathToNode);
       return "http://kh"+serverNumber+".google.com/kh?n=404&v=11&t="+pathToNode;
    }
 

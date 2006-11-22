@@ -203,6 +203,8 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          //update flag
          parent.drawingThread = null;
 
+         //download adjacent
+         gmap.getGDataSource().downloadQueue();
       }
    }
 
@@ -487,10 +489,10 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
                String in = (String)JOptionPane.showInputDialog(gui.frame, "Enter the text to place on the map.","Add Text",JOptionPane.PLAIN_MESSAGE,null,null,"");
                gui.getGMap().getGDraw().remove(tempMarkerA);
 
-               if(in == null) return;
-
-               tempB = new GPhysicalPoint(c.x, c.y,zoom);
-               gui.getGMap().getGDraw().add(new GText(tempB, in));
+               if(in != null){
+                  tempB = new GPhysicalPoint(c.x, c.y,zoom);
+                  gui.getGMap().getGDraw().add(new GText(tempB, in));
+               }
                draw();
             }
 
@@ -510,7 +512,7 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       }
       else if(m == 4){
          //right click
-         gui.getTabbedPane().showPopupMenu(e.getX(), e.getY());
+         gui.getTabbedPane().showPopupMenu(e.getX(), e.getY()+25);
       }
 
 
