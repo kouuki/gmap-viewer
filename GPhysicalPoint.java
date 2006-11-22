@@ -142,7 +142,7 @@ public static final GCalibration[] calibrationPoints = {
       //convert to zero indexing
       calibration--;
       //validate
-      if(calibration < 0 || calibration > calibrationPoints.length) return null;
+      if(calibration < 0 || calibration > calibrationPoints.length - 1) return null;
       if(calibrationPoints[calibration] == null) return null;
 
       //now valid, use appropriate calibrator
@@ -188,7 +188,7 @@ public static final GCalibration[] calibrationPoints = {
       //convert to zero indexing
       calibration--;
       //validate
-      if(calibration < 0 || calibration > calibrationPoints.length) return ;
+      if(calibration < 0 || calibration > calibrationPoints.length - 1) return ;
       if(calibrationPoints[calibration] == null) return ;
 
       //now valid, use appropriate calibrator
