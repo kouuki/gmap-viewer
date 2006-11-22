@@ -29,6 +29,7 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
       this.downArrow = new Arrow(0, 15, 10, Arrow.Orientation.DOWN);
 
       this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+      this.setOpaque(false);
 
       this.addMouseListener(this);
       gui.getNotifier().addPaneListener(this);
@@ -42,6 +43,7 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
      * @param g
      */
    protected void paintComponent(Graphics g) {
+      //super.paintComponent(g);
       this.upArrow.draw(g);
       this.downArrow.draw(g);
    }

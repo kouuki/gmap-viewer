@@ -205,6 +205,9 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
          //download adjacent
          gmap.getGDataSource().downloadQueue();
+
+         //notify listener
+         gui.getNotifier().firePaneEvent(this);
       }
    }
 
@@ -235,10 +238,6 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          g2d.setColor(new Color(110,110,110));
          g2d.drawRect(mouseRectanglePosition.x,mouseRectanglePosition.y,mouseRectanglePosition.width,mouseRectanglePosition.height);
       }
-
-      //notify listener
-      gui.getNotifier().firePaneEvent(this);
-
    }
 
 
