@@ -18,7 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-class GPane extends JPanel implements ActionListener, ComponentListener, MouseListener, MouseMotionListener, Cloneable, GMapListener{
+class GPane extends JPanel implements ActionListener, ComponentListener, MouseListener, MouseMotionListener, Cloneable, GMapListener, MouseWheelListener{
 
    //available JFrame object
    private JFrame popup;
@@ -94,6 +94,7 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       addComponentListener(this);
       addMouseListener(this);
       addMouseMotionListener(this);
+      addMouseWheelListener(this);
 
 
       //GZoomSlider
@@ -592,6 +593,23 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
    }
 
+
+   /*
+    * (non-Javadoc)
+    * @see java.awt.event.MouseWheelListener#mouseWheelMoved(java.awt.event.MouseWheelEvent)
+    */
+   public void mouseWheelMoved(MouseWheelEvent e) {
+      // TODO Auto-generated method stub
+      int notches = e.getWheelRotation();
+
+      if(notches < 0) {
+         // Mouse wheel moved up
+         this.gui.getTopPane().setZoom(this.gui.getTopPane().getZoom() - 1);
+      } else {
+         // Mouse wheel moved down
+         this.gui.getTopPane().setZoom(this.gui.getTopPane().getZoom() + 1);
+      }
+   }
 
 
 }

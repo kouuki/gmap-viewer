@@ -31,13 +31,15 @@ class GDraw{
       //enlarge if needed
       if(objectsSize == objects.length) enlargeGDrawableObjectArray();
       objects[objectsSize++] = object;
+      //System.out.println(this.toString());
    }
 
    public void remove(int index){
       if(index == -1) return;
       if(index == selected) selected = -1;
       if(index == -1 || index >= objectsSize) return;
-      objects[index] = objects[objectsSize--];
+      objects[index] = objects[(objectsSize--)-1];
+      //System.out.println(this.toString());
    }
 
    public void remove(GDrawableObject object){
@@ -60,7 +62,10 @@ class GDraw{
 
    public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
       //draw the objects first
-      for(int i=0;i<objectsSize;i++) objects[i].draw(image, p, zoom);
+      for(int i=0;i<objectsSize;i++)
+         //if(objects[i] != null) objects[i].draw(image, p, zoom);
+         //else System.out.println("......null pointer @ "+i+"......");
+         objects[i].draw(image, p, zoom);
 
       //now draw the selection rectangle tickmarks unless nothing is selected
       if(selected < 0 || selected >= objectsSize) return;
@@ -116,5 +121,13 @@ class GDraw{
       objects = temp;
    }
 
+   public String toString(){
+      String s = "";
+      for(int i=0;i<objectsSize;i++){
+         if(objects[i] != null) s += "["+i+" is not null]\n";
+         else s += "["+i+" is null]\n";
+      }
+      return s;
+   }
 
 }
