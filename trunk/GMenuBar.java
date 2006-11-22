@@ -39,11 +39,11 @@ public class GMenuBar extends JMenuBar{
       JMenuItem[] menu = {new JMenuActionPOC(gui), new JMenuActionClearRAM(gui), new JMenuRadioButtonSelectionOn(gui), new JMenuRadioButtonDragOn(gui), new JMenuRadioButtonCalculateDistance(gui), new JMenuRadioButtonAddPoints(gui) ,new JMenuRadioButtonAddLines(gui),new JMenuRadioButtonAddText(gui)};
       add(new JMenuGroup("Debugging",gui,menu));
 
-	  //data type 
-	  JMenuItem[] datatype = {new JMenuRadioButtonActionSat("Satellite",gui), new JMenuRadioButtonActionMap("Map",gui)};
-	  add(new JMenuGroup("Data Type",gui,datatype));
+     //data type
+     JMenuItem[] datatype = {new JMenuRadioButtonActionSat("Satellite",gui), new JMenuRadioButtonActionMap("Map",gui), new JMenuRadioButtonActionHybrid("Hybrid",gui)};
+     add(new JMenuGroup("Data Type",gui,datatype));
 
-   
+
    }
 
 
