@@ -2,8 +2,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-/** 
- * Class GPopupMenu is a group of radio buttons/menu actions displayed as a popup menu when a 
+/**
+ * Class GPopupMenu is a group of radio buttons/menu actions displayed as a popup menu when a
  * right click is performed on the GUI. It extends JPopupMenu.
  * @author Dan
  */
@@ -25,7 +25,7 @@ class GPopupMenu extends JPopupMenu{
     */
    private JMenuAction removeObject;
 
-   /** 
+   /**
     * Method to initiate the popup and add the necessary menu items and radio
     * buttons to it including:
     * <ul>
@@ -46,12 +46,12 @@ class GPopupMenu extends JPopupMenu{
       JRadioButtonMenuItem rb, rb2;
       // Instantiation of the PopupMenu
       popup = new JPopupMenu();
-      
+
       // Create some menu items for the popupmenu
-      menuItem = new JMenuActionRemovePane(gui);
+      menuItem = new JMenuActionSetPaneTitle(gui);
       this.add(menuItem);
 
-      menuItem = new JMenuActionAddGDrawableObject(gui);
+      menuItem = new JMenuActionRemovePane(gui);
       this.add(menuItem);
 
       removeObject = new JMenuActionRemoveGDrawableObject(gui);
@@ -62,39 +62,39 @@ class GPopupMenu extends JPopupMenu{
 
       // New button group for the radio buttons
       ButtonGroup group = new ButtonGroup();
-      
-      // Create the radio buttons   	
+
+      // Create the radio buttons
       rb = new JMenuRadioButtonDragOn(gui);
       group.add(rb);
       this.add(rb);
-      
+
       rb2 = new JMenuRadioButtonSelectionOn(gui);
       group.add(rb2);
       this.add(rb2);
-      
+
       rb = new JMenuRadioButtonCalculateDistance(gui);
       group.add(rb);
       this.add(rb);
-      
+
       rb = new JMenuRadioButtonAddPoints(gui);
       group.add(rb);
       this.add(rb);
-      
+
       rb = new JMenuRadioButtonAddLines(gui);
       group.add(rb);
       this.add(rb);
-      
+
       rb = new JMenuRadioButtonAddText(gui);
       group.add(rb);
       this.add(rb);
-      
+
       // Define the radio button to be selected by default
       this.setSelected(rb2);
    }
 
    /**
     * Method to check and update the removeObject menu actions state when necessary
-    * 
+    *
     * @param invoker The component in whose space the popup menu is to appear.
     * @param x The x coordinate in invoker's coordinate space at which the popup menu
     * is to be displayed.

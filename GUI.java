@@ -23,7 +23,7 @@ import java.awt.geom.*;
 * <li> MouseMotionListener
 * <li> ComponentListener</ul>
 */
-public class GUI extends JFrame implements ActionListener, KeyListener, MouseListener, MouseMotionListener, ComponentListener{
+public class GUI extends JFrame implements ActionListener, KeyListener, MouseListener, MouseMotionListener, ComponentListener, PaneListener{
 
    /**
     * The global parameter for the Google Map Viewer title.
@@ -130,6 +130,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
 
       //notifier
       notifier = new PaneListenerNotifier();
+      notifier.addPaneListener(this);
 
       //initialize gmap
       gmap = new GMap();
@@ -303,6 +304,11 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    public EmbeddedProgressMeter getProgressMeter(){
       return embeddedProgressMeter;
    }
+
+   public GZoomSlider getSlider(){
+      return slider;
+   }
+
    //public ProgressMeter getProgressMeter(){
    //   return globalProgressMeter;
    //}
@@ -436,6 +442,11 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
          sourceMenuAction.start();
       }
 
+   }
+
+   //panelistener
+   public void paneEvent(Object o){
+      repaint();
    }
 }
 
