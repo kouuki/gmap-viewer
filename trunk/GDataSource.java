@@ -12,7 +12,7 @@ abstract class GDataSource {
    /**
     * This constant restricts the size of the download queue.
     */
-   public static int QUEUE_MAX_SIZE = 32;
+   public static int QUEUE_MAX_SIZE = 20;
 
    //where to put files stored on the server
    protected String cacheDirectory;
@@ -57,7 +57,7 @@ abstract class GDataSource {
         ramCache.remove(ramCacheQueue.remove(0));
 //       I don't agree that we should be calling the garbage collector after
 //       every call to this method. - Taeber
-       System.gc(); 
+       System.gc();
      }
      String key = x + " " + y + " " + zoom;
      ramCache.put(key, new GDataImage(image,x,y,zoom));
@@ -68,10 +68,10 @@ abstract class GDataSource {
     * Checks to see if the image (<tt>x</tt>,<tt>y</tt>) at the specified zoom
     * level exists. If not, then it will download the image and store it in
     * local memory.
-    * 
+    *
     * <b>NOTE:</b> Verifying that the image does not already exist in cache is
     * not a precondition because this method does it.
-    * 
+    *
     * @param x The horizontal coordinate
     * @param y The vertical coordinate
     * @param zoom The zoom level
@@ -87,25 +87,33 @@ abstract class GDataSource {
     * removes that image from the queue.
     */
    public void downloadQueue() {
-	  Thread t = new Thread(new Runnable() {	  
-    	 public void run() {
-    		GDataImage img;
-    		
+     Thread t = new Thread(new Runnable() {
+       public void run() {
+         GDataImage img;
+
             synchronized (downloadQueue) {
                System.out.println(downloadQueue.size());
+               resetAbortFlag();
                while ((img = downloadQueue.poll()) != null) {
-               System.out.println("   from Q: " +img);
+                  System.out.println("   from Q: " +img);
                   cache(img.getX(), img.getY(), img.getZoom());
+                  if(getAbortFlag()){
+                     System.out.println("ABORT");
+                     emptyQueue();
+                     return;
+                  }
                   queueSize--;
+
                }
             }
-    	 }
+       }
       });
-	  
-	  t.setPriority(Thread.MIN_PRIORITY);
-	  t.start();
+
+     t.setPriority(Thread.MIN_PRIORITY);
+     t.start();
    }
-   
+
+
    /**
     * Removes all Images from the download queue. The download queue will be
     * empty afterwards unless an exception is thrown.
@@ -114,17 +122,31 @@ abstract class GDataSource {
    public void emptyQueue() {
       synchronized(downloadQueue) {
          downloadQueue.clear();
+         queueSize = 0;
       }
    }
-   
+
    /**
-    * Accessor method for the <tt>cacheDirectory</tt> property. 
+    * Aborts the download queue.
+    */
+   protected boolean abortFlag;
+   public void abortQueue(){
+      abortFlag = true;
+   }
+
+   public boolean getAbortFlag(){ return abortFlag; }
+   public void resetAbortFlag(){ abortFlag = false;}
+
+
+
+   /**
+    * Accessor method for the <tt>cacheDirectory</tt> property.
     * @return The name of the <tt>cacheDirectory</tt>.
     */
    public String getCacheDirectory(){
       return cacheDirectory;
-   }   
-   
+   }
+
    /**
     * This method will return the image corresponding to the specified point
     * and zoom level. The image could be in any of three places: RAM, memory,
@@ -143,7 +165,7 @@ abstract class GDataSource {
    public BufferedImage getImage(int x, int y, int zoom) {
      return getImage(x, y, zoom, false);
    }
-   
+
    /**
     * This method does the real work of getImage(). The findAdjacent
     * parameter is necessary because we want to have the option to not
@@ -156,7 +178,7 @@ abstract class GDataSource {
       /* try getting image from RAM */
       BufferedImage ramImage = getImageFromRAM(x,y,zoom);
       if (ramImage != null) {
-         queueHigherLevels(x, y, zoom);         
+         queueHigherLevels(x, y, zoom);
          if (findAdjacent) {
             queueAdjacent(x,y,zoom);
          }
@@ -182,11 +204,11 @@ abstract class GDataSource {
          {
             graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
             addImageToRAM(x,y,zoom,thumbImage);
-            queueHigherLevels(x, y, zoom);            
+            queueHigherLevels(x, y, zoom);
             if (findAdjacent) {
                queueAdjacent(x,y,zoom);
             }
-            
+
             return thumbImage;
          }
       } catch(Exception e) {
@@ -210,11 +232,11 @@ abstract class GDataSource {
             //save image to cache
             ImageIO.write(thumbImage, "png", new File(cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png"));
             System.out.println(" [done!]");
-            queueHigherLevels(x, y, zoom);            
+            queueHigherLevels(x, y, zoom);
             if (findAdjacent) {
                queueAdjacent(x,y,zoom);
             }
-            
+
             return thumbImage;
          }
          else
@@ -253,7 +275,7 @@ abstract class GDataSource {
    }
 
    /**
-    * Determines if a local copy of the image (<tt>x</tt>,<tt>y</tt>) at the 
+    * Determines if a local copy of the image (<tt>x</tt>,<tt>y</tt>) at the
     * specified zoom level already exists.
     * @param x The horizontal cooridinate
     * @param y The vertical coordinate
@@ -264,8 +286,8 @@ abstract class GDataSource {
    public boolean isCached(int x, int y, int zoom){
       File file = new File(makeCachedName(x,y,zoom));
       return file.exists();
-   }    
-   
+   }
+
    /**
     * UNDOCUMENTED
     * @param x
@@ -288,7 +310,7 @@ abstract class GDataSource {
 
 
    /**
-    * This method returns the string representing the path through the tree to 
+    * This method returns the string representing the path through the tree to
     * the correct child node representing the desired map.
     */
    public String makeRemoteSatName(int x, int y, int zoom){
@@ -358,7 +380,7 @@ abstract class GDataSource {
    }
 
    /**
-    * Adds the given GDataImage to the download queue. 
+    * Adds the given GDataImage to the download queue.
     * @param img The GDataImage to be added to the queue.
     */
    protected void queue(GDataImage img) {
@@ -374,8 +396,8 @@ abstract class GDataSource {
            System.out.println("Added " + img + " to download queue.");
          }
       }
-   }   
-   
+   }
+
    /**
     * Checks to see if the following squares are in the cache. If not, then
     * they are added to the download queue.
@@ -405,7 +427,7 @@ abstract class GDataSource {
    }
 
    /**
-    * Queues the higher zoom levels that capture the (<tt>x</tt>, <tt>y</tt>) 
+    * Queues the higher zoom levels that capture the (<tt>x</tt>, <tt>y</tt>)
     * at the specifed zoom level.
     * @param x The horizontal coordinate
     * @param y The vertical coordinate
