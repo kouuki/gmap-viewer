@@ -28,7 +28,10 @@ abstract class GDataSource {
    protected ArrayList<String> ramCacheQueue;
    protected int lastPointer;
 
-   //constructor
+   /**
+    * Constructor
+    * @param cacheDirectory
+    */
    public GDataSource(String cacheDirectory){
       this.cacheDirectory = cacheDirectory;
       ramCache = new Hashtable<String, GDataImage>();
@@ -39,176 +42,43 @@ abstract class GDataSource {
       verifyCacheDirectories();
    }
 
-   //get methods
-   public String getCacheDirectory(){
-      return cacheDirectory;
-   }
-
-   //cached or not methods
-   public boolean isCached(int x, int y, int zoom){
-      File file = new File(makeCachedName(x,y,zoom));
-      return file.exists();
-   }
-
-   //cache method
-   public void cache(int x, int y, int zoom) {
-      if (!isCached(x,y,zoom)) {
-         getImage(x, y, zoom, false);
-      }
-   }
-
    /**
-    * This method will return the image corresponding to the specified point
-    * and zoom level. The image could be in any of three places: RAM, memory,
-    * or the Google servers. This method checks the RAM before the memory and
-    * only checks remotely if it was not found locally.
-    * <p>
-    * Furthermore, this method will queue for download all adjacent images as
-    * well as images at all higher zoom levels.
-    *
-    * @param x The horizontal point
-    * @param y The vertical point
-    * @param zoom The zoom level (1-15)
-    * @return A BufferedImage containing the Google Map Image or null if the
-    *         image could not be loaded.
-    */
-   public BufferedImage getImage(int x, int y, int zoom) {
-     return getImage(x, y, zoom, false);
-   }
-
-   /**
-    * This method does the real work of getImage(). The findAdjacent
-    * parameter is necessary because we want to have the option to not
-    * download the adjacent/bordering images. In other words, a call to
-    * the public getImage() will find the bordering images, but all calls to
-    * getImage() made within that initial call will not download the adjacent
-    * images.
-    */
-   public BufferedImage getImage(int x, int y, int zoom, boolean findAdjacent) {
-      /* try getting image from RAM */
-      BufferedImage ramImage = getImageFromRAM(x,y,zoom);
-      if (ramImage != null) {
-         if (findAdjacent) {
-          queueAdjacent(x,y,zoom);
-         }
-         cacheHigherLevels(x, y, zoom);
-         return ramImage;
-      }
-
-      //allocate space for the return
-      BufferedImage thumbImage = new BufferedImage(sourceSize.width, sourceSize.height, BufferedImage.TYPE_INT_ARGB);
-      Graphics2D graphics2D = thumbImage.createGraphics();
-
-      /* try accessing local image */
-      try {
-         //System.out.println("Load local image ("+x+","+y+") zoom="+zoom);
-         //build source string
-         String thisFile = makeCachedName(x,y,zoom);
-         // load image from INFILE
-         Image image = Toolkit.getDefaultToolkit().createImage(thisFile);
-         MediaTracker mediaTracker = new MediaTracker(new Container());
-         mediaTracker.addImage(image, 0);
-         mediaTracker.waitForID(0);
-
-         if (!(mediaTracker.isErrorAny()))
-         {
-            graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
-            addImageToRAM(x,y,zoom,thumbImage);
-//            if (findAdjacent) {
-//               queueAdjacent(x,y,zoom);
-//            }
-            cacheHigherLevels(x, y, zoom);
-            return thumbImage;
-         }
-      } catch(Exception e) {
-      }
-
-      /* try accessing remote image */
-      try{
-         System.out.print("Load remote image ("+x+","+y+") zoom="+zoom);
-         //build source string
-         String thisFile = makeRemoteName(x,y,zoom);
-         // load image from INFILE
-         Image image = Toolkit.getDefaultToolkit().createImage(new URL(thisFile));
-         MediaTracker mediaTracker = new MediaTracker(new Container());
-         mediaTracker.addImage(image, 0);
-         mediaTracker.waitForID(0);
-
-         if (!(mediaTracker.isErrorAny()))
-         {
-            graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
-            addImageToRAM(x,y,zoom,thumbImage);
-            //save image to cache
-            ImageIO.write(thumbImage, "png", new File(cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png"));
-            System.out.println(" [done!]");
-            if (findAdjacent) {
-               queueAdjacent(x,y,zoom);
-            }
-            cacheHigherLevels(x, y, zoom);
-            return thumbImage;
-         }
-         else
-         {
-          System.out.println(" [error!]");
-         }
-      } catch(Exception e) {
-
-          System.out.println("{"+e+"}");
-
-      }
-
-      return null;
-   }
-
-   protected void cacheHigherLevels(int x, int y, int zoom)
-   {
-     /* cache higher zoom levels */
-     if (zoom < GDataImage.ZOOM_MAX && !isCached(x, y, zoom)) {
-         queue(new GDataImage(null, x/2, y/2, zoom+1));
-      }
-   }
-
-   /**
-    * Checks to see if the following squares are in the cache. If not, then
-    * they are added to the download queue.
-    * <p>
-    * +----------+----------+----------+
-    * | x-1, y-1 |  x, y-1  | x+1, y-1 |
-    * +----------+----------+----------+
-    * | x-1, y   |  x, y    | x+1, y   |
-    * +----------+----------+----------+
-    * | x-1, y+1 |  x, y+1  | x+1, y+1 |
-    * +----------+----------+----------+
-    * <p>
+    * UNDOCUMENTED
     * @param x
     * @param y
     * @param zoom
+    * @param image
     */
-   protected void queueAdjacent(int x, int y, int zoom) {
-      for (int m = x-1, M = x+1; m <= M; m++) {
-       if (m < 0) continue;
-
-         for (int n = y-1, N = y+1; n <= N; n++) {
-         if (n >= 0) {
-            this.queue(new GDataImage(null, m, n, zoom));
-         }
-         }
-      }
-      return;
+   public void addImageToRAM(int x, int y, int zoom, BufferedImage image){
+      /*ramCache[lastPointer] = new GDataImage(image,x,y,zoom);
+      lastPointer++;
+      if(lastPointer >= ramCache.length) lastPointer = 0;*/
+     if (ramCache.size() > 100){
+        ramCache.remove(ramCacheQueue.remove(0));
+//       I don't agree that we should be calling the garbage collector after
+//       every call to this method. - Taeber
+       System.gc(); 
+     }
+     String key = x + " " + y + " " + zoom;
+     ramCache.put(key, new GDataImage(image,x,y,zoom));
+     ramCacheQueue.add(key);
    }
 
-   protected void queue(GDataImage img) {
-      synchronized (downloadQueue) {
-         if (!isCached(img.getX(), img.getY(), img.getZoom()) && !downloadQueue.contains(img)) {
-            while (this.queueSize >= QUEUE_MAX_SIZE) {
-            downloadQueue.poll();
-            queueSize--;
-            }
-
-           downloadQueue.offer(img);
-           queueSize++;
-           System.out.println("Added " + img + " to download queue.");
-         }
+   /**
+    * Checks to see if the image (<tt>x</tt>,<tt>y</tt>) at the specified zoom
+    * level exists. If not, then it will download the image and store it in
+    * local memory.
+    * 
+    * <b>NOTE:</b> Verifying that the image does not already exist in cache is
+    * not a precondition because this method does it.
+    * 
+    * @param x The horizontal coordinate
+    * @param y The vertical coordinate
+    * @param zoom The zoom level
+    */
+   public void cache(int x, int y, int zoom) {
+      if (!isCached(x,y,zoom)) {
+         getImage(x, y, zoom, false);
       }
    }
 
@@ -235,16 +105,192 @@ abstract class GDataSource {
 	  t.setPriority(Thread.MIN_PRIORITY);
 	  t.start();
    }
+   
+   /**
+    * Removes all Images from the download queue. The download queue will be
+    * empty afterwards unless an exception is thrown.
+    * @see java.util.Queue.clear()
+    */
+   public void emptyQueue() {
+      synchronized(downloadQueue) {
+         downloadQueue.clear();
+      }
+   }
+   
+   /**
+    * Accessor method for the <tt>cacheDirectory</tt> property. 
+    * @return The name of the <tt>cacheDirectory</tt>.
+    */
+   public String getCacheDirectory(){
+      return cacheDirectory;
+   }   
+   
+   /**
+    * This method will return the image corresponding to the specified point
+    * and zoom level. The image could be in any of three places: RAM, memory,
+    * or the Google servers. This method checks the RAM before the memory and
+    * only checks remotely if it was not found locally.
+    * <p>
+    * Furthermore, this method will queue for download all adjacent images as
+    * well as images at all higher zoom levels.
+    *
+    * @param x The horizontal point
+    * @param y The vertical point
+    * @param zoom The zoom level (1-15)
+    * @return A BufferedImage containing the Google Map Image or null if the
+    *         image could not be loaded.
+    */
+   public BufferedImage getImage(int x, int y, int zoom) {
+     return getImage(x, y, zoom, false);
+   }
+   
+   /**
+    * This method does the real work of getImage(). The findAdjacent
+    * parameter is necessary because we want to have the option to not
+    * download the adjacent/bordering images. In other words, a call to
+    * the public getImage() will find the bordering images, but all calls to
+    * getImage() made within that initial call will not download the adjacent
+    * images.
+    */
+   public BufferedImage getImage(int x, int y, int zoom, boolean findAdjacent) {
+      /* try getting image from RAM */
+      BufferedImage ramImage = getImageFromRAM(x,y,zoom);
+      if (ramImage != null) {
+         queueHigherLevels(x, y, zoom);         
+         if (findAdjacent) {
+            queueAdjacent(x,y,zoom);
+         }
+         return ramImage;
+      }
 
+      //allocate space for the return
+      BufferedImage thumbImage = new BufferedImage(sourceSize.width, sourceSize.height, BufferedImage.TYPE_INT_ARGB);
+      Graphics2D graphics2D = thumbImage.createGraphics();
+
+      /* try accessing local image */
+      try {
+         //System.out.println("Load local image ("+x+","+y+") zoom="+zoom);
+         //build source string
+         String thisFile = makeCachedName(x,y,zoom);
+         // load image from INFILE
+         Image image = Toolkit.getDefaultToolkit().createImage(thisFile);
+         MediaTracker mediaTracker = new MediaTracker(new Container());
+         mediaTracker.addImage(image, 0);
+         mediaTracker.waitForID(0);
+
+         if (!(mediaTracker.isErrorAny()))
+         {
+            graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
+            addImageToRAM(x,y,zoom,thumbImage);
+            queueHigherLevels(x, y, zoom);            
+            if (findAdjacent) {
+               queueAdjacent(x,y,zoom);
+            }
+            
+            return thumbImage;
+         }
+      } catch(Exception e) {
+      }
+
+      /* try accessing remote image */
+      try{
+         System.out.print("Load remote image ("+x+","+y+") zoom="+zoom);
+         //build source string
+         String thisFile = makeRemoteName(x,y,zoom);
+         // load image from INFILE
+         Image image = Toolkit.getDefaultToolkit().createImage(new URL(thisFile));
+         MediaTracker mediaTracker = new MediaTracker(new Container());
+         mediaTracker.addImage(image, 0);
+         mediaTracker.waitForID(0);
+
+         if (!(mediaTracker.isErrorAny()))
+         {
+            graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
+            addImageToRAM(x,y,zoom,thumbImage);
+            //save image to cache
+            ImageIO.write(thumbImage, "png", new File(cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png"));
+            System.out.println(" [done!]");
+            queueHigherLevels(x, y, zoom);            
+            if (findAdjacent) {
+               queueAdjacent(x,y,zoom);
+            }
+            
+            return thumbImage;
+         }
+         else
+         {
+          System.out.println(" [error!]");
+         }
+      } catch(Exception e) {
+
+          System.out.println("{"+e+"}");
+
+      }
+
+      return null;
+   }
+
+   /**
+    * UNDOCUMENTED
+    * @param x
+    * @param y
+    * @param zoom
+    * @return
+    */
+   public BufferedImage getImageFromRAM(int x, int y, int zoom){
+      /*for(int i=0;i<ramCache.length;i++)
+         if(ramCache[i] != null)
+            if(x == ramCache[i].getX() && y == ramCache[i].getY() && zoom == ramCache[i].getZoom())
+               return ramCache[i].getImage();
+      return null;*/
+      BufferedImage image = null;
+      String key = x + " " + y + " " + zoom;
+      GDataImage imageHolder = ramCache.get(key);
+      if (imageHolder != null){
+         image = imageHolder.getImage();
+      }
+      return image;
+   }
+
+   /**
+    * Determines if a local copy of the image (<tt>x</tt>,<tt>y</tt>) at the 
+    * specified zoom level already exists.
+    * @param x The horizontal cooridinate
+    * @param y The vertical coordinate
+    * @param zoom The zoom level
+    * @return <tt>true</tt> if a local copy exists; <tt>false</tt> otherwise.
+    */
+   //cached or not methods
+   public boolean isCached(int x, int y, int zoom){
+      File file = new File(makeCachedName(x,y,zoom));
+      return file.exists();
+   }    
+   
+   /**
+    * UNDOCUMENTED
+    * @param x
+    * @param y
+    * @param zoom
+    * @return
+    */
    protected String makeCachedName(int x, int y, int zoom){
       return cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png";
    }
 
-   //abstract makeRemoteNameMethod
+   /**
+    * UNDOCUMENTED
+    * @param x
+    * @param y
+    * @param zoom
+    * @return
+    */
    protected abstract String makeRemoteName(int x, int y, int zoom);
 
-      //This method returns the string representing the path through the tree to the correct child node
-   //representing the desired map;
+
+   /**
+    * This method returns the string representing the path through the tree to 
+    * the correct child node representing the desired map.
+    */
    public String makeRemoteSatName(int x, int y, int zoom){
        //generate random server
       int ServerNumber = (int)Math.round(Math.random()*3.0);
@@ -311,37 +357,71 @@ abstract class GDataSource {
       return satImage;
    }
 
-   //RAM Methods
-   public BufferedImage getImageFromRAM(int x, int y, int zoom){
-      /*for(int i=0;i<ramCache.length;i++)
-         if(ramCache[i] != null)
-            if(x == ramCache[i].getX() && y == ramCache[i].getY() && zoom == ramCache[i].getZoom())
-               return ramCache[i].getImage();
-      return null;*/
-      BufferedImage image = null;
-      String key = x + " " + y + " " + zoom;
-      GDataImage imageHolder = ramCache.get(key);
-      if (imageHolder != null){
-         image = imageHolder.getImage();
+   /**
+    * Adds the given GDataImage to the download queue. 
+    * @param img The GDataImage to be added to the queue.
+    */
+   protected void queue(GDataImage img) {
+      synchronized (downloadQueue) {
+         if (!isCached(img.getX(), img.getY(), img.getZoom()) && !downloadQueue.contains(img)) {
+            while (this.queueSize >= QUEUE_MAX_SIZE) {
+               downloadQueue.poll();
+               queueSize--;
+            }
+
+           downloadQueue.offer(img);
+           queueSize++;
+           System.out.println("Added " + img + " to download queue.");
+         }
       }
-      return image;
+   }   
+   
+   /**
+    * Checks to see if the following squares are in the cache. If not, then
+    * they are added to the download queue.
+    * <p>
+    * +----------+----------+----------+
+    * | x-1, y-1 |  x, y-1  | x+1, y-1 |
+    * +----------+----------+----------+
+    * | x-1, y   |  x, y    | x+1, y   |
+    * +----------+----------+----------+
+    * | x-1, y+1 |  x, y+1  | x+1, y+1 |
+    * +----------+----------+----------+
+    * <p>
+    * @param x
+    * @param y
+    * @param zoom
+    */
+   protected void queueAdjacent(int x, int y, int zoom) {
+      for (int m = x-1, M = x+1; m <= M; m++) {
+         if (m < 0) continue;
+
+         for (int n = y-1, N = y+1; n <= N; n++) {
+            if (n >= 0) {
+               this.queue(new GDataImage(null, m, n, zoom));
+            }
+         }
+      }
    }
 
-   public void addImageToRAM(int x, int y, int zoom, BufferedImage image){
-      /*ramCache[lastPointer] = new GDataImage(image,x,y,zoom);
-      lastPointer++;
-      if(lastPointer >= ramCache.length) lastPointer = 0;*/
-     if(ramCache.size() > 100){
-        ramCache.remove(ramCacheQueue.remove(0));
-        System.gc();
-     }
-     String key = x + " " + y + " " + zoom;
-     ramCache.put(key, new GDataImage(image,x,y,zoom));
-     ramCacheQueue.add(key);
+   /**
+    * Queues the higher zoom levels that capture the (<tt>x</tt>, <tt>y</tt>) 
+    * at the specifed zoom level.
+    * @param x The horizontal coordinate
+    * @param y The vertical coordinate
+    * @param zoom The zoom level
+    */
+   protected void queueHigherLevels(int x, int y, int zoom)
+   {
+      if (zoom >= GDataImage.ZOOM_MIN && zoom < GDataImage.ZOOM_MAX) {
+         queueHigherLevels(x/2, y/2, zoom+1);
+         queue(new GDataImage(null, x/2, y/2, zoom+1));
+      }
    }
 
-   /*
-    * make sure cache exists
+   /**
+    * Checks to see if the cache directories exists. If not, then it creates
+    * them.
     */
    protected void verifyCacheDirectories(){
       for (int i = GDataImage.ZOOM_MIN; i <= GDataImage.ZOOM_MAX; i++) {
@@ -351,19 +431,99 @@ abstract class GDataSource {
    }
 }
 
-class GDataSourceSatellite extends GDataSource{
+class GDataSourceHybrid extends GDataSource{
+   private GDataSource satellite;
 
-   public GDataSourceSatellite(String cacheDirectory){
+   public GDataSourceHybrid(String cacheDirectory, GDataSource satellite){
       super(cacheDirectory);
+      this.satellite = satellite;
    }
+
+
+   public BufferedImage getImage(int x, int y, int zoom, boolean findAdjacent) {
+      /* try getting image from RAM */
+      BufferedImage ramImage = getImageFromRAM(x,y,zoom);
+      if (ramImage != null) {
+         if (findAdjacent) {
+          queueAdjacent(x,y,zoom);
+         }
+         queueHigherLevels(x, y, zoom);
+         return ramImage;
+      }
+
+      //allocate space for the return
+      BufferedImage thumbImage = new BufferedImage(sourceSize.width, sourceSize.height, BufferedImage.TYPE_INT_ARGB);
+      Graphics2D graphics2D = thumbImage.createGraphics();
+
+      /* try accessing local image */
+      try {
+         //System.out.println("Load local image ("+x+","+y+") zoom="+zoom);
+         //build source string
+         String thisFile = makeCachedName(x,y,zoom);
+         // load image from INFILE
+         Image image = Toolkit.getDefaultToolkit().createImage(thisFile);
+         MediaTracker mediaTracker = new MediaTracker(new Container());
+         mediaTracker.addImage(image, 0);
+         mediaTracker.waitForID(0);
+
+         if (!(mediaTracker.isErrorAny()))
+         {
+            graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
+            addImageToRAM(x,y,zoom,thumbImage);
+            if (findAdjacent) {
+               queueAdjacent(x,y,zoom);
+            }
+            queueHigherLevels(x, y, zoom);
+            return thumbImage;
+         }
+      } catch(Exception e) {
+      }
+
+      /* try accessing remote image */
+      try{
+         System.out.print("Load remote image ("+x+","+y+") zoom="+zoom);
+         //build source string
+         String thisFile = makeRemoteName(x,y,zoom);
+         // load image from INFILE
+         Image image = Toolkit.getDefaultToolkit().createImage(new URL(thisFile));
+         MediaTracker mediaTracker = new MediaTracker(new Container());
+         mediaTracker.addImage(image, 0);
+         mediaTracker.waitForID(0);
+
+         if (!(mediaTracker.isErrorAny()))
+         {
+            graphics2D.drawImage(satellite.getImage(x,y,zoom), 0, 0, sourceSize.width, sourceSize.height, null);
+            graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
+            addImageToRAM(x,y,zoom,thumbImage);
+            //save image to cache
+            ImageIO.write(thumbImage, "png", new File(cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png"));
+            System.out.println(" [done!]");
+            if (findAdjacent) {
+               queueAdjacent(x,y,zoom);
+            }
+            queueHigherLevels(x, y, zoom);
+            return thumbImage;
+         }
+         else
+         {
+          System.out.println(" [error!]");
+         }
+      } catch(Exception e) {
+
+          System.out.println("{"+e+"}");
+
+      }
+
+      return null;
+   }
+
+
 
    protected String makeRemoteName(int x, int y, int zoom){
       int serverNumber = (int)Math.round(Math.random()*3.0);
-      //System.out.print(" [satellite]");
-      String pathToNode = makeRemoteSatName(x,y,zoom);
-
-      System.out.println(pathToNode);
-      return "http://kh"+serverNumber+".google.com/kh?n=404&v=11&t="+pathToNode;
+      //System.out.print(" [map]");
+      //System.out.print("{http://mt"+serverNumber+".google.com/mt?n=404&v=w2.79&x="+x+"&y="+y+"&zoom="+zoom+"}");
+      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2t.30&x="+x+"&y="+y+"&zoom="+zoom;
    }
 
 }
@@ -400,99 +560,19 @@ class GDataSourceOverlay extends GDataSource{
 }
 
 
-class GDataSourceHybrid extends GDataSource{
-   private GDataSource satellite;
+class GDataSourceSatellite extends GDataSource{
 
-   public GDataSourceHybrid(String cacheDirectory, GDataSource satellite){
+   public GDataSourceSatellite(String cacheDirectory){
       super(cacheDirectory);
-      this.satellite = satellite;
    }
-
-
-   public BufferedImage getImage(int x, int y, int zoom, boolean findAdjacent) {
-      /* try getting image from RAM */
-      BufferedImage ramImage = getImageFromRAM(x,y,zoom);
-      if (ramImage != null) {
-         if (findAdjacent) {
-          queueAdjacent(x,y,zoom);
-         }
-         cacheHigherLevels(x, y, zoom);
-         return ramImage;
-      }
-
-      //allocate space for the return
-      BufferedImage thumbImage = new BufferedImage(sourceSize.width, sourceSize.height, BufferedImage.TYPE_INT_ARGB);
-      Graphics2D graphics2D = thumbImage.createGraphics();
-
-      /* try accessing local image */
-      try {
-         //System.out.println("Load local image ("+x+","+y+") zoom="+zoom);
-         //build source string
-         String thisFile = makeCachedName(x,y,zoom);
-         // load image from INFILE
-         Image image = Toolkit.getDefaultToolkit().createImage(thisFile);
-         MediaTracker mediaTracker = new MediaTracker(new Container());
-         mediaTracker.addImage(image, 0);
-         mediaTracker.waitForID(0);
-
-         if (!(mediaTracker.isErrorAny()))
-         {
-            graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
-            addImageToRAM(x,y,zoom,thumbImage);
-            if (findAdjacent) {
-               queueAdjacent(x,y,zoom);
-            }
-            cacheHigherLevels(x, y, zoom);
-            return thumbImage;
-         }
-      } catch(Exception e) {
-      }
-
-      /* try accessing remote image */
-      try{
-         System.out.print("Load remote image ("+x+","+y+") zoom="+zoom);
-         //build source string
-         String thisFile = makeRemoteName(x,y,zoom);
-         // load image from INFILE
-         Image image = Toolkit.getDefaultToolkit().createImage(new URL(thisFile));
-         MediaTracker mediaTracker = new MediaTracker(new Container());
-         mediaTracker.addImage(image, 0);
-         mediaTracker.waitForID(0);
-
-         if (!(mediaTracker.isErrorAny()))
-         {
-            graphics2D.drawImage(satellite.getImage(x,y,zoom), 0, 0, sourceSize.width, sourceSize.height, null);
-            graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
-            addImageToRAM(x,y,zoom,thumbImage);
-            //save image to cache
-            ImageIO.write(thumbImage, "png", new File(cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png"));
-            System.out.println(" [done!]");
-            if (findAdjacent) {
-               queueAdjacent(x,y,zoom);
-            }
-            cacheHigherLevels(x, y, zoom);
-            return thumbImage;
-         }
-         else
-         {
-          System.out.println(" [error!]");
-         }
-      } catch(Exception e) {
-
-          System.out.println("{"+e+"}");
-
-      }
-
-      return null;
-   }
-
-
 
    protected String makeRemoteName(int x, int y, int zoom){
       int serverNumber = (int)Math.round(Math.random()*3.0);
-      //System.out.print(" [map]");
-      //System.out.print("{http://mt"+serverNumber+".google.com/mt?n=404&v=w2.79&x="+x+"&y="+y+"&zoom="+zoom+"}");
-      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2t.30&x="+x+"&y="+y+"&zoom="+zoom;
+      //System.out.print(" [satellite]");
+      String pathToNode = makeRemoteSatName(x,y,zoom);
+
+      System.out.println(pathToNode);
+      return "http://kh"+serverNumber+".google.com/kh?n=404&v=11&t="+pathToNode;
    }
 
 }
