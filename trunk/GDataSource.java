@@ -43,7 +43,9 @@ abstract class GDataSource {
    }
 
    /**
-    * UNDOCUMENTED
+    * adds image to ram, using the 
+    * x and y coordinates as well as the zoom level 
+    * as a key to reference the image.
     * @param x
     * @param y
     * @param zoom
@@ -53,11 +55,11 @@ abstract class GDataSource {
       /*ramCache[lastPointer] = new GDataImage(image,x,y,zoom);
       lastPointer++;
       if(lastPointer >= ramCache.length) lastPointer = 0;*/
-     if (ramCache.size() > 100){
+     if (ramCache.size() > 20){
         ramCache.remove(ramCacheQueue.remove(0));
 //       I don't agree that we should be calling the garbage collector after
 //       every call to this method. - Taeber
-       System.gc();
+//       System.gc();
      }
      String key = x + " " + y + " " + zoom;
      ramCache.put(key, new GDataImage(image,x,y,zoom));
