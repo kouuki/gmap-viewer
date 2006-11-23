@@ -174,14 +174,16 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
          //else paint an overlay
          if(!newImageMemory){
-            Composite temp = g2d.getComposite();
-            g2d.setComposite(opacity30);
-            g2d.setColor(Color.BLACK);
-            g2d.fillRect(0,0,image.getWidth(), image.getHeight());
-            g2d.setComposite(temp);
+            //Composite temp = g2d.getComposite();
+            //g2d.setComposite(opacity30);
+            //g2d.setColor(Color.BLACK);
+            //g2d.fillRect(0,0,image.getWidth(), image.getHeight());
+            //g2d.setComposite(temp);
 
          }
 
+         //empty data source
+         gmap.getGDataSource().abortQueue();
 
          gmap.paintAsynchronousImage(image, x, y, getSize().width, getSize().height, zoom, useCachedZoomLevel, parent);
 

@@ -29,7 +29,9 @@ class GMap{
    private BufferedImage defaultImage;
 
    //transparency
-   private AlphaComposite googleOverlayComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f);
+   private AlphaComposite opacity70 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.70f);
+   private AlphaComposite opacity40 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
+
 
    //google icon
    Image googleImage;
@@ -187,14 +189,14 @@ class GMap{
             int thisXIndex = x/GDataSource.sourceSize.width + col;
             int thisYIndex = y/GDataSource.sourceSize.height + row;
 
+            getSpecificImage(x,y,w,h,col,row,toReturn,zoom,cachedZoom,listener,true);
             if(getGDataSource().isCached(thisXIndex,thisYIndex,zoom)){
-               getSpecificImage(x,y,w,h,col,row,toReturn,zoom,cachedZoom,listener);
                if(listener != null){
                   listener.updateGMapCompleted(completed);
                   completed++;
-                  if(listener.asynchronousGMapStopFlag()) return;
                }
             }
+            if(listener.asynchronousGMapStopFlag()) return;
          }
       }
 
@@ -205,7 +207,7 @@ class GMap{
             int thisYIndex = y/GDataSource.sourceSize.height + row;
 
             if(!getGDataSource().isCached(thisXIndex,thisYIndex,zoom)){
-               getSpecificImage(x,y,w,h,col,row,toReturn,zoom,cachedZoom,listener);
+               getSpecificImage(x,y,w,h,col,row,toReturn,zoom,cachedZoom,listener,false);
                if(listener != null){
                   listener.updateGMapCompleted(completed);
                   completed++;
@@ -219,7 +221,7 @@ class GMap{
       gDraw.draw(toReturn, new GPhysicalPoint(x,y,zoom), zoom);
    }
 
-   private BufferedImage getSpecificImage(int x, int y, int w, int h, int imgIndexX, int imgIndexY, BufferedImage buffImg, int zoom, int cachedZoom, GMapListener listener){
+   private BufferedImage getSpecificImage(int x, int y, int w, int h, int imgIndexX, int imgIndexY, BufferedImage buffImg, int zoom, int cachedZoom, GMapListener listener, boolean localFilesOnly){
 
       int xIndex = x/GDataSource.sourceSize.width;
       int yIndex = y/GDataSource.sourceSize.height;
@@ -227,13 +229,14 @@ class GMap{
       xIndex += imgIndexX;
       yIndex += imgIndexY;
 
-      BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom,listener);
+      BufferedImage image = null;
+      if(!localFilesOnly || getGDataSource().isCached(xIndex,yIndex,zoom)) image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom,listener);
 
       int xCoord = x%GDataSource.sourceSize.width;
       int yCoord = y%GDataSource.sourceSize.height;
 
       //get info about the image
-      Dimension imageSize = new Dimension(image.getWidth(),image.getHeight());
+      Dimension imageSize = new Dimension(getGDataSource().sourceSize.width,getGDataSource().sourceSize.height);
 
       //find the width of what we CAN paint
       int initPaintWidth = imageSize.width - xCoord;
@@ -278,12 +281,19 @@ class GMap{
 
       if(buffImg != null){
          Graphics2D g = (Graphics2D)buffImg.getGraphics();
-
-         //DEBUG
-         //System.out.println(xIndex + "," + yIndex +  "--- xImage=" + xImage + " yImage=" + yImage +  " xCoord=" + xCoord + " yCoord=" + yCoord + " paintWidth=" + paintWidth + " paintHeight=" + paintHeight);
-         // System.out.println();
-         g.drawImage(image.getSubimage(xCoord, yCoord, paintWidth, paintHeight), xImage, yImage, paintWidth, paintHeight, null);
+         if(image != null){
+            g.drawImage(image.getSubimage(xCoord, yCoord, paintWidth, paintHeight), xImage, yImage, paintWidth, paintHeight, null);
+         }
+         else{
+            Composite originalComposite = g.getComposite();
+            g.setComposite(opacity40);
+            g.setColor(Color.BLACK);
+            g.fillRect(xImage, yImage, paintWidth, paintHeight);
+            g.setComposite(originalComposite);
+         }
       }
+
+
       return buffImg;
    }
 
@@ -335,8 +345,6 @@ class GMap{
       return colImages;
    }
 
-   //this alphacomposite controls transparency
-   private AlphaComposite cacheGridComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
 
    public BufferedImage getIndexedImage(int x, int y, int zoom, int cacheZoom){
       return getIndexedImage(x, y, zoom, cacheZoom, null);
@@ -374,7 +382,7 @@ class GMap{
 
       //get composite to restore later, set new transparent composite
       Composite originalComposite = graphics2D.getComposite();
-      graphics2D.setComposite(cacheGridComposite);
+      graphics2D.setComposite(opacity40);
 
       //draw grid
       for(int i=0;i<imageNum;i++){
