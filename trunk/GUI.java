@@ -149,7 +149,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       //set up the menubar
       JMenuBar menuBar = new GMenuBar(this);
       setJMenuBar(menuBar);
-      
+
       //icon
       ImageIcon iconImage = new ImageIcon("images/ico.png");
       Image iconImageObject = iconImage.getImage();
@@ -199,7 +199,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       tabbedPanel.setBounds(0,sizeOfToolbar,screenSize.width,screenSize.height - sizeOfProgressBar - sizeOfToolbar);
       progressBarPanel.setBounds(0,screenSize.height - sizeOfProgressBar,screenSize.width,sizeOfProgressBar);
       pane.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar-sizeOfToolbar);
-      slider.setBounds(10, 30+sizeOfToolbar, 50, 50);
+      slider.setBounds(screenSize.width-25, 30+sizeOfToolbar, 50, 50);
       toolBarPanel.setBounds(0,0,screenSize.width,sizeOfToolbar);
       toolBarPanel.setPreferredSize(new Dimension(screenSize.width, sizeOfToolbar));
    }
@@ -211,7 +211,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       tabbedPanel.setBounds(0,sizeOfToolbar,container.getWidth(),container.getHeight() - sizeOfProgressBar - sizeOfToolbar);
       progressBarPanel.setBounds(0,container.getHeight() - sizeOfProgressBar,container.getWidth(),sizeOfProgressBar);
       pane.setBounds(0,0,container.getWidth(),container.getHeight() - sizeOfProgressBar - sizeOfToolbar);
-      slider.setBounds(10, 30+sizeOfToolbar, 50, 50);
+      slider.setBounds(container.getWidth()-25, 30+sizeOfToolbar, 50, 50);
       toolBarPanel.setPreferredSize(new Dimension(container.getWidth(), sizeOfToolbar));
       toolBarPanel.setBounds(0,0,container.getWidth(),sizeOfToolbar);
       toolBarLayout.layoutContainer(toolBarPanel);
