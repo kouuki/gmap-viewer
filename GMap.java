@@ -354,7 +354,7 @@ class GMap{
          }
       }
 
-      BufferedImage thumbImage = getGDataSource().getImage(x,y,zoom);
+      BufferedImage thumbImage = getGDataSource().getImage(x,y,zoom, true);
 
       if(thumbImage == null) return defaultImage;
 
