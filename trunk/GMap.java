@@ -192,7 +192,7 @@ class GMap{
                if(listener != null){
                   listener.updateGMapCompleted(completed);
                   completed++;
-                  if(listener.asynchronousGMapStopFlag()) break;
+                  if(listener.asynchronousGMapStopFlag()) return;
                }
             }
          }
@@ -209,7 +209,7 @@ class GMap{
                if(listener != null){
                   listener.updateGMapCompleted(completed);
                   completed++;
-                  if(listener.asynchronousGMapStopFlag()) break;
+                  if(listener.asynchronousGMapStopFlag()) return;
                }
             }
          }

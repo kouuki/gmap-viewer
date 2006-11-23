@@ -177,14 +177,13 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       toolBarPanel.add(toolBar, BorderLayout.PAGE_START);
       container.add(toolBarPanel);
 
+      //add GTabbedPane
+      pane = new GTabbedPane(this);
+      int location = JTabbedPane.TOP; // or BOTTOM, LEFT, RIGHT
+
       // add GZoomSlider
       slider = new GZoomSlider(this);
       container.add(slider);
-
-      //add pane
-      pane = new GTabbedPane(this);
-      int location = JTabbedPane.TOP; // or BOTTOM, LEFT, RIGHT
-      addPane(new GPane(this));
 
       //add the tabbed panel
       tabbedPanel = new JPanel();
@@ -202,6 +201,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       slider.setBounds(screenSize.width-25, 30+sizeOfToolbar, 50, 50);
       toolBarPanel.setBounds(0,0,screenSize.width,sizeOfToolbar);
       toolBarPanel.setPreferredSize(new Dimension(screenSize.width, sizeOfToolbar));
+
+      //add pane
+      addPane(new GPane(this));
    }
 
    /**

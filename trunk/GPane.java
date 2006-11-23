@@ -43,7 +43,9 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    private int showCachedZoomLevel;
 
    //this alphacomposite is controls transparency
-   private AlphaComposite selectionOverlayTransparency = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
+   private AlphaComposite opacity30 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
+   private AlphaComposite opacity70 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);
+
 
    //a thread for drawing stuff
    private DrawThread drawingThread;
@@ -57,11 +59,20 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    public static final int DISTANCE_MODE = 5;
    private int mode;
 
+   //buffered image
+   private BufferedImage googleLogo;
+
+   //mouse depressed
+   private boolean mouseIsPressed;
+
    //constructor
    public GPane(GUI gui, GPhysicalPoint center, int zoom, boolean showCachedZoom, int showCachedZoomLevel, int mode){
       //get gmap and registered objects
       this.gui = gui;
       this.gmap = gui.getGMap();
+
+      //mouse state
+      mouseIsPressed = false;
 
       //zoom
       this.zoom = zoom;
@@ -74,6 +85,10 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
       //set mode
       this.mode = mode;
+
+      //load google logo
+      googleLogo = LibGUI.loadImage("images/google.png");
+
 
       //draw it
       draw();
@@ -154,11 +169,13 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          if(newImageMemory){
             image = new BufferedImage(getSize().width, getSize().height,BufferedImage.TYPE_INT_ARGB);
          }
+         //make graphics object
+         Graphics2D g2d = (Graphics2D)image.createGraphics();
+
          //else paint an overlay
-         else{
-            Graphics2D g2d = (Graphics2D)image.createGraphics();
+         if(!newImageMemory){
             Composite temp = g2d.getComposite();
-            g2d.setComposite(selectionOverlayTransparency);
+            g2d.setComposite(opacity30);
             g2d.setColor(Color.BLACK);
             g2d.fillRect(0,0,image.getWidth(), image.getHeight());
             g2d.setComposite(temp);
@@ -167,6 +184,13 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
 
          gmap.paintAsynchronousImage(image, x, y, getSize().width, getSize().height, zoom, useCachedZoomLevel, parent);
+
+         //google logo
+         Composite temp = g2d.getComposite();
+         g2d.setComposite(opacity70);
+         g2d.drawImage(googleLogo, image.getWidth()-googleLogo.getWidth(), image.getHeight()-googleLogo.getHeight(), googleLogo.getWidth(), googleLogo.getHeight(),null);
+         g2d.setComposite(temp);
+
          gui.getProgressMeter().release(parent);
 
          //timer stop
@@ -190,11 +214,11 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          //set cursor to hourglass
          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
+         //download adjacent
+         if(!mouseIsPressed) gmap.getGDataSource().downloadQueue();
+
          //update flag
          parent.drawingThread = null;
-
-         //download adjacent
-         gmap.getGDataSource().downloadQueue();
 
          //notify listener
          gui.getNotifier().firePaneEvent(this);
@@ -221,7 +245,7 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          //draw transparent white
          g2d.setColor(Color.WHITE);
          Composite temp = g2d.getComposite();
-         g2d.setComposite(selectionOverlayTransparency);
+         g2d.setComposite(opacity30);
          g2d.fillRect(mouseRectanglePosition.x,mouseRectanglePosition.y,mouseRectanglePosition.width,mouseRectanglePosition.height);
          g2d.setComposite(temp);
          //draw border
@@ -407,11 +431,8 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    private GMarker tempMarkerB;
 
    public void mousePressed(MouseEvent e){
-
-            System.out.println("mode="+mode);
-
-
       //update mouse dragged
+      mouseIsPressed = true;
       mouseDraggedThisClick = false;
 
       int mouseX = e.getX() + mouseOffset.width;
@@ -507,10 +528,15 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
    }
    public void mouseReleased(MouseEvent e){
+      mouseIsPressed = false;
       if(!mouseDraggedThisClick){
          mouseRectanglePosition = null;
          gmap.getGDataSource().downloadQueue();
       }
+      //download adjacent
+      gmap.getGDataSource().downloadQueue();
+
+      //update
       updateScreen();
   }
 
