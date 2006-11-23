@@ -108,6 +108,14 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
     * @param args the string array
     */
    public static void main(String[] args){
+      // Mac OS X compatibility
+      if (System.getProperty("mrj.version") != null) {
+         System.setProperty("com.apple.macos.useScreenMenuBar", "true");
+         System.setProperty("apple.laf.useScreenMenuBar", "true");
+         System.setProperty("apple.awt.textantialiasing", "true");
+         System.setProperty("apple.awt.showGrowBox", "false");
+      }
+
       GUI newWindow = new GUI();
       newWindow.setVisible(true);
    }
@@ -141,7 +149,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       //set up the menubar
       JMenuBar menuBar = new GMenuBar(this);
       setJMenuBar(menuBar);
-
+      
       //icon
       ImageIcon iconImage = new ImageIcon("images/ico.png");
       Image iconImageObject = iconImage.getImage();

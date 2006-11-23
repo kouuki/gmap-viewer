@@ -114,9 +114,9 @@ abstract class GDataSource {
          {
             graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
             addImageToRAM(x,y,zoom,thumbImage);
-            if (findAdjacent) {
-               queueAdjacent(x,y,zoom);
-            }
+//            if (findAdjacent) {
+//               queueAdjacent(x,y,zoom);
+//            }
             cacheHigherLevels(x, y, zoom);
             return thumbImage;
          }
@@ -217,17 +217,23 @@ abstract class GDataSource {
     * removes that image from the queue.
     */
    public void downloadQueue() {
-      GDataImage img;
-      synchronized (downloadQueue) {
-         System.out.println(downloadQueue.size());
-         while ((img = downloadQueue.poll()) != null) {
-         System.out.println("   from Q: " +img);
-            cache(img.getX(), img.getY(), img.getZoom());
-            queueSize--;
-         }
-
-
-      }
+	  Thread t = new Thread(new Runnable() {	  
+    	 public void run() {
+    		GDataImage img;
+    		
+            synchronized (downloadQueue) {
+               System.out.println(downloadQueue.size());
+               while ((img = downloadQueue.poll()) != null) {
+               System.out.println("   from Q: " +img);
+                  cache(img.getX(), img.getY(), img.getZoom());
+                  queueSize--;
+               }
+            }
+    	 }
+      });
+	  
+	  t.setPriority(Thread.MIN_PRIORITY);
+	  t.start();
    }
 
    protected String makeCachedName(int x, int y, int zoom){

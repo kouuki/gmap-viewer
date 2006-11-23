@@ -190,6 +190,7 @@ class JMenuActionCacheSelected extends JMenuAction{
    public void paneEvent(Object object){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
+      if (pane == null) return;
       int paneZoom = pane.getZoom();
       if(zoomLevel >= paneZoom) this.setEnabled(false);
       else this.setEnabled(true);
@@ -233,6 +234,8 @@ class JMenuRadioButtonActionCache extends JMenuRadioButtonAction{
    public void paneEvent(Object object){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
+      if (pane == null) return;
+      
       int currentZoom = pane.getShowCachedZoomLevel();
       if(zoomLevel == -1 && !pane.getShowCachedZoom()) super.setSelected(true);
       else if(currentZoom == zoomLevel) super.setSelected(true);
@@ -268,6 +271,8 @@ class JMenuRadioButtonActionZoom extends JMenuRadioButtonAction{
    public void paneEvent(Object object){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
+      if (pane == null) return;
+      
       int currentZoom = pane.getZoom();
       if(currentZoom == zoomLevel) super.setSelected(true);
       else super.setSelected(false);

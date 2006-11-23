@@ -57,11 +57,6 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    public static final int DISTANCE_MODE = 5;
    private int mode;
 
-   //GZoomslider object
-   private GZoomSlider slider;
-
-
-
    //constructor
    public GPane(GUI gui, GPhysicalPoint center, int zoom, boolean showCachedZoom, int showCachedZoomLevel, int mode){
       //get gmap and registered objects
@@ -95,11 +90,6 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       addMouseListener(this);
       addMouseMotionListener(this);
       addMouseWheelListener(this);
-
-
-      //GZoomSlider
-      slider = new GZoomSlider(gui);
-
 
       //initialize draw thread to null
       drawingThread = null;
