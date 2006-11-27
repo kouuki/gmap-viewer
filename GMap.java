@@ -425,7 +425,7 @@ class GMap{
    }
    
    /** Method to set the <tt>cacheDirectory</tt> property. */
-   public void setCacheDirectory( GUI gui ) 
+   public void setCacheDirectory() 
    {
       //new instance of JFileChooser and a dialog window
       JFileChooser loadFile = new JFileChooser();
@@ -442,14 +442,14 @@ class GMap{
             selectedFile = loadFile.getSelectedFile();
             String cacheDirectory = selectedFile.toString();            
          //set the appropriate directories for each gDataSource instance and verify they exist, otherwise create them
-            gui.getGMap().gDataSourceMap.cacheDirectory = cacheDirectory+File.separator+"map_cache";
-            gui.getGMap().gDataSourceMap.verifyCacheDirectories();
-            gui.getGMap().gDataSourceSatellite.cacheDirectory = cacheDirectory+File.separator+"sat_cache";
-            gui.getGMap().gDataSourceSatellite.verifyCacheDirectories();
-            gui.getGMap().gDataSourceHybrid.cacheDirectory = cacheDirectory+File.separator+"hybrid_cache";
-            gui.getGMap().gDataSourceHybrid.verifyCacheDirectories();
-            gui.getGMap().gDataSourceOverlay.cacheDirectory = cacheDirectory+File.separator+"overlay_cache";      
-            gui.getGMap().gDataSourceOverlay.verifyCacheDirectories();
+            gDataSourceMap.cacheDirectory = cacheDirectory+File.separator+"map_cache";
+            gDataSourceMap.verifyCacheDirectories();
+            gDataSourceSatellite.cacheDirectory = cacheDirectory+File.separator+"sat_cache";
+            gDataSourceSatellite.verifyCacheDirectories();
+            gDataSourceHybrid.cacheDirectory = cacheDirectory+File.separator+"hybrid_cache";
+            gDataSourceHybrid.verifyCacheDirectories();
+            gDataSourceOverlay.cacheDirectory = cacheDirectory+File.separator+"overlay_cache";      
+            gDataSourceOverlay.verifyCacheDirectories();
             
             JOptionPane.showMessageDialog(null, "Cache directory set successfully!",
                     "Set Cache Directory", JOptionPane.PLAIN_MESSAGE);                 
