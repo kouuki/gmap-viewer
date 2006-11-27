@@ -131,7 +131,10 @@ class LibString{
    public static String appendExtensionIfNeeded(String input, String extension){
       String output = input;
       input = input.toLowerCase();
-      if(input.substring(input.length() - extension.length()) != extension) output += extension;
+      String lastChars = input.substring(input.length() - extension.length());
+      if(!lastChars.equals(extension)) {
+    	  output += extension;
+      }
       return output;
    }
 
