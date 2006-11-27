@@ -515,6 +515,19 @@ class JMenuActionAddGDrawableObject extends JMenuAction{
    }
 }
 
+/** Menu action allowing the user to set the cache directory */
+class JMenuActionSetCacheDirectory extends JMenuAction{
+   public JMenuActionSetCacheDirectory(GUI registeredObject) {
+      super("Set Cache Directory",registeredObject);
+   }
+
+   public void run(){
+      //create new GDrawableObject
+      GUI gui = (GUI)registeredObject;
+      gui.getGMap().setCacheDirectory( gui );
+   }
+}
+
 /** It is the radio button action when sattelite type data is needed.*/
 class JMenuRadioButtonActionSat extends JMenuRadioButtonAction{
    /** Constructor for JMenuRadioButtonActionSat class.*/

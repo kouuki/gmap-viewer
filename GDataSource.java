@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.awt.image.*;
 import java.net.*;
 import javax.imageio.ImageIO;
-import javax.swing.*;
 
 abstract class GDataSource {
    //dimension of source files
@@ -148,43 +147,6 @@ abstract class GDataSource {
     */
    public String getCacheDirectory(){
       return cacheDirectory;
-   }
-   
-   /** Method to set the <tt>cacheDirectory</tt> property. */
-   public void setCacheDirectory() 
-   {
-      //new instance of JFileChooser and a dialog window
-      JFileChooser loadFile = new JFileChooser();
-      JDialog cacheDialog = new JDialog();
-      //allow only directories to be selected
-      loadFile.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
-      //show the new instance and declare return value for the instance
-      int returnVal = loadFile.showOpenDialog(cacheDialog);
-      //declare the file object
-      File selectedFile = null;
-      //Query the JFileChooser to get the chosen directory from the user
-      switch(returnVal) {
-         case JFileChooser.APPROVE_OPTION:
-            selectedFile = loadFile.getSelectedFile();
-            cacheDirectory = selectedFile.toString();
-            
-         //set the appropriate directories for each gDataSource instance
-            //gDataSourceMap.cacheDirectory = cacheDirectory + "\\\\map_cache";
-            //gDataSourceSatellite.cacheDirectory = cacheDirectory + "\\\\sat_cache";
-            //gDataSourceHybrid.cacheDirectory = cacheDirectory + "\\\\hybrid_cache";
-            //gDataSourceOverlay.cacheDirectory = cacheDirectory + "\\\\overlay_cache";            
-            
-            JOptionPane.showMessageDialog(null, "Cache directory set successfully!",
-                    "Set Cache Directory", JOptionPane.PLAIN_MESSAGE);                 
-            break;
-         case JFileChooser.CANCEL_OPTION:
-            //Cancel button was clicked - do nothing   
-            break;
-         case JFileChooser.ERROR_OPTION:
-            //Error was detected - make no changes and output error message
-            System.out.println("Error detected!");
-            break;
-      }
    }
 
    /**
