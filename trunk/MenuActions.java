@@ -517,14 +517,17 @@ class JMenuActionAddGDrawableObject extends JMenuAction{
 
 /** Menu action allowing the user to set the cache directory */
 class JMenuActionSetCacheDirectory extends JMenuAction{
+   /**Constructor for JMenuActionSetCacheDirectory class. 
+    * @param registeredObject The object to be registered with this menu action.
+    */
    public JMenuActionSetCacheDirectory(GUI registeredObject) {
       super("Set Cache Directory",registeredObject);
    }
-
+   /** Set the new cache directory and create necessary sub-directories for it */
    public void run(){
-      //create new GDrawableObject
+      //set the cache directory and verify it
       GUI gui = (GUI)registeredObject;
-      gui.getGMap().setCacheDirectory( gui );
+      gui.getGMap().setCacheDirectory();
    }
 }
 
