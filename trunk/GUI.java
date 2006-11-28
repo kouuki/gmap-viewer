@@ -267,6 +267,20 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       return gmap;
    }
 
+   /*
+    * SETTERS
+    */
+
+   /**
+    * It sets the gmap object.
+    *
+    *@return gmap is the new gmap object.
+    */
+   public void setGMap(GMap gmap){
+      this.gmap = gmap;
+   }
+
+
    /**
     * It gets the current size of the JFrame.
     *

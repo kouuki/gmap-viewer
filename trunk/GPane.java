@@ -25,7 +25,6 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
    //GMap object
    private GUI gui;
-   private GMap gmap;
 
    //image AND icon object
    private BufferedImage image;
@@ -67,9 +66,8 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
    //constructor
    public GPane(GUI gui, GPhysicalPoint center, int zoom, boolean showCachedZoom, int showCachedZoomLevel, int mode){
-      //get gmap and registered objects
+      //get gui.getGMap() and registered objects
       this.gui = gui;
-      this.gmap = gui.getGMap();
 
       //mouse state
       mouseIsPressed = false;
@@ -183,9 +181,9 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          }
 
          //empty data source
-         gmap.getGDataSource().abortQueue();
+         gui.getGMap().getGDataSource().abortQueue();
 
-         gmap.paintAsynchronousImage(image, x, y, getSize().width, getSize().height, zoom, useCachedZoomLevel, parent);
+         gui.getGMap().paintAsynchronousImage(image, x, y, getSize().width, getSize().height, zoom, useCachedZoomLevel, parent);
 
          //google logo
          Composite temp = g2d.getComposite();
@@ -217,7 +215,7 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
          //download adjacent
-         if(!mouseIsPressed) gmap.getGDataSource().downloadQueue();
+         if(!mouseIsPressed) gui.getGMap().getGDataSource().downloadQueue();
 
          //update flag
          parent.drawingThread = null;
@@ -260,7 +258,6 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
    //getters
 
-   //returns center as a GPhysicalPoint
    public GPhysicalPoint getCenter(){
       return center;
    }
@@ -415,9 +412,9 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          int y = centerPixels.y - (getSize().height/2);
 
          if(mode == SELECTION_MODE || mode == DRAGGING_MODE){
-            int clicked = gmap.getGDraw().inside(new Point(e.getX(),e.getY()), new GPhysicalPoint(x,y,zoom), zoom);
-            if(clicked != gmap.getGDraw().getSelected()){
-               gmap.getGDraw().setSelected(clicked);
+            int clicked = gui.getGMap().getGDraw().inside(new Point(e.getX(),e.getY()), new GPhysicalPoint(x,y,zoom), zoom);
+            if(clicked != gui.getGMap().getGDraw().getSelected()){
+               gui.getGMap().getGDraw().setSelected(clicked);
                draw();
             }
          }
@@ -533,10 +530,10 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       mouseIsPressed = false;
       if(!mouseDraggedThisClick){
          mouseRectanglePosition = null;
-         gmap.getGDataSource().downloadQueue();
+         gui.getGMap().getGDataSource().downloadQueue();
       }
       //download adjacent
-      gmap.getGDataSource().downloadQueue();
+      gui.getGMap().getGDataSource().downloadQueue();
 
       //update
       updateScreen();
@@ -553,7 +550,7 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       return new GPane(gui, (GPhysicalPoint)center.clone(), zoom, showCachedZoom, showCachedZoomLevel, mode);
    }
 
-   //gmap listener
+   //gui.getGMap() listener
    private int gmapCompleted;
    private int gmapTaskSize;
    private int messageNumber;
