@@ -235,7 +235,7 @@ class JMenuRadioButtonActionCache extends JMenuRadioButtonAction{
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
       if (pane == null) return;
-      
+
       int currentZoom = pane.getShowCachedZoomLevel();
       if(zoomLevel == -1 && !pane.getShowCachedZoom()) super.setSelected(true);
       else if(currentZoom == zoomLevel) super.setSelected(true);
@@ -272,7 +272,7 @@ class JMenuRadioButtonActionZoom extends JMenuRadioButtonAction{
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
       if (pane == null) return;
-      
+
       int currentZoom = pane.getZoom();
       if(currentZoom == zoomLevel) super.setSelected(true);
       else super.setSelected(false);
@@ -517,7 +517,7 @@ class JMenuActionAddGDrawableObject extends JMenuAction{
 
 /** Menu action allowing the user to set the cache directory */
 class JMenuActionSetCacheDirectory extends JMenuAction{
-   /**Constructor for JMenuActionSetCacheDirectory class. 
+   /**Constructor for JMenuActionSetCacheDirectory class.
     * @param registeredObject The object to be registered with this menu action.
     */
    public JMenuActionSetCacheDirectory(GUI registeredObject) {
@@ -527,7 +527,35 @@ class JMenuActionSetCacheDirectory extends JMenuAction{
    public void run(){
       //set the cache directory and verify it
       GUI gui = (GUI)registeredObject;
-      gui.getGMap().setCacheDirectory();
+      //new instance of JFileChooser and a dialog window
+      JFileChooser loadFile = new JFileChooser();
+      JDialog cacheDialog = new JDialog();
+      //allow only directories to be selected
+      loadFile.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
+      //show the new instance and declare return value for the instance
+      int returnVal = loadFile.showOpenDialog(cacheDialog);
+      //declare the file object
+      File selectedFile = null;
+      //Query the JFileChooser to get the chosen directory from the user
+      switch(returnVal) {
+         case JFileChooser.APPROVE_OPTION:
+            selectedFile = loadFile.getSelectedFile();
+            String cacheDirectory = selectedFile.toString();
+         //set the appropriate directories for each gDataSource instance and verify they exist, otherwise create them
+            gui.setGMap(new GMap(cacheDirectory));
+
+            gui.getGMap().getGDataSource().cacheDirectory = cacheDirectory;
+            gui.getGMap().getGDataSource().verifyCacheDirectories();
+            break;
+         case JFileChooser.CANCEL_OPTION:
+            //Cancel button was clicked - do nothing
+            break;
+         case JFileChooser.ERROR_OPTION:
+            //Error was detected - make no changes and output error message
+            System.out.println("Error detected!");
+            break;
+      }
+      gui.getTopPane().draw();
    }
 }
 
@@ -599,4 +627,5 @@ class JMenuRadioButtonActionHybrid extends JMenuRadioButtonAction{
       super.setSelected(gui.getGMap().getMode() == GMap.HYBRID_MODE);
    }
 }
+
 

@@ -56,12 +56,12 @@ class GMap{
    private int mode;
 
    //constructor
-   public GMap(){
+   public GMap(String cache){
       //data source
-      this.gDataSourceMap = new GDataSourceMap("map_cache");
-      this.gDataSourceSatellite = new GDataSourceSatellite("sat_cache");
-      this.gDataSourceOverlay = new GDataSourceOverlay("overlay_cache");
-      this.gDataSourceHybrid = new GDataSourceHybrid("hybrid_cache",gDataSourceSatellite);
+      this.gDataSourceMap = new GDataSourceMap(cache+"/map_cache");
+      this.gDataSourceSatellite = new GDataSourceSatellite(cache+"/sat_cache");
+      this.gDataSourceOverlay = new GDataSourceOverlay(cache+"/overlay_cache");
+      this.gDataSourceHybrid = new GDataSourceHybrid(cache+"/hybrid_cache",gDataSourceSatellite);
 
       //build default image
       defaultImage = getDefaultImage(GDataSource.sourceSize.width, GDataSource.sourceSize.height);
@@ -75,6 +75,10 @@ class GMap{
       //icon
       ImageIcon loadImage = new ImageIcon("images/google.png");
       googleImage = loadImage.getImage();
+   }
+
+   public GMap(){
+      this("cache");
    }
 
    //getters
@@ -423,47 +427,12 @@ class GMap{
       graphics2D.drawRect(0,0,w-1, h-1);
       return defaultImage;
    }
-   
+
    /** Method to set the <tt>cacheDirectory</tt> property. */
-   public void setCacheDirectory() 
+   public void setCacheDirectory()
    {
-      //new instance of JFileChooser and a dialog window
-      JFileChooser loadFile = new JFileChooser();
-      JDialog cacheDialog = new JDialog();
-      //allow only directories to be selected
-      loadFile.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
-      //show the new instance and declare return value for the instance
-      int returnVal = loadFile.showOpenDialog(cacheDialog);
-      //declare the file object
-      File selectedFile = null;
-      //Query the JFileChooser to get the chosen directory from the user
-      switch(returnVal) {
-         case JFileChooser.APPROVE_OPTION:
-            selectedFile = loadFile.getSelectedFile();
-            String cacheDirectory = selectedFile.toString();            
-         //set the appropriate directories for each gDataSource instance and verify they exist, otherwise create them
-            gDataSourceMap.cacheDirectory = cacheDirectory+File.separator+"map_cache";
-            gDataSourceMap.verifyCacheDirectories();
-            gDataSourceSatellite.cacheDirectory = cacheDirectory+File.separator+"sat_cache";
-            gDataSourceSatellite.verifyCacheDirectories();
-            gDataSourceHybrid.cacheDirectory = cacheDirectory+File.separator+"hybrid_cache";
-            gDataSourceHybrid.verifyCacheDirectories();
-            gDataSourceOverlay.cacheDirectory = cacheDirectory+File.separator+"overlay_cache";      
-            gDataSourceOverlay.verifyCacheDirectories();
-            
-            JOptionPane.showMessageDialog(null, "Cache directory set successfully!",
-                    "Set Cache Directory", JOptionPane.PLAIN_MESSAGE);                 
-            break;
-         case JFileChooser.CANCEL_OPTION:
-            //Cancel button was clicked - do nothing   
-            break;
-         case JFileChooser.ERROR_OPTION:
-            //Error was detected - make no changes and output error message
-            System.out.println("Error detected!");
-            break;
-      }
    }
-   
+
 }
 
 interface GMapListener{
