@@ -7,12 +7,14 @@ import java.net.*;
 import javax.imageio.ImageIO;
 
 abstract class GDataSource {
-   //dimension of source files
+   /**
+    * The dimension of images returned by this data source.
+    */
    public static final Dimension sourceSize = new Dimension(256,256);
    /**
     * This constant restricts the size of the download queue.
     */
-   public static int QUEUE_MAX_SIZE = 20;
+   public static final int QUEUE_MAX_SIZE = 20;
 
    //where to put files stored on the server
    protected String cacheDirectory;
@@ -129,16 +131,27 @@ abstract class GDataSource {
    }
 
    /**
-    * Aborts the download queue.
+    * Set a flag that instructs the border data queue to stop at the next download.
     */
    protected boolean abortFlag;
    public void abortQueue(){
       abortFlag = true;
    }
 
-   public boolean getAbortFlag(){ return abortFlag; }
-   public void resetAbortFlag(){ abortFlag = false;}
+   /**
+    * Get the status of the abort flag.
+    * @return Status of the abort flag.
+    */
+   public boolean getAbortFlag(){
+      return abortFlag;
+   }
 
+   /**
+    * Reset the abort flag.
+    */
+   public void resetAbortFlag(){
+      abortFlag = false;
+   }
 
 
    /**
@@ -255,10 +268,10 @@ abstract class GDataSource {
    }
 
    /**
-    * UNDOCUMENTED
-    * @param x
-    * @param y
-    * @param zoom
+    * Get the specified image from RAM cache. If it is not cached, return null.
+    * @param x The horizontal cooridinate
+    * @param y The vertical coordinate
+    * @param zoom The zoom level
     * @return
     */
    public BufferedImage getImageFromRAM(int x, int y, int zoom){
@@ -277,8 +290,8 @@ abstract class GDataSource {
    }
 
    /**
-    * Determines if a local copy of the image (<tt>x</tt>,<tt>y</tt>) at the
-    * specified zoom level already exists.
+    * Determines if a copy of the image (<tt>x</tt>,<tt>y</tt>) at the
+    * specified zoom level already exists in RAM or on the local filesystem.
     * @param x The horizontal cooridinate
     * @param y The vertical coordinate
     * @param zoom The zoom level
@@ -291,95 +304,24 @@ abstract class GDataSource {
    }
 
    /**
-    * UNDOCUMENTED
-    * @param x
-    * @param y
-    * @param zoom
-    * @return
+    * Get the path to this image on the local filesystem.
+    * @param x The horizontal cooridinate
+    * @param y The vertical coordinate
+    * @param zoom The zoom level
+    * @return The path.
     */
    protected String makeCachedName(int x, int y, int zoom){
       return cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png";
    }
 
    /**
-    * UNDOCUMENTED
-    * @param x
-    * @param y
-    * @param zoom
-    * @return
+    * Get the path to this image on a remote database.
+    * @param x The horizontal cooridinate
+    * @param y The vertical coordinate
+    * @param zoom The zoom level
+    * @return The path.
     */
    protected abstract String makeRemoteName(int x, int y, int zoom);
-
-
-   /**
-    * This method returns the string representing the path through the tree to
-    * the correct child node representing the desired map.
-    */
-   public String makeRemoteSatName(int x, int y, int zoom){
-       //generate random server
-      int ServerNumber = (int)Math.round(Math.random()*3.0);
-
-      char[] sat = new char[20];
-      int i = 1;
-      int curZoom = 16 - (zoom-1);
-
-      int midxTiles = (int)Math.pow(2,(curZoom - 1));
-      int midyTiles = midxTiles;
-
-     int maxxTiles = midxTiles*2;
-     int maxyTiles = midyTiles*2;
-
-     int minxTiles = 0;
-     int minyTiles = 0;
-
-      StringBuffer sb = new StringBuffer();
-      sb.append("t");
-      BufferedImage currentImage;
-
-      //checks that the given point is within map and converts x, y, zoom to Tree Node Path
-      while( curZoom != 0){
-         System.out.println(midxTiles + " " + midyTiles);
-         if( x >= 0 &&  y >= 0){
-            if( x >= midxTiles){
-            minxTiles = midxTiles;
-               if( y >= midyTiles){
-                  sat[i] = 's';
-              minyTiles = midyTiles;
-               }
-               else{
-                  sat[i] = 'r';
-              maxyTiles = midyTiles;
-               }
-            }
-            else if( x < midxTiles){
-            maxxTiles = midxTiles;
-               if( y >= midyTiles){
-                  sat[i] = 't';
-              minyTiles = midyTiles;
-               }
-               else{
-                  sat[i] = 'q';
-                  maxyTiles = midyTiles;
-               }
-            }
-         midxTiles = minxTiles + (maxxTiles - minxTiles)/2;
-            midyTiles = minyTiles + (maxyTiles - minyTiles)/2;
-            String s = new Character(sat[i]).toString();
-            sb.append(s);
-            i++;
-            curZoom--;
-         }
-         else{
-            System.out.println("Chosen Point outside Map Area.");
-         }
-      }
-
-      //Converted Tree Node Path String
-      String satImage = sb.toString();
-
-      //Build the URL
-      return satImage;
-   }
 
    /**
     * Adds the given GDataImage to the download queue.
@@ -403,7 +345,7 @@ abstract class GDataSource {
    /**
     * Checks to see if the following squares are in the cache. If not, then
     * they are added to the download queue.
-    * <p>
+    * <pre>
     * +----------+----------+----------+
     * | x-1, y-1 |  x, y-1  | x+1, y-1 |
     * +----------+----------+----------+
@@ -411,7 +353,7 @@ abstract class GDataSource {
     * +----------+----------+----------+
     * | x-1, y+1 |  x, y+1  | x+1, y+1 |
     * +----------+----------+----------+
-    * <p>
+    * </pre>
     * @param x
     * @param y
     * @param zoom
@@ -431,7 +373,7 @@ abstract class GDataSource {
    /**
     * Queues the higher zoom levels that capture the (<tt>x</tt>, <tt>y</tt>)
     * at the specifed zoom level.
-    * @param x The horizontal coordinate
+    * @param x The horizontal cooridinate
     * @param y The vertical coordinate
     * @param zoom The zoom level
     */
