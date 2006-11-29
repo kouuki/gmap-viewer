@@ -18,9 +18,84 @@ class GDataSourceSatellite extends GDataSource{
       //System.out.print(" [satellite]");
       String pathToNode = makeRemoteSatName(x,y,zoom);
 
-      System.out.println(pathToNode);
+      //System.out.println(pathToNode);
       return "http://kh"+serverNumber+".google.com/kh?n=404&v=11&t="+pathToNode;
    }
+
+   /**
+    * This method returns the string representing the path through the tree to
+    * the correct child node representing the desired map image.
+    * @param x The horizontal cooridinate
+    * @param y The vertical coordinate
+    * @param zoom The zoom level
+    * @return The path.
+    */
+   private String makeRemoteSatName(int x, int y, int zoom){
+       //generate random server
+      int ServerNumber = (int)Math.round(Math.random()*3.0);
+
+      char[] sat = new char[20];
+      int i = 1;
+      int curZoom = 16 - (zoom-1);
+
+      int midxTiles = (int)Math.pow(2,(curZoom - 1));
+      int midyTiles = midxTiles;
+
+     int maxxTiles = midxTiles*2;
+     int maxyTiles = midyTiles*2;
+
+     int minxTiles = 0;
+     int minyTiles = 0;
+
+      StringBuffer sb = new StringBuffer();
+      sb.append("t");
+      BufferedImage currentImage;
+
+      //checks that the given point is within map and converts x, y, zoom to Tree Node Path
+      while( curZoom != 0){
+         System.out.println(midxTiles + " " + midyTiles);
+         if( x >= 0 &&  y >= 0){
+            if( x >= midxTiles){
+            minxTiles = midxTiles;
+               if( y >= midyTiles){
+                  sat[i] = 's';
+              minyTiles = midyTiles;
+               }
+               else{
+                  sat[i] = 'r';
+              maxyTiles = midyTiles;
+               }
+            }
+            else if( x < midxTiles){
+            maxxTiles = midxTiles;
+               if( y >= midyTiles){
+                  sat[i] = 't';
+              minyTiles = midyTiles;
+               }
+               else{
+                  sat[i] = 'q';
+                  maxyTiles = midyTiles;
+               }
+            }
+         midxTiles = minxTiles + (maxxTiles - minxTiles)/2;
+            midyTiles = minyTiles + (maxyTiles - minyTiles)/2;
+            String s = new Character(sat[i]).toString();
+            sb.append(s);
+            i++;
+            curZoom--;
+         }
+         else{
+            System.out.println("Chosen Point outside Map Area.");
+         }
+      }
+
+      //Converted Tree Node Path String
+      String satImage = sb.toString();
+
+      //Build the URL
+      return satImage;
+   }
+
 
 }
 
