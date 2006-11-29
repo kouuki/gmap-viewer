@@ -43,8 +43,8 @@ abstract class GDataSource {
    }
 
    /**
-    * adds image to ram, using the 
-    * x and y coordinates as well as the zoom level 
+    * adds image to ram, using the
+    * x and y coordinates as well as the zoom level
     * as a key to reference the image.
     * @param x
     * @param y
@@ -551,54 +551,4 @@ class GDataSourceHybrid extends GDataSource{
    }
 
 }
-
-
-class GDataSourceMap extends GDataSource{
-
-   public GDataSourceMap(String cacheDirectory){
-      super(cacheDirectory);
-   }
-
-   protected String makeRemoteName(int x, int y, int zoom){
-      int serverNumber = (int)Math.round(Math.random()*3.0);
-      //System.out.print(" [map]");
-      //System.out.print("{http://mt"+serverNumber+".google.com/mt?n=404&v=w2.79&x="+x+"&y="+y+"&zoom="+zoom+"}");
-      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2.79&x="+x+"&y="+y+"&zoom="+zoom;
-   }
-
-}
-
-class GDataSourceOverlay extends GDataSource{
-
-   public GDataSourceOverlay(String cacheDirectory){
-      super(cacheDirectory);
-   }
-
-   protected String makeRemoteName(int x, int y, int zoom){
-      int serverNumber = (int)Math.round(Math.random()*3.0);
-      //System.out.print(" [map]");
-      //System.out.print("{http://mt"+serverNumber+".google.com/mt?n=404&v=w2.79&x="+x+"&y="+y+"&zoom="+zoom+"}");
-      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2t.30&x="+x+"&y="+y+"&zoom="+zoom;
-   }
-
-}
-
-
-class GDataSourceSatellite extends GDataSource{
-
-   public GDataSourceSatellite(String cacheDirectory){
-      super(cacheDirectory);
-   }
-
-   protected String makeRemoteName(int x, int y, int zoom){
-      int serverNumber = (int)Math.round(Math.random()*3.0);
-      //System.out.print(" [satellite]");
-      String pathToNode = makeRemoteSatName(x,y,zoom);
-
-      System.out.println(pathToNode);
-      return "http://kh"+serverNumber+".google.com/kh?n=404&v=11&t="+pathToNode;
-   }
-
-}
-
 
