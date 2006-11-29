@@ -13,10 +13,26 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-class JMenuActionExit extends JMenuAction{
-   public JMenuActionExit(GUI registeredObject){super("Exit",registeredObject);}
+/**
+ * Class which defines the exit action for the menu.
+ * 
+ * Exits the program when activated.
+ * 
+ */
+class JMenuActionExit extends JMenuAction {
+   /**
+    * Create new instance of JMenuActionExit
+    * 
+    * @param registeredObject
+    */
+   public JMenuActionExit(GUI registeredObject) {
+      super("Exit", registeredObject);
+   }
 
-   public void run(){
+   /**
+    * run method which causes the program to exit when called.
+    */
+   public void run() {
       System.exit(1);
    }
 }
