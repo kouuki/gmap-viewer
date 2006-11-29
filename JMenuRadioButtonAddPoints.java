@@ -13,15 +13,25 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-
+/**
+ * Class which handles allowing the user to draw points on the map. 
+ *
+ */
 class JMenuRadioButtonAddPoints extends JMenuRadioButtonAction {
 
    static final long serialVersionUID = 42643948;
 
+   /**
+    * Constructor for creation of Radio button
+    * @param registeredObject
+    */
    public JMenuRadioButtonAddPoints(GUI registeredObject) {
       super("Add Points",registeredObject);
    }
-
+   
+   /**
+    * run method for class
+    */
    public void run() {
       GUI gui = (GUI) registeredObject;
       GPane pane = gui.getTopPane();
@@ -31,6 +41,9 @@ class JMenuRadioButtonAddPoints extends JMenuRadioButtonAction {
       gui.getProgressMeter().getPanel().repaint();
    }
 
+   /**
+    * Pane event method for class.
+    */
    public void paneEvent(Object object){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
