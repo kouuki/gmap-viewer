@@ -12,10 +12,20 @@ import com.sun.image.codec.jpeg.*;
 import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
-
+/**
+* The class JMenuActionSetCenter is a type of JMenuAction that sets the View menu to Set Center or Set Center Pixel. 
+*/
 class JMenuActionSetCenter extends JMenuAction{
-   public JMenuActionSetCenter(GUI registeredObject){super("Set Center",registeredObject);}
 
+/**
+* The method allows the user to set the view of the map towards the center of the given latitude and longitude
+*@param registeredObject The GUI object 
+*/
+   public JMenuActionSetCenter(GUI registeredObject){super("Set Center",registeredObject);}
+/**
+*The method run sets and creates the GUI object with the new dialog box assigning the new center.
+*
+*/
    public void run(){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();

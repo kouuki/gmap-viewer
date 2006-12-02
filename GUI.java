@@ -468,7 +468,10 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
 
    }
 
-   //panelistener
+     /**
+   * A method for pane listener events
+   *@param o The object given. 
+   */
    public void paneEvent(Object o){
       repaint();
    }
