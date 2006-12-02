@@ -12,38 +12,67 @@ import com.sun.image.codec.jpeg.*;
 import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
-
+/**
+* The class GText is used in the Google Map Viewer application. It is used for the texts used in the program. It implements the following:
+*<ul>
+* <li>GDrawableObject</ul>
+*/
 class GText implements GDrawableObject{
 
    private GPhysicalPoint point;
    private String text;
    private Rectangle2D textRectangle;
    private int maxDescent;
+   /**
+   * This sets the padding between letters to a final number 2.
+   *
+   */
    private static final int padding = 2;
-
+  /**
+   * A constructor for the GText class. 
+   *@param point The actual point in the map.
+   *@param text The String text that is going to be placed in the map. 
+   */
    public GText(GPhysicalPoint point, String text){
       this.point = point;
       this.text = text;
       this.textRectangle = null;
    }
 
+     /**
+   *A method for the return of the physical point on the map.
+   *@return The point on the map is given.
+   */
    public GPhysicalPoint getPoint(){
       return point;
    }
-
+  /**
+   *A method that sets a physical point on the map.
+   *@param point  The actual point on the map
+   */
    public void setPoint(GPhysicalPoint point){
       this.point = point;
    }
-
+  /**
+   *A method for the return of text.
+   *@return The text to be written in the map.
+   */
    public String getText(){
       return text;
    }
-
+  /**
+   *A method that sets text that is given. 
+   *@param text The text to be written in the map.
+   */
    public void setText(String text){
       this.text = text;
    }
-
-
+  /**
+   *A method that returns the rectangle created. 
+   *@param p The physical point in the map.
+   *@param zoom The zoom amoun t/level of the rectangle.
+   *@return The rectangle is returned with appropriated values. 
+   */
    public Rectangle getRectangle(GPhysicalPoint p, int zoom){
       //check for nulls to prevent null pointer exceptions
       if(p == null) return null;
@@ -56,7 +85,13 @@ class GText implements GDrawableObject{
 
       return new Rectangle(pointOnScreen.x - padding,(int)(pointOnScreen.y-textRectangle.getHeight()+maxDescent) - padding,(int)textRectangle.getWidth() + 2*padding,(int)textRectangle.getHeight()+maxDescent+2*padding);
    }
-
+   
+  /**
+   *A method that enables the drawing of objects to the map.
+   *@param image Creates the graphics content.
+   *@param p The physical point in the map.
+   *@param zoom The zoom amount/level 
+   */
    public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
       //check for nulls to prevent null pointer exceptions
       if(p == null || image == null) return ;
