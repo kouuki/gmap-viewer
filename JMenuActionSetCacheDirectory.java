@@ -13,7 +13,6 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-
 /** Menu action allowing the user to set the cache directory */
 class JMenuActionSetCacheDirectory extends JMenuAction{
    /**Constructor for JMenuActionSetCacheDirectory class.
@@ -42,9 +41,6 @@ class JMenuActionSetCacheDirectory extends JMenuAction{
             String cacheDirectory = selectedFile.toString();
          //set the appropriate directories for each gDataSource instance and verify they exist, otherwise create them
             gui.setGMap(new GMap(cacheDirectory));
-
-            gui.getGMap().getGDataSource().cacheDirectory = cacheDirectory;
-            gui.getGMap().getGDataSource().verifyCacheDirectories();
             break;
          case JFileChooser.CANCEL_OPTION:
             //Cancel button was clicked - do nothing
