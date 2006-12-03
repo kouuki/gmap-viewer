@@ -13,15 +13,17 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-
-
+/** Class defining the radio button action for map dragging. It extends JMenuRadioButtonAction */
 class JMenuRadioButtonDragOn extends JMenuRadioButtonAction{
-   //stuff we need to know
-
+   /** 
+    * Constructor for the radio button action
+    * @param registeredObject The object to recieve the action
+    */
    public JMenuRadioButtonDragOn(GUI registeredObject){
       super("Map Dragging",registeredObject);
    }
 
+   /** Method to perform the necessary tasks for the button action */
    public void run(){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
@@ -31,6 +33,10 @@ class JMenuRadioButtonDragOn extends JMenuRadioButtonAction{
       gui.getProgressMeter().getPanel().repaint();
    }
 
+   /** 
+    * Method to define a listener for a given object
+    * @param object  The object to listen for the event
+    */
    public void paneEvent(Object object){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();

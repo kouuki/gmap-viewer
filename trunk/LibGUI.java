@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -14,11 +13,14 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-
-
-
+/** Class defining a library for performing other common Java operations necessary for GUI operations */
 class LibGUI{
-
+   /** 
+    * Method to load a buffered image
+    * @param location     The location of the image
+    * @param dimension    The dimension of the image
+    * @return             The buffered image
+    */
    public static BufferedImage loadImage(String location, Dimension dimension){
       try{
          // load image from INFILE
@@ -41,13 +43,21 @@ class LibGUI{
 
       }catch(Exception e){return null;}
    }
-
+   /** 
+    * Method to load a buffered image by location reference
+    * @param location      The location of the image
+    * @return              The buffered image
+    */
    public static BufferedImage loadImage(String location){
       return loadImage(location,null);
    }
-
-
-
+   /**
+    * Method to define a URL for given data
+    * @param urlString     The URL to create
+    * @param getData       The necessary data to get from the URL
+    * @param postData      The data to output
+    * @return              The URL created
+    */
    public static String getURL(String urlString, String getData, String postData){
       try{
          if(getData != null)
@@ -70,11 +80,18 @@ class LibGUI{
          return null;
       }
    }
-
+   /**
+    * Method to define a URL by given string reference
+    * @param urlString     The URL to create
+    * @return              The URL created
+    */
    public static String getURL(String urlString){
       return getURL(urlString, "", "");
    }
-
+   /** 
+    * Method to get the current time reference
+    * @return              The current time reference
+    */
    public static long getTime(){
       Date date = new Date();
       return date.getTime();
