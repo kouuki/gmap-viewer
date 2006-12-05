@@ -13,8 +13,11 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-/** Menu action allowing the user to set the cache directory */
-class JMenuActionSetCacheDirectory extends JMenuAction{
+/**
+  * Menu action allowing the user to set the cache directory
+  *@author bill
+  */
+public class JMenuActionSetCacheDirectory extends JMenuAction{
    /**Constructor for JMenuActionSetCacheDirectory class.
     * @param registeredObject The object to be registered with this menu action.
     */

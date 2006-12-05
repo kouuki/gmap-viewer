@@ -14,8 +14,21 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 
-abstract class JMenuRadioButtonAction extends JRadioButtonMenuItem implements PaneListener{
-   Object registeredObject;
+/**
+* This is the super class to all JMenuRadioButtonActions. JMenuRadioButtonAction is no different
+* than its parent JRadioButtonMenuItem, except that it (1) has a run method for actually performing
+* some task, (2) can be registered to an object on which it acts, (3) implements PaneListener, so
+* it can update its state in response to certain events.
+*/
+public abstract class JMenuRadioButtonAction extends JRadioButtonMenuItem implements PaneListener{
+   protected Object registeredObject;
+
+   /**
+   * Set up the JMenuAction.
+   *@param string - the representation of the object in a menu
+   *@param object - the object on which this action executes
+   */
+
    public JMenuRadioButtonAction(String string, Object registeredObject){
       super(string);
       this.registeredObject = registeredObject;
@@ -27,11 +40,17 @@ abstract class JMenuRadioButtonAction extends JRadioButtonMenuItem implements Pa
       }
    }
 
+   /**
+   * Launch the run method in a new thread.
+   */
    public void start(){
       thisThread tt = new thisThread(this);
       tt.start();
    }
 
+   /**
+   * A new thread for the run method.
+   */
    class thisThread extends Thread{
       private JMenuRadioButtonAction codeSource;
       public thisThread(JMenuRadioButtonAction codeSource){
@@ -42,7 +61,16 @@ abstract class JMenuRadioButtonAction extends JRadioButtonMenuItem implements Pa
       }
    }
 
+   /**
+   * The run method. This must be overridden, as all implementations of this class will do something different.
+   */
    public abstract void run();
+
+   /**
+   * Receive and handle a pane event. By default, this method does nothing, so subclassers do not have
+   * to override paneEvent unless they want to use its functionality.
+   *@param object - the object that fired this paneEvent
+   */
    public void paneEvent(Object object){
       //do nothing on pane event unless this is overidden
    };
