@@ -15,7 +15,7 @@ import java.awt.geom.*;
 /**
 * The class JMenuActionSetCenter is a type of JMenuAction that sets the View menu to Set Center or Set Center Pixel. 
 */
-class JMenuActionSetCenter extends JMenuAction{
+public class JMenuActionSetCenter extends JMenuAction{
 
 /**
 * The method allows the user to set the view of the map towards the center of the given latitude and longitude

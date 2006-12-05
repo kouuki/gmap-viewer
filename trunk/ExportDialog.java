@@ -21,7 +21,7 @@ import java.awt.geom.*;
 * <li> MouseListener
 * <li> ItemListener</ul>
 */
-class ExportDialog extends JDialog implements MouseListener, ActionListener, ItemListener{
+public class ExportDialog extends JDialog implements MouseListener, ActionListener, ItemListener{
    //properties
    private JButton save;
    private JButton cancel;
