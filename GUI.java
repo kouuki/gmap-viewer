@@ -281,8 +281,6 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
 
    /**
     * It sets the gmap object.
-    *
-    *@return gmap is the new gmap object.
     */
    public void setGMap(GMap gmap){
       this.gmap = gmap;
@@ -436,21 +434,21 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    /**
    *It shows the key being typed.
    *
-   *@param e   is the key event action
+   *@param k   is the key event action
    */
    public void keyTyped(KeyEvent k){}
 
    /**
    *It shows the key being released.
    *
-   *@param e   is the key event action
+   *@param k   is the key event action
    */
    public void keyReleased(KeyEvent k){}
 
    /**
    *It shows the key being pressed.
    *
-   *@param e   is the key event action
+   *@param k   is the key event action
    */
    public void keyPressed(KeyEvent k){}
 

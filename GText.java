@@ -17,7 +17,7 @@ import java.awt.geom.*;
 *<ul>
 * <li>GDrawableObject</ul>
 */
-class GText implements GDrawableObject{
+public class GText implements GDrawableObject{
 
    private GPhysicalPoint point;
    private String text;
