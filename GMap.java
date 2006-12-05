@@ -17,7 +17,7 @@ import java.awt.geom.*;
 
 class GMap{
 
-   /*
+   /**
    This class contains the modifications to the map,
    and is capable of generating an image at any
    zoom level. One Gmap is shared by all the viewing
@@ -45,17 +45,24 @@ class GMap{
    //GDraw handles the work of painting data NOT in the database
    private GDraw gDraw;
 
-   //message
+   /**
+    * Messages
+    */
    public static final int MESSAGE_DOWNLOADING = 0;
    public static final int MESSAGE_PAINTING = 1;
 
-   //modes
+   /**
+    * Modes
+    */
    public static final int SATELLITE_MODE = 2;
    public static final int MAP_MODE = 3;
    public static final int HYBRID_MODE = 4;
    private int mode;
 
-   //constructor
+   /**
+	Creates a new GMap object based on a base directory specified in the constructure.
+	@param cache - Base directory to search for cached image folders.
+	*/
    public GMap(String cache){
       //data source
       this.gDataSourceMap = new GDataSourceMap(cache+"/map_cache");
@@ -76,60 +83,121 @@ class GMap{
       ImageIcon loadImage = new ImageIcon("images/google.png");
       googleImage = loadImage.getImage();
    }
-
+	/**
+	Builds a GMap based on a 'cache' sub-directory.
+	*/
    public GMap(){
       this("cache");
    }
 
    //getters
+   /**
+	Returns a GDataSource object used by the GMap object
+	@return Returns the GDataSource used to grab the images.
+	*/
    public GDataSource getGDataSource(){
       return getGDataSource(mode);
    }
-
+	/**
+	Returns a GDataSource based on a specific mode using constants:
+		MAP_MODE, SATELLITE_MODE, HYBRID_MODE
+	@return A GDataSource of the specified mode.
+	*/
    public GDataSource getGDataSource(int mode){
       if(mode == MAP_MODE) return gDataSourceMap;
       else if(mode == SATELLITE_MODE) return gDataSourceSatellite;
       else if(mode == HYBRID_MODE) return gDataSourceHybrid;
       return null;
    }
-
+	/**
+	
+	*/
    public GDraw getGDraw(){
       return gDraw;
    }
-
+	/**
+	Gets the current used by the GMap object
+	@return Current mode: MAP_MODE, SATELLITE_MODE, HYBRID_MODE
+	*/
    public int getMode(){
       return mode;
    }
 
-   //setters
+   /**
+	Sets the current mode of the GMap object
+	@param Mode to set:  MAP_MODE, SATELLITE_MODE, HYBRID_MODE
+        */
    public void setMode(int mode){
       this.mode = mode;
    }
 
-   //actual build image method
+   /**
+    * Method used to build image asynchronously
+    * @param image - Image to paint
+    * @param x - x Pixel value
+    * @param y - y Pixel value
+    * @param w - width in pixels
+    * @param h - height in pixels
+    * @param cachedZoom - zoom level used
+    * @param listener - GMapListener object
+    */
    public void paintAsynchronousImage(BufferedImage image, int x, int y, int w, int h, int zoom, int cachedZoom, GMapListener listener){
       buildImage(image, x,y,w,h,zoom,cachedZoom,listener);
    }
-
+   /**
+    * Returns image at x and y 
+    * @param x - x Pixel value
+    * @param y - y Pixel value
+    * @param w - width in pixels
+    * @param h - height in pixels
+    * @param cachedZoom - zoom level used
+    */
    public BufferedImage getImage(int x, int y, int w, int h, int zoom, int cachedZoom){
      //create buffered image for return
       return getImage(x,y,w,h,zoom,cachedZoom,null);
    }
-
+   /**
+    * Returns image at x and y 
+    * @param x - x Pixel value
+    * @param y - y Pixel value
+    * @param w - width in pixels
+    * @param h - height in pixels
+    * @param cachedZoom - zoom level used
+    * @param listener - GMapListener to use in getImage
+    */
    public BufferedImage getImage(int x, int y, int w, int h, int zoom, int cachedZoom, GMapListener listener){
       BufferedImage toReturn = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
       buildImage(toReturn,x,y,w,h,zoom,cachedZoom,listener);
       return toReturn;
    }
-
+   /**
+    * Method used to cacheImage
+    * @param image - Image to paint
+    * @param x - x Pixel value
+    * @param y - y Pixel value
+    * @param w - width in pixels
+    * @param h - height in pixels
+    * @param zoom - zoom level used
+    */
    public void cacheImage(int x, int y, int w, int h, int zoom){
       cacheImage(x,y,w,h,zoom,null);
    }
+   /**
+    * Method used to cache image
+    * @param image - Image to paint
+    * @param x - x Pixel value
+    * @param y - y Pixel value
+    * @param w - width in pixels
+    * @param h - height in pixels
+    * @param zoom - zoom level used
+    */
    public void cacheImage(int x, int y, int w, int h, int zoom, GMapListener listener){
       paintAsynchronousImage(null,x,y,w,h,zoom,-1,listener);
    }
 
-
+   /**
+    * Main method used to build the image based on a large number of tiles.
+    */
    public void buildImage(BufferedImage toReturn, int x, int y, int w, int h, int zoom, int cachedZoom, GMapListener listener){
       //validate
       //if(x < 0 || y < 0 || w <= 0 || h <= 0) return getDefaultImage(w,h);
@@ -319,6 +387,9 @@ class GMap{
       return buffImg;
    }
 
+   /**
+    * Calculates the number of rows of tiles needed to build current image.
+    */
    public int numOfRows(int x, int y, int h, int zoom, int cachedZoom){
       int xIndex = x/GDataSource.sourceSize.width;
       int yIndex = y/GDataSource.sourceSize.height;
@@ -342,7 +413,9 @@ class GMap{
 
       return rowImages;
    }
-
+   /**
+    * Calculates the number of columns of tiles needed to build current image.
+    */
    public int numOfCols(int x, int y, int w, int zoom, int cachedZoom){
       int xIndex = x/GDataSource.sourceSize.width;
       int yIndex = y/GDataSource.sourceSize.height;
@@ -371,7 +444,9 @@ class GMap{
    public BufferedImage getIndexedImage(int x, int y, int zoom, int cacheZoom){
       return getIndexedImage(x, y, zoom, cacheZoom, null);
    }
-
+   /**
+    * Get an image based on index numbers
+    */
    public BufferedImage getIndexedImage(int x, int y, int zoom, int cacheZoom, GMapListener listener){
 
       if(listener != null){

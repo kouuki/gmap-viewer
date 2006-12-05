@@ -13,6 +13,10 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
+
+/**
+ * ActionListner that clears RAM when activated.
+ */
 class JMenuActionClearRAM extends JMenuAction{
    public JMenuActionClearRAM(GUI registeredObject){super("Clear RAM",registeredObject);}
 
