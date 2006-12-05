@@ -143,6 +143,14 @@ class GMap{
       //find coord of our starting point
       int xCoord = x%GDataSource.sourceSize.width;
       int yCoord = y%GDataSource.sourceSize.height;
+	  
+	  //Checks for invalid xCoord and yCoord
+	  if(xCoord < 0){
+		xCoord = 0;
+	  }
+	  if(yCoord < 0){
+		yCoord = 0;
+	  }
 
       //load this index
       BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom,listener);
@@ -239,6 +247,14 @@ class GMap{
 
       int xCoord = x%GDataSource.sourceSize.width;
       int yCoord = y%GDataSource.sourceSize.height;
+	  
+	  //Checks for invalid xCoord and yCoord
+	  if(xCoord < 0){
+		xCoord = 0;
+	  }
+	  if(yCoord < 0){
+		yCoord = 0;
+	  }
 
       //get info about the image
       Dimension imageSize = new Dimension(getGDataSource().sourceSize.width,getGDataSource().sourceSize.height);
@@ -287,6 +303,7 @@ class GMap{
       if(buffImg != null){
          Graphics2D g = (Graphics2D)buffImg.getGraphics();
          if(image != null){
+			//System.out.println(xCoord + ":" + yCoord + ":" + paintWidth + ":" + paintHeight);
             g.drawImage(image.getSubimage(xCoord, yCoord, paintWidth, paintHeight), xImage, yImage, paintWidth, paintHeight, null);
          }
          else{
