@@ -14,10 +14,10 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 /**
-  * Menu action allowing the user to cache currently selected area
-  * @author bill
+  * Menu action that will cache the currently selected area
+  * @author Bill
   */
-class JMenuActionCacheSelected extends JMenuAction{
+public class JMenuActionCacheSelected extends JMenuAction{
    //stuff we need to know
    int zoomLevel;
    /**Constructor for JMenuActionCacheSelected class.
@@ -30,7 +30,7 @@ class JMenuActionCacheSelected extends JMenuAction{
       this.zoomLevel = zoomLevel;
    }
 
-   /**Run method that performs actual caching
+   /**Performs the actual caching
     * 
     */
    public void run(){
@@ -59,8 +59,8 @@ class JMenuActionCacheSelected extends JMenuAction{
 
    }
 
-   /**paneEvent method determines when to enable this thread
-    * @param Object
+   /**Determines when to enable the thread
+    * @param object
     */
    public void paneEvent(Object object){
       GUI gui = (GUI)registeredObject;
