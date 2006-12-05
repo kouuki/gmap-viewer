@@ -6,7 +6,12 @@ import java.awt.image.*;
 import java.net.*;
 import javax.imageio.ImageIO;
 
-abstract class GDataSource {
+/**
+ * A superclass to all data source elements. GDataSource objects are responsible
+ * for contacting the Google database and downloading data.
+ */
+
+public abstract class GDataSource {
    /**
     * The dimension of images returned by this data source.
     */
@@ -32,7 +37,7 @@ abstract class GDataSource {
 
    /**
     * Constructor
-    * @param cacheDirectory
+    * @param cacheDirectory The new cache directory.
     */
    public GDataSource(String cacheDirectory){
       this.cacheDirectory = cacheDirectory;
@@ -48,20 +53,17 @@ abstract class GDataSource {
     * adds image to ram, using the
     * x and y coordinates as well as the zoom level
     * as a key to reference the image.
-    * @param x
-    * @param y
-    * @param zoom
-    * @param image
+    * @param x The horizontal coordinate
+    * @param y The vertical coordinate
+    * @param zoom The zoom level
+    * @param image The image to add to RAM.
     */
    public void addImageToRAM(int x, int y, int zoom, BufferedImage image){
-      /*ramCache[lastPointer] = new GDataImage(image,x,y,zoom);
-      lastPointer++;
-      if(lastPointer >= ramCache.length) lastPointer = 0;*/
+      //ramCache[lastPointer] = new GDataImage(image,x,y,zoom);
+      //lastPointer++;
+      //if(lastPointer >= ramCache.length) lastPointer = 0;
      if (ramCache.size() > 20){
         ramCache.remove(ramCacheQueue.remove(0));
-//       I don't agree that we should be calling the garbage collector after
-//       every call to this method. - Taeber
-//       System.gc();
      }
      String key = x + " " + y + " " + zoom;
      ramCache.put(key, new GDataImage(image,x,y,zoom));
@@ -204,7 +206,7 @@ abstract class GDataSource {
       BufferedImage thumbImage = new BufferedImage(sourceSize.width, sourceSize.height, BufferedImage.TYPE_INT_ARGB);
       Graphics2D graphics2D = thumbImage.createGraphics();
 
-      /* try accessing local image */
+      // try accessing local image
       try {
          //System.out.println("Load local image ("+x+","+y+") zoom="+zoom);
          //build source string
@@ -229,7 +231,7 @@ abstract class GDataSource {
       } catch(Exception e) {
       }
 
-      /* try accessing remote image */
+      // try accessing remote image
       try{
          System.out.print("Load remote image ("+x+","+y+") zoom="+zoom);
          //build source string
@@ -275,11 +277,11 @@ abstract class GDataSource {
     * @return
     */
    public BufferedImage getImageFromRAM(int x, int y, int zoom){
-      /*for(int i=0;i<ramCache.length;i++)
-         if(ramCache[i] != null)
-            if(x == ramCache[i].getX() && y == ramCache[i].getY() && zoom == ramCache[i].getZoom())
-               return ramCache[i].getImage();
-      return null;*/
+      //for(int i=0;i<ramCache.length;i++)
+      //   if(ramCache[i] != null)
+      //      if(x == ramCache[i].getX() && y == ramCache[i].getY() && zoom == ramCache[i].getZoom())
+      //         return ramCache[i].getImage();
+      //return null;
       BufferedImage image = null;
       String key = x + " " + y + " " + zoom;
       GDataImage imageHolder = ramCache.get(key);

@@ -7,12 +7,31 @@ import java.net.*;
 import javax.imageio.ImageIO;
 
 
-class GDataSourceSatellite extends GDataSource{
 
+/**
+ * This subclass of GDataSource retreives data specific to
+ * Google's satellite database.
+ * @author bill
+ */
+
+public class GDataSourceSatellite extends GDataSource{
+
+
+   /**
+    * Constructor for GDataSourceSatellite
+    * @param cacheSatellite The directory in which to save data.
+    */
    public GDataSourceSatellite(String cacheDirectory){
       super(cacheDirectory);
    }
 
+   /**
+    * Create a String representing the path to this image in Google's satellite database.
+    * @param x The horizontal cooridinate
+    * @param y The vertical coordinate
+    * @param zoom The zoom level
+    * @return The path.
+    */
    protected String makeRemoteName(int x, int y, int zoom){
       int serverNumber = (int)Math.round(Math.random()*3.0);
       //System.out.print(" [satellite]");
