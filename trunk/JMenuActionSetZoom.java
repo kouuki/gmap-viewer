@@ -13,14 +13,25 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-class JMenuActionSetZoom extends JMenuAction{
+/*Class for the Google Map Viewer application.  JMenuActionSetZoom
+*refreshes the Map Image when a new zoom level is set in the Menu Bar.
+*/
+public class JMenuActionSetZoom extends JMenuAction{
+
+/**
+* The JMenuActionSetZoom constructor.
+*@param registeredObject    The object representing the visible map image.
+*/
    public JMenuActionSetZoom(GUI registeredObject){super("Set Zoom",registeredObject);}
 
+/**
+* The method for setting the new Zoom Level image as the top
+*pane if it is valid, otherwise it asks for a new integer value.
+*/
    public void run(){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
       if(pane == null) return;
-
 
       int inPoint = pane.getZoom();
       String in = inPoint+"";

@@ -7,16 +7,29 @@ import java.net.*;
 import javax.imageio.ImageIO;
 
 
-
-class GDataSourceHybrid extends GDataSource{
+/**
+*Class for the Google Map Viewer application.  GDataSourceHybrid combines the
+*satellite imagery with Mapped Streets and Labels.
+*/
+public class GDataSourceHybrid extends GDataSource{
    private GDataSource satellite;
 
+/**This method gets the satellite imagery from the cache.
+*@param cacheDirectory   The directory location for the cached images.
+*@param satellite    The 
+*/
    public GDataSourceHybrid(String cacheDirectory, GDataSource satellite){
       super(cacheDirectory);
       this.satellite = satellite;
    }
 
-
+/**This method retrieves the hybrid images from the RAM to display in the pane.
+*@param x    The x coordinate of the topleft corner of the image being retrieved.
+*@param y    The y coordinate of the topleft corner of the image being retrieved.
+*@param zoom    The zoom level of the image being retrieved.
+*@param findAdjacent  Boolean for whether the bordering images are already cached in RAM.
+*@return   BufferedImage The image to be retrieved.
+*/
    public BufferedImage getImage(int x, int y, int zoom, boolean findAdjacent) {
       /* try getting image from RAM */
       BufferedImage ramImage = getImageFromRAM(x,y,zoom);
@@ -94,7 +107,14 @@ class GDataSourceHybrid extends GDataSource{
       return null;
    }
 
-
+/**
+* This method creates the URL address to retrieve the hybrid image from the
+*online Google database.
+*@param x    The x coordinate of the topleft corner of the image being retrieved.
+*@param y    The y coordinate of the topleft corner of the image being retrieved.
+*@param zoom    The zoom level of the image being retrieved.
+*@return String   The URL address for the requested image.
+*/
 
    protected String makeRemoteName(int x, int y, int zoom){
       int serverNumber = (int)Math.round(Math.random()*3.0);
