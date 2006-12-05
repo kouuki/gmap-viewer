@@ -13,16 +13,26 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-
+/**
+  * Menu action allowing the user to cache currently selected area
+  * @author bill
+  */
 class JMenuActionCacheSelected extends JMenuAction{
    //stuff we need to know
    int zoomLevel;
-
+   /**Constructor for JMenuActionCacheSelected class.
+    * @param name The name of the desired action
+    * @param registeredObject The object to be registered with this menu action.
+    * @param zoomLevel The current system zoom level
+    */
    public JMenuActionCacheSelected(String name, GUI registeredObject, int zoomLevel){
       super(name,registeredObject);
       this.zoomLevel = zoomLevel;
    }
 
+   /**Run method that performs actual caching
+    * 
+    */
    public void run(){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
@@ -49,6 +59,9 @@ class JMenuActionCacheSelected extends JMenuAction{
 
    }
 
+   /**paneEvent method determines when to enable this thread
+    * @param Object
+    */
    public void paneEvent(Object object){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
