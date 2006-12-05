@@ -27,7 +27,7 @@ public class GLine implements GDrawableObject{
       line = new Line2D.Double(p1, p2);
       this.zoom = zoom;
    }
-    * GLine constructor that takes in two points.  It applies a default zoom level of 1.
+    /** GLine constructor that takes in two points.  It applies a default zoom level of 1.
     * 
     * @param p1 Point where the line starts
     * @param p2 Point where the line ends
