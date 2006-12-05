@@ -13,9 +13,21 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-class JMenuActionSetCenterPixel extends JMenuAction{
+/*Class for the Google Map Viewer application.  JMenuActionSetCenterPixel
+*takes in an x and y value and displays a map image with that pixel as its center.
+*/
+public class JMenuActionSetCenterPixel extends JMenuAction{
+
+/**
+* The JMenuActionSetCenterPixel constructor.
+*@param registeredObject    The object representing the visible map image.
+*/
    public JMenuActionSetCenterPixel(GUI registeredObject){super("Set Center Pixel",registeredObject);}
 
+/**
+* The method for setting the new Centerd image as the top
+*pane if it is valid, otherwise it asks for new coordinates.
+*/
    public void run(){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
