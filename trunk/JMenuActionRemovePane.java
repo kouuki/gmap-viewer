@@ -16,7 +16,7 @@ import java.awt.geom.*;
 /**
  * Removes a pane from the menu.
  */
-class JMenuActionRemovePane extends JMenuAction{
+public class JMenuActionRemovePane extends JMenuAction{
    /**
     * Creates a JMenuAction.
     * @param registeredObject GUI

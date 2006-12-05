@@ -16,7 +16,7 @@ import java.awt.geom.*;
 /**
  * It is the radio button action when the user wants to calculate distance.
  */
-class JMenuRadioButtonCalculateDistance extends JMenuRadioButtonAction {
+public class JMenuRadioButtonCalculateDistance extends JMenuRadioButtonAction {
 	
 	
 	/**

@@ -18,7 +18,7 @@ import java.awt.geom.*;
  * @author aaday
  *
  */
-class JMenuRadioButtonActionCache extends JMenuRadioButtonAction{
+public class JMenuRadioButtonActionCache extends JMenuRadioButtonAction{
    //stuff we need to know
    /**
     * The current zoom level.

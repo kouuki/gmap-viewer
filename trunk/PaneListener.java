@@ -1,7 +1,7 @@
 /**
  * Interface for a PaneListener.
  */
-interface PaneListener{
+public interface PaneListener{
    /**
     * Registers a pane event.
     * 
