@@ -14,17 +14,20 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 
-
-
-/*
-* JMenuAction
-*
-* This abstract JMenuItem makes its own name, and guarantees a run method
-* that is invoked by the GUI when it is fired
-*
-*/
+/**
+ * JMenuAction
+ *
+ * This abstract JMenuItem makes its own name, and guarantees a run method
+ * that is invoked by the GUI when it is fired
+ *
+ */
 abstract class JMenuAction extends JMenuItem implements PaneListener{
    Object registeredObject;
+
+   /**Constructor for JMenuAction class.
+    * @param string The name of the desired action
+    * @param registeredObject The object to be registered with this menu action.
+    */
    public JMenuAction(String string, Object registeredObject){
       super(string);
       this.registeredObject = registeredObject;
@@ -37,6 +40,9 @@ abstract class JMenuAction extends JMenuItem implements PaneListener{
       }
    }
 
+   /**start method starts the thread
+    * 
+    */
    public void start(){
       thisThread tt = new thisThread(this);
       tt.start();
@@ -52,8 +58,15 @@ abstract class JMenuAction extends JMenuItem implements PaneListener{
       }
    }
 
+   /**Run method to be extended
+    *
+    */
    public abstract void run();
+
+   /**paneEvent method to be extended
+    * do nothing on pane event unless this is overridden
+    */
    public void paneEvent(Object object){
-      //do nothing on pane event unless this is overidden
+
    };
 }
