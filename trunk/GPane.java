@@ -1,27 +1,22 @@
-
+/**
+ * This file contains the GPane class
+ */
 
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.*;
-import java.io.*;
-import java.util.*;
 import java.awt.image.*;
-import javax.imageio.*;
-import java.beans.*; //Property change stuff
-import javax.swing.table.*;
-import com.sun.image.codec.jpeg.*;
-import java.net.*;
-import javax.imageio.ImageIO;
-import java.awt.geom.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
 
-class GPane extends JPanel implements ActionListener, ComponentListener, MouseListener, MouseMotionListener, Cloneable, GMapListener, MouseWheelListener{
-
-   //available JFrame object
-   private JFrame popup;
+/**
+ * The GPane class.
+ * 
+ * This class handles the work of storing and tracking all the information 
+ * needed to build a map. This includes zoom level, cached zoom level, width, 
+ * height, and center position. It also controls and tracks the selected area,
+ * and handles the task of painting images to the screen by overriding the 
+ * paintComponent() method.
+ */
+public class GPane extends JPanel implements ActionListener, ComponentListener, MouseListener, MouseMotionListener, Cloneable, GMapListener, MouseWheelListener{
 
    //GMap object
    private GUI gui;
@@ -45,17 +40,51 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    private AlphaComposite opacity30 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
    private AlphaComposite opacity70 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);
 
-
    //a thread for drawing stuff
    private DrawThread drawingThread;
 
-   //boolean mode
+   /**
+    * Selection mode.
+    * 
+    * Clicking the mouse starts a new selection rectangle.
+    */
    public static final int SELECTION_MODE = 0;
+   
+   /**
+    * Dragging mode.
+    * 
+    * Clicking the mouse will move the map.
+    */
    public static final int DRAGGING_MODE = 1;
+   
+   /**
+    * Draw line mode.
+    * 
+    * Clicking the mouse in two places will draw a line.
+    */
    public static final int DRAW_LINE_MODE = 2;
+   
+   /**
+    * Draw marker mode.
+    * 
+    * Clicking the mouse will create a new marker.
+    */
    public static final int DRAW_MARKER_MODE = 3;
+   
+   /**
+    * Draw string mode.
+    * 
+    * Clicking the mouse wll allow the user to type in text.
+    */
    public static final int DRAW_STRING_MODE = 4;
+   
+   /**
+    * Calculate distance mode.
+    * 
+    * Clicking the mouse in two places will calculate and display the distance.
+    */
    public static final int DISTANCE_MODE = 5;
+   
    private int mode;
 
    //buffered image
@@ -64,7 +93,19 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    //mouse depressed
    private boolean mouseIsPressed;
 
-   //constructor
+   /**
+    * Constructor.
+    * 
+    * Sets the pane layout, stores data elements, and fires a pane event to all 
+    * paneListeners.
+    * 
+    * @param gui
+    * @param center
+    * @param zoom
+    * @param showCachedZoom
+    * @param showCachedZoomLevel
+    * @param mode
+    */
    public GPane(GUI gui, GPhysicalPoint center, int zoom, boolean showCachedZoom, int showCachedZoomLevel, int mode){
       //get gui.getGMap() and registered objects
       this.gui = gui;
@@ -107,17 +148,22 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       //initialize draw thread to null
       drawingThread = null;
 
-
       //fire pane listener event
       gui.getNotifier().firePaneEvent(this);
-
-
    }
 
+   /**
+    * Default constructor.
+    * 
+    * @param gui
+    */
    public GPane(GUI gui){
       this(gui, new GPhysicalPoint(29.8265419861086, -82.35763549804688), 13, false, -1, SELECTION_MODE);
    }
 
+   /**
+    * Get a new image from GMap and repaint the screen.
+    */
    public void draw(){
       drawThreadScheduler();
    }
@@ -170,15 +216,14 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          //make graphics object
          Graphics2D g2d = (Graphics2D)image.createGraphics();
 
-         //else paint an overlay
-         if(!newImageMemory){
-            //Composite temp = g2d.getComposite();
-            //g2d.setComposite(opacity30);
-            //g2d.setColor(Color.BLACK);
-            //g2d.fillRect(0,0,image.getWidth(), image.getHeight());
-            //g2d.setComposite(temp);
-
-         }
+//         //else paint an overlay
+//         if(!newImageMemory){
+//            Composite temp = g2d.getComposite();
+//            g2d.setComposite(opacity30);
+//            g2d.setColor(Color.BLACK);
+//            g2d.fillRect(0,0,image.getWidth(), image.getHeight());
+//            g2d.setComposite(temp);
+//         }
 
          //empty data source
          gui.getGMap().getGDataSource().abortQueue();
@@ -196,17 +241,16 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          //timer stop
          System.out.println("Draw time = " + (LibGUI.getTime() - start));
 
-
-         //TEMP - DRAW TICK LINES
-         //BufferedImage toDraw = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
-         //Graphics2D g = toDraw.createGraphics();
-
-         //.drawImage(image, 0, 0, image.getWidth(), getHeight(), null);
-         //g.drawLine(getSize().width/2, 0, getSize().width/2, getSize().height);
-         //g.drawLine(0, getSize().height/2, getSize().width, getSize().height/2);
-
-         //update icon bounds
-         //label.setBounds(0,0,getSize().width, getSize().height);
+//         //TEMP - DRAW TICK LINES
+//         BufferedImage toDraw = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
+//         Graphics2D g = toDraw.createGraphics();
+//
+//         .drawImage(image, 0, 0, image.getWidth(), getHeight(), null);
+//         g.drawLine(getSize().width/2, 0, getSize().width/2, getSize().height);
+//         g.drawLine(0, getSize().height/2, getSize().width, getSize().height/2);
+//
+//         //update icon bounds
+//         label.setBounds(0,0,getSize().width, getSize().height);
 
          //image = toDraw;
          updateScreen();
@@ -225,12 +269,20 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       }
    }
 
-
+   /**
+    * Makes a synchronous call to repaint
+    */
    public void updateScreen(){
       this.paintImmediately(0,0,this.getWidth(), this.getHeight());
       gui.repaint();
    }
 
+   /**
+    * Using an image already retrieved from the GMap, does the work of painting 
+    * this image (and the selection overlay) to the screen.
+    * 
+    * @param g the <tt>Graphics</tt> object
+    */
    protected void paintComponent(Graphics g) {
       //call superclass, although its not necessary cause this is not transparent
       super.paintComponent(g);
@@ -254,15 +306,18 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       }
    }
 
-
-
-   //getters
-
+   /**
+    * Gets the center.
+    * @return the center
+    */
    public GPhysicalPoint getCenter(){
       return center;
    }
 
-   //returns upper left pixel of map
+   /**
+    * Gets the upper left pixel of map.
+    * @return the upper left pixel of the map.
+    */
    public Point getUpperLeftPixel(){
       Point centerPixel = center.getPixelPoint(zoom);
       int x = centerPixel.x - (getSize().width/2);
@@ -270,17 +325,27 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       return new Point(x,y);
    }
 
-   //returns center as a pixel at this zoom level
+   /**
+    * Gets the center as a pixel at this zoom level.
+    * @return the center as a pixel at this zoom level.
+    */
    public Point getCenterPixel(){
       return center.getPixelPoint(zoom);
    }
 
-   //returns Rectangle corresponding to selected area
+   /**
+    * Gets <tt>Rectangle</tt> corresponding to the selected area.
+    * @return the <tt>Rectangle</tt> corresponding to the selected area.
+    */
    public Rectangle getMouseRectanglePosition(){
       return mouseRectanglePosition;
    }
 
-   //returns centered rectangle for selected area
+   /**
+    * Computes and returns the centered mouse rectangle position. 
+    * Mouse rectangle position is the selected area. 
+    * @return the <tt>CentertedRectangle</tt>
+    */
    public CenteredRectangle getMouseRectanglePositionCentered(){
       if(mouseRectanglePosition == null) return null;
       Point ul = getUpperLeftPixel();
@@ -289,41 +354,68 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       return new CenteredRectangle(new GPhysicalPoint(x,y,zoom),mouseRectanglePosition.width,mouseRectanglePosition.height);
    }
 
-   //returns centered rectangle for screen
+   /**
+    * Gets a clone of the ScreenDimensionsCentered <tt>CenteredRectangle</tt>.
+    * @return the cloned <tt>CentertedRectangle</tt>
+    */
    public CenteredRectangle getScreenDimensionsCentered(){
       return new CenteredRectangle((GPhysicalPoint)center.clone(),getSize().width,getSize().height);
    }
 
-   //returns zoom
+   /**
+    * Gets the current zoom level.
+    * @return the current zoom level.
+    */
    public int getZoom(){
       return zoom;
    }
 
-   //returns cache display zoom
+   /**
+    * Gets the zoom level of the cached area shown.
+    * @return the zoom level of the cached area shown.
+    */
    public int getShowCachedZoomLevel(){
       return showCachedZoomLevel;
    }
 
-   //returns whether or not cache zoom is on
+   /**
+    * Gets whether to show the cached area at this zoom level.  
+    * @return whether to show the cached area at this zoom level.
+    */
    public boolean getShowCachedZoom(){
       return showCachedZoom;
    }
 
+   /**
+    * Gets the mode.
+    * @return the mode.
+    */
    public int getMode(){
       return mode;
    }
 
-   //setters
+   /**
+    * Sets the center using a physical point.
+    * @param center
+    */
    public void setCenter(GPhysicalPoint center){
       this.center = center;
       draw();
    }
 
+   /**
+    * Sets the center using a pixel point.
+    * @param center
+    */
    public void setCenterPixel(Point center){
       this.center.setPixelPoint(center, zoom);
       draw();
    }
 
+   /**
+    * Sets the zoom level; checks to make sure it is in range.
+    * @param zoom
+    */
    public void setZoom(int zoom){
       if (zoom >= GDataImage.ZOOM_MIN && zoom <= GDataImage.ZOOM_MAX) {
          this.zoom = zoom;
@@ -331,16 +423,28 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       }
    }
 
+   /**
+    * Sets the zoom level of the cached area shown.
+    * @param showCachedZoomLevel
+    */
    public void setShowCachedZoomLevel(int showCachedZoomLevel){
       this.showCachedZoomLevel = showCachedZoomLevel;
       draw();
    }
 
+   /**
+    * Sets whether to show the cached area.
+    * @param showCachedZoom
+    */
    public void setShowCachedZoom(boolean showCachedZoom){
       this.showCachedZoom = showCachedZoom;
       draw();
    }
 
+   /**
+    * Sets the mode.
+    * @param mode
+    */
    public void setMode(int mode){
       //clean up tracking variables for mouse actions
       clickCount = 0;
@@ -350,19 +454,34 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       draw();
    }
 
-
-   //component listener
+   /**
+    * @see java.awt.event.ComponentListener#componentHidden(ComponentEvent)
+    */
    public void componentHidden(ComponentEvent e){}
-   public void componentMoved(ComponentEvent e){}
-   public void componentResized(ComponentEvent e){draw();}
+   
+   /**
+    * @see java.awt.event.ComponentListener#componentMoved(ComponentEvent)
+    */
+   public void componentMoved(ComponentEvent e){}   
+   
+   /**
+    * @see java.awt.event.ComponentListener#componentResized(ComponentEvent)
+    */
+   public void componentResized(ComponentEvent e){draw();}   
+   
+   /**
+    * @see java.awt.event.ComponentListener#componentShown(ComponentEvent)
+    */
    public void componentShown(ComponentEvent e){gui.getNotifier().firePaneEvent(this);}
-
 
    //mouse methods - use e.getX()
    private Point mouseLocation = new Point(0,0);
    private Point clickLocation = new Point(0,0);
    private Dimension mouseOffset = new Dimension(0,0);
 
+   /**
+    * @see java.awt.event.MouseMotionListener#mouseMoved(MouseEvent)
+    */
    public void mouseMoved(MouseEvent e){
       int mouseX = e.getX() + mouseOffset.width;
       int mouseY = e.getY() + mouseOffset.height;
@@ -373,6 +492,9 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
 
    private boolean mouseDraggedThisClick = false;
 
+   /**
+    * @see java.awt.event.MouseMotionListener#mouseDragged(MouseEvent)
+    */
    public void mouseDragged(MouseEvent e){
       int m = e.getModifiers();
       if(m == 16){
@@ -401,6 +523,9 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       }
    }
 
+   /**
+    * @see java.awt.event.MouseListener#mouseClicked(MouseEvent)
+    */
    public void mouseClicked(MouseEvent e){
       //single left click
       if(e.getModifiers() == 16){
@@ -420,15 +545,25 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          }
       }
    }
+   
+   /**
+    * @see java.awt.event.MouseListener#mouseEntered(MouseEvent)
+    */
    public void mouseEntered(MouseEvent e){}
+   
+   /**
+    * @see java.awt.event.MouseListener#mouseExited(MouseEvent)
+    */
    public void mouseExited(MouseEvent e){}
 
    private int clickCount = 0;
    private GPhysicalPoint tempA;
    private GPhysicalPoint tempB;
    private GMarker tempMarkerA;
-   private GMarker tempMarkerB;
 
+   /**
+    * @see java.awt.event.MouseListener#mousePressed(MouseEvent)
+    */
    public void mousePressed(MouseEvent e){
       //update mouse dragged
       mouseIsPressed = true;
@@ -504,8 +639,6 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
                }
                draw();
             }
-
-
          }
          else if(e.getClickCount() == 2){
             //double left click
@@ -523,9 +656,11 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          //right click
          gui.getTabbedPane().showPopupMenu(e.getX(), e.getY()+25);
       }
-
-
    }
+   
+   /**
+    * @see java.awt.event.MouseListener#mouseReleased(MouseEvent)
+    */
    public void mouseReleased(MouseEvent e){
       mouseIsPressed = false;
       if(!mouseDraggedThisClick){
@@ -539,13 +674,24 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       updateScreen();
   }
 
-   //keyboard methods - use k.getKeyCode();
+   /**
+    * @see java.awt.event.KeyListener#keyTyped(KeyEvent)
+    */
    public void keyTyped(KeyEvent k){}
+
+   /**
+    * @see java.awt.event.KeyListener#keyReleased(KeyEvent)
+    */
    public void keyReleased(KeyEvent k){}
+
+   /**
+    * @see java.awt.event.KeyListener#keyPressed(KeyEvent)
+    */
    public void keyPressed(KeyEvent k){}
 
-
-   //clone
+   /**
+    * Creates a deep copy of this GPane.
+    */
    public Object clone(){
       return new GPane(gui, (GPhysicalPoint)center.clone(), zoom, showCachedZoom, showCachedZoomLevel, mode);
    }
@@ -555,16 +701,27 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
    private int gmapTaskSize;
    private int messageNumber;
 
+   /**
+    * Sets the number of completed units for the current task tracked by the
+    * ProgressMeter.
+    */
    public void updateGMapCompleted(int completed){
       this.gmapCompleted = completed;
       gui.getProgressMeter().setPercent(ProgressMeter.computePercent(gmapCompleted,gmapTaskSize),this);
    }
 
+   /**
+    * Sets the total number of units for the current task tracked by the 
+    * ProgressMeter.
+    */
    public void updateGMapTaskSize(int size){
       this.gmapTaskSize = size;
       gui.getProgressMeter().setPercent(ProgressMeter.computePercent(gmapCompleted,gmapTaskSize),this);
    }
 
+   /**
+    * Sets the message for the current task tracked by the ProgressMeter.
+    */
    public void updateGMapMessage(int messageNumber){
       if(this.messageNumber != messageNumber){
          this.messageNumber = messageNumber;
@@ -584,16 +741,24 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
       }
    }
 
+   /**
+    * Updates the screen.
+    */
    public void updateGMapPainting(){
       updateScreen();
    }
 
+   /**
+    * Gets the stop flag, asynchrounously.
+    */
    public boolean asynchronousGMapStopFlag(){
       return gui.getProgressMeter().getStopFlag();
    }
 
-
-   //action dispatcher method from menubar
+   /**
+    * Action dispatcher method from meubar
+    * @see java.awt.event.ActionListener#actionPerformed(ActionEvent)
+    */
    public void actionPerformed(ActionEvent e){
       Object sourceObject = e.getSource();
       //dispatch actions
@@ -601,21 +766,18 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          JMenuAction sourceMenuAction = (JMenuAction)sourceObject;
          sourceMenuAction.start();
       }
+      
       //dispatch radio button actions
       if(sourceObject instanceof JMenuRadioButtonAction){
          JMenuRadioButtonAction sourceMenuAction = (JMenuRadioButtonAction)sourceObject;
          sourceMenuAction.start();
       }
-
    }
 
-
-   /*
-    * (non-Javadoc)
+   /**
     * @see java.awt.event.MouseWheelListener#mouseWheelMoved(java.awt.event.MouseWheelEvent)
     */
    public void mouseWheelMoved(MouseWheelEvent e) {
-      // TODO Auto-generated method stub
       int notches = e.getWheelRotation();
 
       if(notches < 0) {
@@ -626,6 +788,4 @@ class GPane extends JPanel implements ActionListener, ComponentListener, MouseLi
          this.gui.getTopPane().setZoom(this.gui.getTopPane().getZoom() + 1);
       }
    }
-
-
 }
