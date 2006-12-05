@@ -17,7 +17,7 @@ import java.awt.geom.*;
 /**
  * It is the radio button action when map type data is needed.
  */
-class JMenuRadioButtonActionHybrid extends JMenuRadioButtonAction{
+public class JMenuRadioButtonActionHybrid extends JMenuRadioButtonAction{
 
    /**
     * Constructor for JMenuRadioButtonActionMap class.

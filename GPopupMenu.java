@@ -7,7 +7,7 @@ import javax.swing.*;
  * right click is performed on the GUI. It extends JPopupMenu.
  * @author Dan
  */
-class GPopupMenu extends JPopupMenu{
+public class GPopupMenu extends JPopupMenu{
    /**
     * Declaration of the instance of the popup
     */

@@ -1,7 +1,7 @@
 /**
  * Provides a static method to compute distance.
  */
-class GLib{
+public class GLib{
    private static final int R = 6367; //R = 6367 km = 3956 mi
 
    /**
