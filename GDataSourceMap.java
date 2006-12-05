@@ -7,7 +7,7 @@ import java.net.*;
 import javax.imageio.ImageIO;
 
 /** Class defining the characteristics for the map mode data source. It extends the abstract class GDataSource */
-class GDataSourceMap extends GDataSource{
+public class GDataSourceMap extends GDataSource{
 
    /** 
     * Constructor for a new GDataSourceMap 

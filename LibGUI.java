@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 /** Class defining a library for performing other common Java operations necessary for GUI operations */
-class LibGUI{
+public class LibGUI{
    /** 
     * Method to load a buffered image
     * @param location     The location of the image

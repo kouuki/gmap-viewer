@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 /** Class defining the radio button action for map dragging. It extends JMenuRadioButtonAction */
-class JMenuRadioButtonDragOn extends JMenuRadioButtonAction{
+public class JMenuRadioButtonDragOn extends JMenuRadioButtonAction{
    /** 
     * Constructor for the radio button action
     * @param registeredObject The object to recieve the action
