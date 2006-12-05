@@ -14,12 +14,18 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 
-
-class JMenuActionRemoveGDrawableObject extends JMenuAction{
+/**
+ * A clickable menu action that removes a drawable object.
+ *@author bill
+ */
+public class JMenuActionRemoveGDrawableObject extends JMenuAction{
    public JMenuActionRemoveGDrawableObject(GUI registeredObject) {
       super("Remove Object",registeredObject);
    }
 
+   /**
+    * Remove the object.
+    */
    public void run(){
       //remove the GDrawableObject returned
       GUI gui = (GUI)registeredObject;

@@ -17,12 +17,15 @@ import java.awt.geom.*;
 * JMenuGroup
 *
 * A JMenu that handles the work involved in registering all the necessary
-* Listeners and adding its own item array
+* Listeners and adding its own item array. Puts items in a single ButtonGroup.
 *
 */
 class JMenuGroup extends JMenu{
-   ButtonGroup buttonGroup;
+   private ButtonGroup buttonGroup;
 
+   /*
+   * Construct this JMenu group.
+   */
    public JMenuGroup(String name, ActionListener registeredObject, JMenuItem[] items){
       super(name);
       //set up the button group
