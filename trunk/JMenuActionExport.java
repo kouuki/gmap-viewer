@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 
-/*
+/**
 *
 * Specific JMenuActions - gather user input, exit program, and the like...
 *
