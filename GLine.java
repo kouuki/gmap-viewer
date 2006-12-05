@@ -15,7 +15,7 @@ public class GLine implements GDrawableObject{
     * Holds the zoom level
     */
    int zoom;
-
+	
    /**
     * GLine constructor that takes in two points and a zoom level.
     * 
@@ -27,8 +27,6 @@ public class GLine implements GDrawableObject{
       line = new Line2D.Double(p1, p2);
       this.zoom = zoom;
    }
-
-   /**
     * GLine constructor that takes in two points.  It applies a default zoom level of 1.
     * 
     * @param p1 Point where the line starts
@@ -39,7 +37,6 @@ public class GLine implements GDrawableObject{
      //System.out.println("(" + p1.getPixelPoint(zoom).x + ", " + p1.getPixelPoint(zoom).y + ") " + "(" + p2.getPixelPoint(zoom).x + ", " + p2.getPixelPoint(zoom).y);
      line = new Line2D.Double(p1.getPixelPoint(zoom), p2.getPixelPoint(zoom));
    }
-
    /**
     * Takes in a buffered image and draws a line on it.
     * 
@@ -205,7 +202,6 @@ public class GLine implements GDrawableObject{
        g.drawLine(x1-1,y1+1,x2-1,y2+1);
       }
    }
-
    /**
     * Returns a rectangle the encompasses the entire line.
     * 
@@ -220,11 +216,20 @@ public class GLine implements GDrawableObject{
 		width *= Math.pow(2, this.zoom - zoom);
 		height *= Math.pow(2, this.zoom - zoom);
 		
-		Point2D gPoint = p.getPoint();
-		int x = (int)gPoint.getX() - (int)(line.getX1()*Math.pow(2, this.zoom - zoom));
-		int y = (int)gPoint.getY() - (int)(line.getY1()*Math.pow(2, this.zoom - zoom));
+		int x, y;
 		
-		Rectangle rect = new Rectangle(x, y, width, height);
+		if(width < 0){
+			x = (int)(line.getX2()*Math.pow(2, this.zoom - zoom)) - p.getPixelX(zoom);
+		}else{
+			x = (int)(line.getX1()*Math.pow(2, this.zoom - zoom)) - p.getPixelX(zoom);
+		}
+		if(height < 0){
+			y = (int)(line.getY2()*Math.pow(2, this.zoom - zoom)) - p.getPixelY(zoom);
+		}else{
+			y = (int)(line.getY1()*Math.pow(2, this.zoom - zoom)) - p.getPixelY(zoom);
+		}
+		//System.out.println(x + ":" + y + ":" + width + ":" + height);
+		Rectangle rect = new Rectangle(x, y, Math.abs(width), Math.abs(height));
 		
 		return rect;
    }
