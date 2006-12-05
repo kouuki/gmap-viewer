@@ -116,8 +116,15 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
          System.setProperty("apple.awt.showGrowBox", "false");
       }
 
-      GUI newWindow = new GUI();
+      //option to set cache directory from command line
+      if ( args.length != 0 && args[0] != null ) {
+      GUI newWindow = new GUI( args[0] );
+      newWindow.setVisible(true);   
+      }
+      else{
+      GUI newWindow = new GUI( "cache" );
       newWindow.setVisible(true);
+      }
    }
 
    /*
@@ -126,8 +133,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
 
    /**
     * The GUI constructor.
+    *@param cacheDirectory 	The directory to store the cached images
     */
-   public GUI(){
+   public GUI( String cacheDirectory ){
       //set parameters
       setTitle(title);
       setSize(screenSize.width,screenSize.height);
@@ -141,7 +149,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       notifier.addPaneListener(this);
 
       //initialize gmap
-      gmap = new GMap();
+      gmap = new GMap( cacheDirectory );
 
       //run content build
       buildJFrameContents();
