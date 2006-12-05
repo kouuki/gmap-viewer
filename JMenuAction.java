@@ -15,13 +15,11 @@ import java.awt.geom.*;
 
 
 /**
- * JMenuAction
- *
- * This abstract JMenuItem makes its own name, and guarantees a run method
+ * This abstract JMenuItem makes its own name and guarantees a run method
  * that is invoked by the GUI when it is fired
  *
  */
-abstract class JMenuAction extends JMenuItem implements PaneListener{
+public abstract class JMenuAction extends JMenuItem implements PaneListener{
    Object registeredObject;
 
    /**Constructor for JMenuAction class.
@@ -40,7 +38,7 @@ abstract class JMenuAction extends JMenuItem implements PaneListener{
       }
    }
 
-   /**start method starts the thread
+   /**Starts the thread
     * 
     */
    public void start(){
@@ -58,13 +56,13 @@ abstract class JMenuAction extends JMenuItem implements PaneListener{
       }
    }
 
-   /**Run method to be extended
+   /**Should contain code for main functionality
     *
     */
    public abstract void run();
 
-   /**paneEvent method to be extended
-    * do nothing on pane event unless this is overridden
+   /**
+    * Does nothing on pane event unless overridden
     */
    public void paneEvent(Object object){
 

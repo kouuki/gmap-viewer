@@ -14,11 +14,11 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 /**
- * Class which handles allowing the user to draw text on the map. 
+ * This class handles allowing the user to draw text on the map. 
  *
  */
 
-class JMenuRadioButtonAddText extends JMenuRadioButtonAction {
+public class JMenuRadioButtonAddText extends JMenuRadioButtonAction {
 
    static final long serialVersionUID = 42643950;
 
@@ -31,7 +31,7 @@ class JMenuRadioButtonAddText extends JMenuRadioButtonAction {
    }
 
    /**
-    * run method for class
+    * Run method for this class
     */
    public void run() {
       GUI gui = (GUI) registeredObject;
@@ -43,7 +43,7 @@ class JMenuRadioButtonAddText extends JMenuRadioButtonAction {
    }
 
    /**
-    * Pane event method for class.
+    * Pane event method for this class.
     */
    public void paneEvent(Object object){
       GUI gui = (GUI)registeredObject;
