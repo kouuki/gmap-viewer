@@ -22,6 +22,9 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
+/**
+	GPhysicalPoint is a representation of a point on the 2D google maps plane.  It represents both pixel and physical locations, basing its mapping calculations on the mercator projections.
+*/
 
 public class GPhysicalPoint implements Cloneable{
 
@@ -118,18 +121,35 @@ public static final GCalibration[] calibrationPoints = {
 */
 
    //constructors
+   /**
+	Constructs a GPhysicalPoint object based on a Point2D.Double object representing the physical (latitude, longitude) location of the point.
+	@param point - Point2D representing latitude and longitude data.
+       */
    public GPhysicalPoint(Point2D.Double point){
       this.point = point;
    }
-
+	/**
+	Constructs a GPhysicalPoint object based on a physical values.
+	@param x - latitude
+	@param y - longitude
+	*/
    public GPhysicalPoint(double x, double y){
       this(new Point2D.Double(x,y));
    }
-
+	/**
+	Constructs a GPhysicalPoint object based on pixel point data and a zoom level.
+	@param point - represnts a pixel point in the (x,y) format
+	@param calibration - zoom level the pixel point represents (1 - 15)
+	*/
    public GPhysicalPoint(Point point, int calibration){
       setPixelPoint(point,calibration);
    }
-
+	/**
+	Constructs a GPhysicalPoint object based on pixel point data and a zoom level.
+	@param x - represents the x pixel point value
+	@param y - represnts the y pixel point value
+	@param calibration - zoom level the pixel point represents(1-15)
+	*/
    public GPhysicalPoint(int x, int y, int calibration){
       setPixelPoint(new Point(x,y),calibration);
    }
@@ -138,6 +158,11 @@ public static final GCalibration[] calibrationPoints = {
    //getters
 
    //calibration corresponds to zoom levels, different pixel/meter ratios
+   /**
+	Returns the pixel point location of the GPhysicalPoint based on a zoom level.
+	@param calibration - zoom level you want the returned pixel point to correspond to.
+	@return A Point object representing the pixel of the current point at zoom level calibration in a (x,y) format.
+	*/
    public Point getPixelPoint(int calibration){
       //convert to zero indexing
       calibration--;
@@ -148,42 +173,72 @@ public static final GCalibration[] calibrationPoints = {
       //now valid, use appropriate calibrator
       return calibrationPoints[calibration].getPixelPoint(point);
    }
-
+	/**
+	Returns the x pixel value based on a zoom level
+	@param calibration - zoom level you want the returned x value to correspond to.
+	@return An int value respresnting the x pixel value.
+	*/
    public int getPixelX(int calibration){
       return getPixelPoint(calibration).x;
    }
-
+	/**
+	Returns the y pixel value based on a zoom level
+	@param calibration - zoom level you want the returned y value to correspond to.
+	@return An int value respresnting the y pixel value.
+	*/
    public int getPixelY(int calibration){
       return getPixelPoint(calibration).y;
    }
-
+	/**
+	Returns the physical point location of the GPhysicalPoint.
+	@return A Point2D object representing the physical location of the current point in a (latitude, longitude) format.
+	*/
    public Point2D.Double getPoint(){
       return point;
    }
-
+	/**
+	Returns a latitude of the current GPhysicalPoint
+	@return Latitude
+	*/
    public double getX(){
       return point.x;
    }
-
+	/**
+	Returns the longitude of the current GPhysicalPoint
+	@return longitude
+	*/
    public double getY(){
       return point.y;
    }
 
 
    //setters
+   /**
+	Resets the value of the GPhysicalPoint to the latitude and longitude represented by the Point2D paramter.
+	@param point - Represents the latitude and longitude of a new physical point.
+	*/
    public void setPoint(Point2D.Double point){
       this.point = point;
    }
-
+	/**
+	Resets the latitude value of the current GPhysicalPoint
+	@param x - latitude value
+	*/
    public void setX(double x){
       point.x = x;
    }
-
+	/**
+	Resets the longitude value of the current GPhysicalPoint
+	@param y - longitude value
+	*/
    public void setY(double y){
       point.y = y;
    }
 
-
+	/**
+	Resets the value of the GPhysicalPoint to the x and y pixel values represented by the Point paramter.
+	@param point - Represents the x and y of a new pixel point.
+	*/
    public void setPixelPoint(Point setPoint, int calibration){
       //convert to zero indexing
       calibration--;
@@ -195,11 +250,18 @@ public static final GCalibration[] calibrationPoints = {
       point = calibrationPoints[calibration].getPhysicalPoint(setPoint);
    }
 
-
+	/**
+	Resets the x pixel value of the current GPhysicalPoint
+	@param x - pixel x value
+	*/
    public void setPixelX(int pixel, int calibration){
       setPixelPoint(new Point(pixel,getPixelY(calibration)), calibration);
    }
-
+	
+	/**
+	Resets the x pixel value of the current GPhysicalPoint
+	@param y - pixel y value
+	*/
    public void setPixelY(int pixel, int calibration){
       setPixelPoint(new Point(getPixelX(calibration),pixel), calibration);
    }
