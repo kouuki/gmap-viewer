@@ -2,22 +2,51 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 
+/**
+ * Class defining the instance for a line object. It implements GDrawableObject.
+ */
 public class GLine implements GDrawableObject{
-
+   /**
+    * Declaration for a line on the map
+    */
    Line2D line;
+   
+   /**
+    * Holds the zoom level
+    */
    int zoom;
 
+   /**
+    * GLine constructor that takes in two points and a zoom level.
+    * 
+    * @param p1 Point where the line starts
+    * @param p2 Point where the line ends
+    * @param zoom Zoom level
+    */
    public GLine(Point2D p1, Point2D p2, int zoom){
       line = new Line2D.Double(p1, p2);
       this.zoom = zoom;
    }
 
+   /**
+    * GLine constructor that takes in two points.  It applies a default zoom level of 1.
+    * 
+    * @param p1 Point where the line starts
+    * @param p2 Point where the line ends
+    */
    public GLine(GPhysicalPoint p1, GPhysicalPoint p2){
      this.zoom = 1;
      //System.out.println("(" + p1.getPixelPoint(zoom).x + ", " + p1.getPixelPoint(zoom).y + ") " + "(" + p2.getPixelPoint(zoom).x + ", " + p2.getPixelPoint(zoom).y);
      line = new Line2D.Double(p1.getPixelPoint(zoom), p2.getPixelPoint(zoom));
    }
 
+   /**
+    * Takes in a buffered image and draws a line on it.
+    * 
+    * @param image The buffered image
+    * @param p The upper left pixel of the buffered image
+    * @param zoom The zoom level
+    */
    public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
       Dimension imageDim = new Dimension(image.getWidth(), image.getHeight());
      //imageRect is the currently viewable image window.
@@ -177,6 +206,13 @@ public class GLine implements GDrawableObject{
       }
    }
 
+   /**
+    * Returns a rectangle the encompasses the entire line.
+    * 
+    * @param p The point at which the line is
+    * @param zoom The zoom level
+    * @returns A rectangle the encompasses the entire line
+    */
    public Rectangle getRectangle(GPhysicalPoint p, int zoom){
 		int width = (int)line.getX2() - (int)line.getX1();
 		int height = (int)line.getY2() - (int)line.getY1();

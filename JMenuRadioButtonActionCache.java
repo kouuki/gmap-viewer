@@ -13,15 +13,33 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
+/**
+ * Creates a radio button for setting the cache zoom level.  It also the events associated with it.
+ * @author aaday
+ *
+ */
 class JMenuRadioButtonActionCache extends JMenuRadioButtonAction{
    //stuff we need to know
+   /**
+    * The current zoom level.
+    */
    int zoomLevel;
 
+   /**
+    * Creates a radio button for setting the cache zoom level.
+    * 
+    * @param name Name of radio button
+    * @param registeredObject GUI
+    * @param zoomLevel The current zoom level
+    */
    public JMenuRadioButtonActionCache(String name, GUI registeredObject, int zoomLevel){
       super(name,registeredObject);
       this.zoomLevel = zoomLevel;
    }
 
+   /**
+    * Handles the event for the radio button.
+    */
    public void run(){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
@@ -37,6 +55,9 @@ class JMenuRadioButtonActionCache extends JMenuRadioButtonAction{
       }
    }
 
+   /**
+    * When a pane event is fired, this method is run.
+    */
    public void paneEvent(Object object){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
