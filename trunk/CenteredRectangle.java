@@ -2,7 +2,7 @@
  * Class CenteredRectangle represents a rectangle of size w,h centered on
  * a GPhysicalPoint.
  */
-class CenteredRectangle {
+public class CenteredRectangle {
    /** Declaration of the center position of the rectangular shape */
    public GPhysicalPoint center;
    /** Declaration of the width of the rectangle */
@@ -10,7 +10,7 @@ class CenteredRectangle {
    /** Declaration of the height of the rectangle */
    public double height;
 
-   /** 
+   /**
     * Method to create a new instance of the rectangle
     */
    public CenteredRectangle(GPhysicalPoint center, double width, double height) {
@@ -19,9 +19,9 @@ class CenteredRectangle {
       this.center = center;
    }
 
-   /** 
+   /**
     * Method to check whether a particular (x,y) location is inside the rectangle
-    *  
+    *
     * @param x The x coordinate to be checked
     * @param y The y coordinate to be checked
     * @return  The boolean result of whether the corresponding point (x,y) is in the rectangle

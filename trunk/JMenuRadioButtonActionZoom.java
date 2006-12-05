@@ -13,16 +13,26 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-
-class JMenuRadioButtonActionZoom extends JMenuRadioButtonAction{
+/**
+  * Menu action allowing the user to set the current pane's zoom level.
+  *@author bill
+  */
+public class JMenuRadioButtonActionZoom extends JMenuRadioButtonAction{
    //stuff we need to know
-   int zoomLevel;
+   private int zoomLevel;
 
+
+   /**Constructor for JMenuRadioButtonActionZoom class.
+    *@param name The visual representation of this object in a menu.
+    *@param registeredObject The object to be registered with this menu action.
+    *@param zoomLevel The int value corresponding to this zoom level.
+    */
    public JMenuRadioButtonActionZoom(String name, GUI registeredObject, int zoomLevel){
       super(name,registeredObject);
       this.zoomLevel = zoomLevel;
    }
 
+   /** Modify the zoom level. */
    public void run(){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
@@ -33,6 +43,10 @@ class JMenuRadioButtonActionZoom extends JMenuRadioButtonAction{
       pane.setZoom(zoomLevel);
       pane.draw();
    }
+
+   /** On pane events, update the state of this object to reflect the status of the top level pane.
+    *@param object The object that fired this pane event.
+    */
 
    public void paneEvent(Object object){
       GUI gui = (GUI)registeredObject;
