@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 /** Class defining the instance for a marker object. It implements GDrawableObject */
-class GMarker implements GDrawableObject{
+public class GMarker implements GDrawableObject{
    /** Declaration for a point on the map for the marker */
    private GPhysicalPoint point;
    /** 

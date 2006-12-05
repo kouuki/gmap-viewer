@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 /** Class defining the instance of the drawing mechanism for the map view */
-class GDraw{
+public class GDraw{
    /** Declaration for the instance of an array of GDrawableObjects */
    private GDrawableObject[] objects;
    /** Declaration for the size of the object array */
