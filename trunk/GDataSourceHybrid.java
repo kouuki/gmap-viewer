@@ -16,7 +16,7 @@ public class GDataSourceHybrid extends GDataSource{
 
 /**This method gets the satellite imagery from the cache.
 *@param cacheDirectory   The directory location for the cached images.
-*@param satellite    The 
+*@param satellite    An attribute for satellite imagery.
 */
    public GDataSourceHybrid(String cacheDirectory, GDataSource satellite){
       super(cacheDirectory);
