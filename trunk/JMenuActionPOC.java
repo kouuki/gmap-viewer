@@ -22,7 +22,7 @@ class JMenuActionPOC extends JMenuAction{
       GPane pane = gui.getTopPane();
       if(pane == null) return;
 
-      try{
+      //try{
          String newTitle = "";
          String message = "";
          newTitle = (String)JOptionPane.showInputDialog(gui.frame, "Enter a task size. "+message,"Set Task Size",JOptionPane.PLAIN_MESSAGE,null,null,newTitle);
@@ -35,11 +35,12 @@ class JMenuActionPOC extends JMenuAction{
                meter.setPercent(ProgressMeter.computePercent(i,taskSize), this);
                meter.setMessage(""+meter.getRoundedPercent(3), this);
                System.out.println("Completed "+meter.getRoundedPercent(3));
-
+               Object o = null;
+               o.equals("");
             }
             meter.release(this);
          }
-      }
-      catch(Exception e){System.out.println(e);}
+      //}
+      //catch(Exception e){System.out.println(e);}
    }
 }

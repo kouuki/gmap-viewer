@@ -60,14 +60,14 @@ class GMap{
    private int mode;
 
    /**
-	Creates a new GMap object based on a base directory specified in the constructure.
-	@param cache - Base directory to search for cached image folders.
-	*/
+   Creates a new GMap object based on a base directory specified in the constructure.
+   @param cache - Base directory to search for cached image folders.
+   */
    public GMap(String cache){
       //data source
       this.gDataSourceMap = new GDataSourceMap(cache+"/map_cache");
       this.gDataSourceSatellite = new GDataSourceSatellite(cache+"/sat_cache");
-      this.gDataSourceOverlay = new GDataSourceOverlay(cache+"/overlay_cache");
+      //this.gDataSourceOverlay = new GDataSourceOverlay(cache+"/overlay_cache");
       this.gDataSourceHybrid = new GDataSourceHybrid(cache+"/hybrid_cache",gDataSourceSatellite);
 
       //build default image
@@ -83,49 +83,49 @@ class GMap{
       ImageIcon loadImage = new ImageIcon("images/google.png");
       googleImage = loadImage.getImage();
    }
-	/**
-	Builds a GMap based on a 'cache' sub-directory.
-	*/
+   /**
+   Builds a GMap based on a 'cache' sub-directory.
+   */
    public GMap(){
       this("cache");
    }
 
    //getters
    /**
-	Returns a GDataSource object used by the GMap object
-	@return Returns the GDataSource used to grab the images.
-	*/
+   Returns a GDataSource object used by the GMap object
+   @return Returns the GDataSource used to grab the images.
+   */
    public GDataSource getGDataSource(){
       return getGDataSource(mode);
    }
-	/**
-	Returns a GDataSource based on a specific mode using constants:
-		MAP_MODE, SATELLITE_MODE, HYBRID_MODE
-	@return A GDataSource of the specified mode.
-	*/
+   /**
+   Returns a GDataSource based on a specific mode using constants:
+      MAP_MODE, SATELLITE_MODE, HYBRID_MODE
+   @return A GDataSource of the specified mode.
+   */
    public GDataSource getGDataSource(int mode){
       if(mode == MAP_MODE) return gDataSourceMap;
       else if(mode == SATELLITE_MODE) return gDataSourceSatellite;
       else if(mode == HYBRID_MODE) return gDataSourceHybrid;
       return null;
    }
-	/**
-	
-	*/
+   /**
+
+   */
    public GDraw getGDraw(){
       return gDraw;
    }
-	/**
-	Gets the current used by the GMap object
-	@return Current mode: MAP_MODE, SATELLITE_MODE, HYBRID_MODE
-	*/
+   /**
+   Gets the current used by the GMap object
+   @return Current mode: MAP_MODE, SATELLITE_MODE, HYBRID_MODE
+   */
    public int getMode(){
       return mode;
    }
 
    /**
-	Sets the current mode of the GMap object
-	@param Mode to set:  MAP_MODE, SATELLITE_MODE, HYBRID_MODE
+   Sets the current mode of the GMap object
+   @param Mode to set:  MAP_MODE, SATELLITE_MODE, HYBRID_MODE
         */
    public void setMode(int mode){
       this.mode = mode;
@@ -145,7 +145,7 @@ class GMap{
       buildImage(image, x,y,w,h,zoom,cachedZoom,listener);
    }
    /**
-    * Returns image at x and y 
+    * Returns image at x and y
     * @param x - x Pixel value
     * @param y - y Pixel value
     * @param w - width in pixels
@@ -157,7 +157,7 @@ class GMap{
       return getImage(x,y,w,h,zoom,cachedZoom,null);
    }
    /**
-    * Returns image at x and y 
+    * Returns image at x and y
     * @param x - x Pixel value
     * @param y - y Pixel value
     * @param w - width in pixels
@@ -211,14 +211,14 @@ class GMap{
       //find coord of our starting point
       int xCoord = x%GDataSource.sourceSize.width;
       int yCoord = y%GDataSource.sourceSize.height;
-	  
-	  //Checks for invalid xCoord and yCoord
-	  if(xCoord < 0){
-		xCoord = 0;
-	  }
-	  if(yCoord < 0){
-		yCoord = 0;
-	  }
+
+     //Checks for invalid xCoord and yCoord
+     if(xCoord < 0){
+      xCoord = 0;
+     }
+     if(yCoord < 0){
+      yCoord = 0;
+     }
 
       //load this index
       BufferedImage image = getIndexedImage(xIndex,yIndex,zoom,cachedZoom,listener);
@@ -315,14 +315,14 @@ class GMap{
 
       int xCoord = x%GDataSource.sourceSize.width;
       int yCoord = y%GDataSource.sourceSize.height;
-	  
-	  //Checks for invalid xCoord and yCoord
-	  if(xCoord < 0){
-		xCoord = 0;
-	  }
-	  if(yCoord < 0){
-		yCoord = 0;
-	  }
+
+     //Checks for invalid xCoord and yCoord
+     if(xCoord < 0){
+      xCoord = 0;
+     }
+     if(yCoord < 0){
+      yCoord = 0;
+     }
 
       //get info about the image
       Dimension imageSize = new Dimension(getGDataSource().sourceSize.width,getGDataSource().sourceSize.height);
@@ -371,7 +371,7 @@ class GMap{
       if(buffImg != null){
          Graphics2D g = (Graphics2D)buffImg.getGraphics();
          if(image != null){
-			//System.out.println(xCoord + ":" + yCoord + ":" + paintWidth + ":" + paintHeight);
+            //System.out.println(xCoord + ":" + yCoord + ":" + paintWidth + ":" + paintHeight);
             g.drawImage(image.getSubimage(xCoord, yCoord, paintWidth, paintHeight), xImage, yImage, paintWidth, paintHeight, null);
          }
          else{

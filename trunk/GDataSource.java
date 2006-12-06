@@ -98,10 +98,10 @@ public abstract class GDataSource {
          GDataImage img;
 
             synchronized (downloadQueue) {
-               System.out.println(downloadQueue.size());
+               //System.out.println(downloadQueue.size());
                resetAbortFlag();
                while ((img = downloadQueue.poll()) != null) {
-                  System.out.println("   from Q: " +img);
+                  //System.out.println("   from Q: " +img);
                   cache(img.getX(), img.getY(), img.getZoom());
                   if(getAbortFlag()){
                      System.out.println("ABORT");
@@ -192,6 +192,9 @@ public abstract class GDataSource {
     * images.
     */
    public BufferedImage getImage(int x, int y, int zoom, boolean findAdjacent) {
+      //try to determine if index is invalid
+      if(!isValidIndex(x,y,zoom)) return null;
+
       /* try getting image from RAM */
       BufferedImage ramImage = getImageFromRAM(x,y,zoom);
       if (ramImage != null) {
@@ -339,7 +342,7 @@ public abstract class GDataSource {
 
            downloadQueue.offer(img);
            queueSize++;
-           System.out.println("Added " + img + " to download queue.");
+           //System.out.println("Added " + img + " to download queue.");
          }
       }
    }
@@ -385,6 +388,16 @@ public abstract class GDataSource {
          queueHigherLevels(x/2, y/2, zoom+1);
          queue(new GDataImage(null, x/2, y/2, zoom+1));
       }
+   }
+
+   /**
+    * Checks to see if we can determine programmatically that an image does not exist.
+    * @param x The horizontal cooridinate
+    * @param y The vertical coordinate
+    * @param zoom The zoom level
+    */
+   public boolean isValidIndex(int x, int y, int zoom){
+      return (x >= 0 && x < Math.pow(2,17-zoom) && y >= 0 && y < Math.pow(2,17-zoom));
    }
 
    /**
