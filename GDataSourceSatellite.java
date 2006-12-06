@@ -72,7 +72,7 @@ public class GDataSourceSatellite extends GDataSource{
 
       //checks that the given point is within map and converts x, y, zoom to Tree Node Path
       while( curZoom != 0){
-         System.out.println(midxTiles + " " + midyTiles);
+         //System.out.println(midxTiles + " " + midyTiles);
          if( x >= 0 &&  y >= 0){
             if( x >= midxTiles){
             minxTiles = midxTiles;
@@ -104,7 +104,7 @@ public class GDataSourceSatellite extends GDataSource{
             curZoom--;
          }
          else{
-            System.out.println("Chosen Point outside Map Area.");
+            //System.out.println("Chosen Point outside Map Area.");
          }
       }
 

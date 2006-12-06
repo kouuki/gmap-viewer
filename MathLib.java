@@ -1,7 +1,9 @@
 import java.awt.geom.*;
-
+/**this is the class that does the calc for determing the image size and placement variables
+ */
 class MathLib{
-	
+	/**this is the main class that creates the 2Dlines intersection point
+	 */
 	public static void main(String[] args){
 		Line2D l1 = new Line2D.Double(5.0,6.0,7.0,9.0);
 		Line2D l2 = new Line2D.Double(6.0,10.0,6.0,5.0);
@@ -11,13 +13,18 @@ class MathLib{
 			ret = MathLib.intersectPoint(l2,l1);
 			System.out.println(ret.getX() + " " + ret.getY());
 	}
-
+/**This is the construcotr for the MathLib class
+ */
 	public MathLib(){
 		super();
 	}
 	
-	/**
-	**/
+
+	/**this is the declaration that determines the slop of Point @D
+	 * @param p1 this is the Point2D
+	 * @param p2 this is the Point2d
+	 * @return the slope value
+	 */
 	public static double slope(Point2D p1, Point2D p2) throws ArithmeticException{
 		double x1 = p1.getX();
 		double y1 = p1.getY();
@@ -26,16 +33,26 @@ class MathLib{
 		
 		return (y2 - y1)/(x2 - x1);
 	}
-	
-	public static double yIntercept(Point2D p1, Point2D p2) throws ArithmeticException{
+	/**this is the y intercept of the 2D points
+	 *@param p1 this is the Point2D
+	 * @param p2 this is the Point2d
+	 * @return the Y intercept 
+	 */
+	public static double yIntercept(Point2D p1, Point2D p2) throws ArithmeticException
+	{
 	
 		double a = slope(p1, p2);
 		
 		return p1.getY() - (a*p1.getX());
 		
 	}
-	
-	public static Point2D intersectPoint(Line2D l1, Line2D l2){
+	/**this is the Point2D interscept 
+	 * @param 11 this is the Point2D
+	 * @param 12 this is the Point2d
+	 * @return the new value of the interceptpoint
+	 */
+	public static Point2D intersectPoint(Line2D l1, Line2D l2)
+	{
 		double a1 = 0.0;
 		double a2 = 0.0;
 		double b1 = 0.0;
@@ -94,12 +111,22 @@ class MathLib{
 		
 		return new Point2D.Double(x, y);
 	}
-	
-	public static double intersectPointX(Line2D l1, Line2D l2){
+	/**this is the X intersectpoint
+	 * @param 11 this is the Point2D
+	 * @param 12 this is the Point2d
+	 * @return the intersection point for X
+	 */
+	public static double intersectPointX(Line2D l1, Line2D l2)
+	{
 		return intersectPoint(l1, l2).getX();
 	}
-	
-	public static double intersectPointY(Line2D l1, Line2D l2){
+	/**this is the Y intersectpoint
+	 * @param 11 this is the Point2D
+	 * @param 12 this is the Point2d
+	 * @return the intersection point for Y
+	 */
+	public static double intersectPointY(Line2D l1, Line2D l2)
+	{
 		return intersectPoint(l1, l2).getY();
 	}
 }

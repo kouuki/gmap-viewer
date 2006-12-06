@@ -3,7 +3,7 @@ import java.lang.Object;
 import java.lang.Math;
 
 /**
- * Class ProgressMeter represents the characteristics of the progress meter 
+ * Class ProgressMeter represents the characteristics of the progress meter
  * which are modified by EmbeddedProgressMeter
  */
 class ProgressMeter{
@@ -26,12 +26,12 @@ class ProgressMeter{
       this(null,0.0,"");
    }
 
-   /** 
+   /**
     * Method to set the message for the current status of the progress bar
     *
     * @param message The message to display next to the progress bar
     * @param o       The object of the progress bar
-    * @return        The boolean result for whether the message was set or not 
+    * @return        The boolean result for whether the message was set or not
     */
    public boolean setMessage(String message, Object o){
       if(object == o){
@@ -43,12 +43,12 @@ class ProgressMeter{
       }
    }
 
-   /** 
+   /**
     * Method to set the percentage for the progress bar
     *
-    * @param percent The percentage to be set for the progress bar 
+    * @param percent The percentage to be set for the progress bar
     * @param o       The object of the progress bar
-    * @return        The boolean result for whether the percent was set or not 
+    * @return        The boolean result for whether the percent was set or not
     */
    public boolean setPercent(double percent, Object o){
       if(object == o){
@@ -78,9 +78,9 @@ class ProgressMeter{
       return message;
    }
 
-   /** 
+   /**
     * Method to check whether an object instance was grabbed by the progress bar
-    * 
+    *
     * @return The boolean result for whether an object instance was grabbed by the progress bar
     */
    public boolean grab(Object o){
@@ -94,13 +94,13 @@ class ProgressMeter{
       }
    }
 
-   /** 
-    * Method to check whether an object instance was released by the progress bar
-    * 
+   /**
+    * Method to released the progress bar for use by another object.
+    *
     * @return The boolean result for whether an object instance was released by the progress bar
     */
    public boolean release(Object o){
-      if(object== o || object == null){
+      if(object == o || object == null){
          object=null;
          stopFlag = false;
          return true;
@@ -109,15 +109,15 @@ class ProgressMeter{
          return false;
       }
    }
-   
-   /** 
+
+   /**
     * Method to immediately stop the current thread action used by the progress bar
     */
    public void stop(){
       stopFlag = true;
    }
 
-   /** 
+   /**
     * Method to get the flag value of stopFlag
     *
     * @return The boolean result of stopFlag
@@ -126,7 +126,7 @@ class ProgressMeter{
       return stopFlag;
    }
 
-   /** 
+   /**
     * Method to check whether the passed paramater o is an object
     *
     * @param o The object passed for checking
@@ -135,19 +135,19 @@ class ProgressMeter{
    public boolean isObject(Object o){
       return o == object;
    }
-   
-   /** 
+
+   /**
     * Method for making the progress bar visible or not
-    * 
-    * @param b The boolean value for setting the progress bar visible or not  
+    *
+    * @param b The boolean value for setting the progress bar visible or not
     */
    public void setVisible(boolean b){
       // Simple declared method for making the progress bar visible or not
    }
 
-   /** 
+   /**
     * Method for converting the job's integer total into a usable percentage
-    * 
+    *
     * @param p  The integer value to be converted into a usable percentage value
     * @return   The double usable percentage value
     */
@@ -165,10 +165,10 @@ class ProgressMeter{
       // back to the left.
       return (double)tmp / factor;
    }
-   
-   /** 
+
+   /**
     * Method for converting the job's complete status into a percentage
-    * 
+    *
     * @param done    The double value of how much is already complete for the current job
     * @param total   The double value of the job's total value needed for completion
     * @return        The percentage value of how complete the job is

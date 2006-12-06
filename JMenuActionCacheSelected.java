@@ -31,7 +31,7 @@ public class JMenuActionCacheSelected extends JMenuAction{
    }
 
    /**Performs the actual caching
-    * 
+    *
     */
    public void run(){
       GUI gui = (GUI)registeredObject;
@@ -54,7 +54,7 @@ public class JMenuActionCacheSelected extends JMenuAction{
 
       //cache it
       gui.getGMap().cacheImage(toCache.x, toCache.y, toCache.width, toCache.height, zoomLevel, pane);
-      gui.getGMap().getGDataSource().downloadQueue();
+      gui.getGMap().getGDataSource().emptyQueue();
       pane.draw();
 
    }

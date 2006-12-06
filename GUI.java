@@ -81,6 +81,12 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    private JPanel progressBarPanel;
 
    /**
+    * The panel for holding expression text.
+    */
+   private MessagePanel messagePanel;
+
+
+   /**
     * The global parameter for progress bar panel for building and setting up the frame.
     */
    private JPanel toolBarPanel;
@@ -96,6 +102,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
     */
    private static final int sizeOfProgressBar = 23;
    private static final int sizeOfToolbar = 27;
+   private static final int widthOfMessagePanel = 170;
 
    /**
     * An instance of GZoomSlider.
@@ -118,12 +125,12 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
 
       //option to set cache directory from command line
       if ( args.length != 0 && args[0] != null ) {
-      GUI newWindow = new GUI( args[0] );
-      newWindow.setVisible(true);   
+         GUI newWindow = new GUI( args[0] );
+         newWindow.setVisible(true);
       }
       else{
-      GUI newWindow = new GUI( "cache" );
-      newWindow.setVisible(true);
+         GUI newWindow = new GUI( "cache" );
+         newWindow.setVisible(true);
       }
    }
 
@@ -133,7 +140,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
 
    /**
     * The GUI constructor.
-    *@param cacheDirectory 	The directory to store the cached images
+    *@param cacheDirectory. The directory to store the cached images
     */
    public GUI( String cacheDirectory ){
       //set parameters
@@ -171,6 +178,14 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    }
 
    /**
+    * Default constructor uses "cache" as cache directory.
+    */
+   public GUI(){
+      this("cache");
+   }
+
+
+   /**
     * The method for buildFrameContents will set layout to null, add pane,
     * add tabbed panel, add progress bar panel and initializes sizes.
     */
@@ -199,12 +214,19 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       tabbedPanel.setLayout(null);
       container.add(tabbedPanel);
 
+      //progress bar panel
       progressBarPanel = embeddedProgressMeter.getPanel(); //change this line to get the panel from the meter
       container.add(progressBarPanel);
 
+
+      //exception panel
+      messagePanel = new MessagePanel();
+      container.add(messagePanel);
+
       //initialize sizes
       tabbedPanel.setBounds(0,sizeOfToolbar,screenSize.width,screenSize.height - sizeOfProgressBar - sizeOfToolbar);
-      progressBarPanel.setBounds(0,screenSize.height - sizeOfProgressBar,screenSize.width,sizeOfProgressBar);
+      progressBarPanel.setBounds(0,screenSize.height - sizeOfProgressBar,screenSize.width-widthOfMessagePanel,sizeOfProgressBar);
+      messagePanel.setBounds(screenSize.width-widthOfMessagePanel,screenSize.height - sizeOfProgressBar,widthOfMessagePanel,sizeOfProgressBar);
       pane.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar-sizeOfToolbar);
       slider.setBounds(screenSize.width-25, 30+sizeOfToolbar, 50, 50);
       toolBarPanel.setBounds(0,0,screenSize.width,sizeOfToolbar);
@@ -219,7 +241,8 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
     */
    public void update(){
       tabbedPanel.setBounds(0,sizeOfToolbar,container.getWidth(),container.getHeight() - sizeOfProgressBar - sizeOfToolbar);
-      progressBarPanel.setBounds(0,container.getHeight() - sizeOfProgressBar,container.getWidth(),sizeOfProgressBar);
+      progressBarPanel.setBounds(0,container.getHeight() - sizeOfProgressBar,container.getWidth()-widthOfMessagePanel,sizeOfProgressBar);
+      messagePanel.setBounds(container.getWidth()-widthOfMessagePanel,container.getHeight() - sizeOfProgressBar,widthOfMessagePanel,sizeOfProgressBar);
       pane.setBounds(0,0,container.getWidth(),container.getHeight() - sizeOfProgressBar - sizeOfToolbar);
       slider.setBounds(container.getWidth()-25, 30+sizeOfToolbar, 50, 50);
       toolBarPanel.setPreferredSize(new Dimension(container.getWidth(), sizeOfToolbar));
@@ -304,6 +327,16 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    public GTabbedPane getTabbedPane(){
       return pane;
    }
+
+   /**
+    * Gets the exception panel.
+    *
+    *@return the GUI's exception panel.
+    */
+   public MessagePanel getMessagePanel(){
+      return messagePanel;
+   }
+
 
    /**
     * It gets the top pane component.
@@ -443,7 +476,8 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    *
    *@param k   is the key event action
    */
-   public void keyReleased(KeyEvent k){}
+   public void keyReleased(KeyEvent k){
+   }
 
    /**
    *It shows the key being pressed.
@@ -460,23 +494,26 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    *@param e   is the action event being deciphered.
    */
    public void actionPerformed(ActionEvent e){
-      Object sourceObject = e.getSource();
-      //dispatch actions
-      if(sourceObject instanceof JMenuAction){
-         JMenuAction sourceMenuAction = (JMenuAction)sourceObject;
-         sourceMenuAction.start();
+      try{
+         Object sourceObject = e.getSource();
+         //dispatch actions
+         if(sourceObject instanceof JMenuAction){
+            JMenuAction sourceMenuAction = (JMenuAction)sourceObject;
+            sourceMenuAction.start();
+         }
+         //dispatch radio button actions
+         if(sourceObject instanceof JMenuRadioButtonAction){
+            JMenuRadioButtonAction sourceMenuAction = (JMenuRadioButtonAction)sourceObject;
+            sourceMenuAction.start();
+         }
+      }catch(Exception exception){
+         getMessagePanel().setException(exception);
       }
-      //dispatch radio button actions
-      if(sourceObject instanceof JMenuRadioButtonAction){
-         JMenuRadioButtonAction sourceMenuAction = (JMenuRadioButtonAction)sourceObject;
-         sourceMenuAction.start();
-      }
-
    }
 
      /**
    * A method for pane listener events
-   *@param o The object given. 
+   *@param o The object given.
    */
    public void paneEvent(Object o){
       repaint();

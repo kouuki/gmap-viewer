@@ -12,10 +12,13 @@ import com.sun.image.codec.jpeg.*;
 import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
-
+/**this is the class that creates a new pane for the menu bar
+ * @param registeredObject the GUI frame name
+ */
 class JMenuActionNewPane extends JMenuAction{
    public JMenuActionNewPane(GUI registeredObject){super("New Pane",registeredObject);}
-
+/**this is where the gui is set to the pane menu bar
+ */
    public void run(){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();

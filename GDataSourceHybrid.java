@@ -31,6 +31,9 @@ public class GDataSourceHybrid extends GDataSource{
 *@return   BufferedImage The image to be retrieved.
 */
    public BufferedImage getImage(int x, int y, int zoom, boolean findAdjacent) {
+      //try to determine if index is invalid
+      if(!isValidIndex(x,y,zoom)) return null;
+
       /* try getting image from RAM */
       BufferedImage ramImage = getImageFromRAM(x,y,zoom);
       if (ramImage != null) {
