@@ -15,9 +15,11 @@ import java.awt.geom.*;
 
 
 /** It is the radio button action when map type data is needed.*/
+
 class JMenuRadioButtonActionMap extends JMenuRadioButtonAction{
 
-   /** Constructor for JMenuRadioButtonActionMap class.*/
+   /** Constructor for JMenuRadioButtonActionMap class.
+    */
    public JMenuRadioButtonActionMap(String name, GUI registeredObject){
       super(name,registeredObject);
    }
@@ -29,7 +31,8 @@ class JMenuRadioButtonActionMap extends JMenuRadioButtonAction{
       GPane pane = gui.getTopPane();
       pane.draw();
    }
-
+	/**The pane event method
+	 */
    public void paneEvent(Object object){
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();

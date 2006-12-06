@@ -12,7 +12,10 @@ import com.sun.image.codec.jpeg.*;
 import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
-
+/**
+ *Class for GTappedPanes.  The tabbed panes will be contained within the GUI frame and
+ *be what the user views the maps in.
+ */
 class GTabbedPane extends JTabbedPane implements MouseListener, ActionListener{
 
    //gui
@@ -23,6 +26,9 @@ class GTabbedPane extends JTabbedPane implements MouseListener, ActionListener{
 
 
    //default
+   /**The Default constructor
+    *@param gui Must beconnected to the gui to funtion.
+    */
    public GTabbedPane(GUI gui){
       super();
 
@@ -40,7 +46,10 @@ class GTabbedPane extends JTabbedPane implements MouseListener, ActionListener{
 
    }
 
-
+	/**Method to show poppup menu
+	 *@param x The x coordinate of location to display the poppup
+	 *@param y The y coordinate of location to display the poppup
+	 */
    public void showPopupMenu(int x, int y){
       popupMenu.show(this,x,y);
 //      popupMenu.setBounds(x,y,200,300);
@@ -55,6 +64,9 @@ class GTabbedPane extends JTabbedPane implements MouseListener, ActionListener{
    }
    public void mouseEntered(MouseEvent e){}
    public void mouseExited(MouseEvent e){}
+   /**Method that handles mouse button presses.
+    *@param e The mouse event to be handled.
+    */
    public void mousePressed(MouseEvent e){
       int m = e.getModifiers();
       if(m == 4 && gui.getTopPane() != null){
@@ -66,6 +78,9 @@ class GTabbedPane extends JTabbedPane implements MouseListener, ActionListener{
 
 
    //action dispatcher method from menubar
+   /**Method to dispatch ActionEvents
+    *@param e the event to be dispatched.
+    */
    public void actionPerformed(ActionEvent e){
       Object sourceObject = e.getSource();
       //dispatch actions
