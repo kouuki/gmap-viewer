@@ -17,6 +17,7 @@ public class GMenuBar extends JMenuBar{
 
    public GMenuBar(GUI gui){
       //file
+      //JMenuItem[] fileMenu = {new JMenuActionSaveState(gui), new JMenuActionOpenState(gui), new JMenuActionExport(gui), new JMenuActionExit(gui)};
       JMenuItem[] fileMenu = {new JMenuActionExport(gui), new JMenuActionExit(gui)};
       add(new JMenuGroup("File",gui,fileMenu));
 
@@ -36,14 +37,16 @@ public class GMenuBar extends JMenuBar{
       add(new JMenuGroup("Cache",gui,cacheMenu));
 
       //pmeter
-      //JMenuItem[] menu = {new JMenuActionPOC(gui), new JMenuActionClearRAM(gui), new JMenuRadioButtonSelectionOn(gui), new JMenuRadioButtonDragOn(gui), new JMenuRadioButtonCalculateDistance(gui), new JMenuRadioButtonAddPoints(gui) ,new JMenuRadioButtonAddLines(gui),new JMenuRadioButtonAddText(gui)};
-      //add(new JMenuGroup("Debugging",gui,menu));
+      JMenuItem[] menu = {new JMenuActionPOC(gui), new JMenuActionClearRAM(gui), new JMenuRadioButtonSelectionOn(gui), new JMenuRadioButtonDragOn(gui), new JMenuRadioButtonCalculateDistance(gui), new JMenuRadioButtonAddPoints(gui) ,new JMenuRadioButtonAddLines(gui),new JMenuRadioButtonAddText(gui), new JMenuActionGridlines(gui)};
+      add(new JMenuGroup("Debugging",gui,menu));
 
-     //data type
-     JMenuItem[] datatype = {new JMenuRadioButtonActionSat("Satellite",gui), new JMenuRadioButtonActionMap("Map",gui), new JMenuRadioButtonActionHybrid("Hybrid",gui)};
-     add(new JMenuGroup("Data Type",gui,datatype));
+      //data type
+      JMenuItem[] datatype = {new JMenuRadioButtonActionSat("Satellite",gui), new JMenuRadioButtonActionMap("Map",gui), new JMenuRadioButtonActionHybrid("Hybrid",gui)};
+      add(new JMenuGroup("Data Type",gui,datatype));
 
-
+      //geocoder
+      JMenuItem[] geocode = {new JMenuActionGeocode(gui)};
+      add(new JMenuGroup("Geocode",gui,geocode));
    }
 
 

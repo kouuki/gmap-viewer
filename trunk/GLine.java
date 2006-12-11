@@ -1,24 +1,25 @@
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
+import java.io.Serializable;
 
 /**
  * Class defining the instance for a line object. It implements GDrawableObject.
  */
-public class GLine implements GDrawableObject{
+public class GLine implements GDrawableObject, Serializable{
    /**
     * Declaration for a line on the map
     */
    Line2D line;
-   
+
    /**
     * Holds the zoom level
     */
    int zoom;
-	
+
    /**
     * GLine constructor that takes in two points and a zoom level.
-    * 
+    *
     * @param p1 Point where the line starts
     * @param p2 Point where the line ends
     * @param zoom Zoom level
@@ -28,7 +29,7 @@ public class GLine implements GDrawableObject{
       this.zoom = zoom;
    }
     /** GLine constructor that takes in two points.  It applies a default zoom level of 1.
-    * 
+    *
     * @param p1 Point where the line starts
     * @param p2 Point where the line ends
     */
@@ -39,7 +40,7 @@ public class GLine implements GDrawableObject{
    }
    /**
     * Takes in a buffered image and draws a line on it.
-    * 
+    *
     * @param image The buffered image
     * @param p The upper left pixel of the buffered image
     * @param zoom The zoom level
@@ -204,34 +205,34 @@ public class GLine implements GDrawableObject{
    }
    /**
     * Returns a rectangle the encompasses the entire line.
-    * 
+    *
     * @param p The point at which the line is
     * @param zoom The zoom level
     * @returns A rectangle the encompasses the entire line
     */
    public Rectangle getRectangle(GPhysicalPoint p, int zoom){
-		int width = (int)line.getX2() - (int)line.getX1();
-		int height = (int)line.getY2() - (int)line.getY1();
-		
-		width *= Math.pow(2, this.zoom - zoom);
-		height *= Math.pow(2, this.zoom - zoom);
-		
-		int x, y;
-		
-		if(width < 0){
-			x = (int)(line.getX2()*Math.pow(2, this.zoom - zoom)) - p.getPixelX(zoom);
-		}else{
-			x = (int)(line.getX1()*Math.pow(2, this.zoom - zoom)) - p.getPixelX(zoom);
-		}
-		if(height < 0){
-			y = (int)(line.getY2()*Math.pow(2, this.zoom - zoom)) - p.getPixelY(zoom);
-		}else{
-			y = (int)(line.getY1()*Math.pow(2, this.zoom - zoom)) - p.getPixelY(zoom);
-		}
-		//System.out.println(x + ":" + y + ":" + width + ":" + height);
-		Rectangle rect = new Rectangle(x, y, Math.abs(width), Math.abs(height));
-		
-		return rect;
+      int width = (int)line.getX2() - (int)line.getX1();
+      int height = (int)line.getY2() - (int)line.getY1();
+
+      width *= Math.pow(2, this.zoom - zoom);
+      height *= Math.pow(2, this.zoom - zoom);
+
+      int x, y;
+
+      if(width < 0){
+         x = (int)(line.getX2()*Math.pow(2, this.zoom - zoom)) - p.getPixelX(zoom);
+      }else{
+         x = (int)(line.getX1()*Math.pow(2, this.zoom - zoom)) - p.getPixelX(zoom);
+      }
+      if(height < 0){
+         y = (int)(line.getY2()*Math.pow(2, this.zoom - zoom)) - p.getPixelY(zoom);
+      }else{
+         y = (int)(line.getY1()*Math.pow(2, this.zoom - zoom)) - p.getPixelY(zoom);
+      }
+      //System.out.println(x + ":" + y + ":" + width + ":" + height);
+      Rectangle rect = new Rectangle(x, y, Math.abs(width), Math.abs(height));
+
+      return rect;
    }
 
 }

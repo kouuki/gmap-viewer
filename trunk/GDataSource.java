@@ -34,6 +34,7 @@ public abstract class GDataSource {
    protected Hashtable<String,GDataImage> ramCache;
    protected ArrayList<String> ramCacheQueue;
    protected int lastPointer;
+   protected Thread downloadThread;
 
    /**
     * Constructor
@@ -93,7 +94,7 @@ public abstract class GDataSource {
     * removes that image from the queue.
     */
    public void downloadQueue() {
-     Thread t = new Thread(new Runnable() {
+     downloadThread = new Thread(new Runnable() {
        public void run() {
          GDataImage img;
 
@@ -115,8 +116,8 @@ public abstract class GDataSource {
        }
       });
 
-     t.setPriority(Thread.MIN_PRIORITY);
-     t.start();
+     downloadThread.setPriority(Thread.MIN_PRIORITY);
+     downloadThread.start();
    }
 
 

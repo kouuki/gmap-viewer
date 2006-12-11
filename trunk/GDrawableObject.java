@@ -1,7 +1,7 @@
 import java.awt.*;
 import java.awt.image.*;
 
-/** 
+/**
   * An abstract class defining the structure for classes
   * to represent objects drawn to the map
   *

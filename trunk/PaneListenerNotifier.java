@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-class PaneListenerNotifier{
+class PaneListenerNotifier implements Serializable{
 
    /**PaneListener methods
     * This fires an action to every registered menu or group
@@ -7,7 +8,7 @@ class PaneListenerNotifier{
 
    private PaneListener[] listeners;
    private int listenersSize;
-   
+
    /**
     * Constructs a basic PaneListenerNotifier
     */
@@ -25,7 +26,7 @@ class PaneListenerNotifier{
       if(listenersSize == listeners.length) enlargeListenerArray();
       listeners[listenersSize++] = listener;
    }
-   
+
    /**
     * Removes Listener from PaneNotifier list
     *  @param index - numbered index of listener
@@ -72,7 +73,7 @@ class PaneListenerNotifier{
          temp[i] = listeners[i];
       listeners = temp;
    }
-   
+
    /**
     * Fires a PaneEevent
     * @param object - used to fire PaneEvent

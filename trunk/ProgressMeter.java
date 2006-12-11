@@ -1,12 +1,13 @@
 import java.lang.String;
 import java.lang.Object;
 import java.lang.Math;
+import java.io.Serializable;
 
 /**
  * Class ProgressMeter represents the characteristics of the progress meter
  * which are modified by EmbeddedProgressMeter
  */
-class ProgressMeter{
+class ProgressMeter implements Serializable{
 
    private Object object;
    private double percent;

@@ -15,7 +15,7 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-class GMap{
+class GMap implements Serializable{
 
    /**
    This class contains the modifications to the map,
@@ -26,21 +26,21 @@ class GMap{
 
 
    //defaultImage
-   private BufferedImage defaultImage;
+   transient private BufferedImage defaultImage;
 
    //transparency
-   private AlphaComposite opacity70 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.70f);
-   private AlphaComposite opacity40 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
+   transient private AlphaComposite opacity70 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.70f);
+   transient private AlphaComposite opacity40 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
 
 
    //google icon
    Image googleImage;
 
    //keep track of the data object
-   private GDataSource gDataSourceMap;
-   private GDataSource gDataSourceSatellite;
-   private GDataSource gDataSourceHybrid;
-   private GDataSource gDataSourceOverlay;
+   transient private GDataSource gDataSourceMap;
+   transient private GDataSource gDataSourceSatellite;
+   transient private GDataSource gDataSourceHybrid;
+   transient private GDataSource gDataSourceOverlay;
 
    //GDraw handles the work of painting data NOT in the database
    private GDraw gDraw;

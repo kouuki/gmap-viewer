@@ -16,15 +16,15 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 /**This class gets the image for GData to display on the screen
  */
-class GDataImage {
+class GDataImage implements Serializable{
 /**This is for the zoom variable min starting no less than one
  */
    public static int ZOOM_MIN = 1;
-	/**Theres zoom variables for max at 15
-	 */
+   /**Theres zoom variables for max at 15
+    */
    public static int ZOOM_MAX = 15;
-	
-   private BufferedImage image;
+
+   transient private BufferedImage image;
    private int x;
    private int y;
    private int zoom;
@@ -45,7 +45,7 @@ class GDataImage {
  */
    public BufferedImage getImage(){
 
-	   return image;
+      return image;
    }
 /**this gets the x coord.
  * @return x coord
@@ -74,7 +74,7 @@ class GDataImage {
  * @return the string of coords x and y
  */
    public String toString() {
-	   return "("+x+","+y+","+zoom+")";
+      return "("+x+","+y+","+zoom+")";
    }
 /**this checks to see if the object is set to thr current object
  * @return false if it isn't
@@ -84,7 +84,7 @@ class GDataImage {
       if (!(obj instanceof GDataImage)) {
          return false;
       }
-      
+
       GDataImage o = (GDataImage) obj;
       return (this.zoom == o.zoom && this.y == o.y && this.x == o.x);
    }

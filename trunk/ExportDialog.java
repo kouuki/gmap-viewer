@@ -46,7 +46,7 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
    private Dimension outputSize;
 
  /**
-   * The ExportDialog class constructor. 
+   * The ExportDialog class constructor.
    *
    *@param gui the GUI class
    */
@@ -54,46 +54,46 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
 
       //superclass constructor
       super(gui, "Export to PNG", true);
-  
-	 /**
-	  * Sets up outputsize 
-	  *@see Dimension()
-	  */
+
+    /**
+     * Sets up outputsize
+     *@see Dimension()
+     */
       outputSize = new Dimension();
 
      /**
-	  *Store screen data.
-	  */
+     *Store screen data.
+     */
       this.gui = gui;
       GPane pane = gui.getTopPane();
       selectedRect = pane.getMouseRectanglePositionCentered();
       screenRect = pane.getScreenDimensionsCentered();
 
       /**
-	  *Set up content pane.
-	  *@see getContentPane()
-	  */
+     *Set up content pane.
+     *@see getContentPane()
+     */
       Container content = getContentPane();
       content.setLayout(null);
 
       /**
-	  *Setup size.
-	  *
-	  */
+     *Setup size.
+     *
+     */
       this.setSize(260,350);
 
       /**
-	  *Create select group buttons.
-	  *@see ButtonGroup()
-	  */
+     *Create select group buttons.
+     *@see ButtonGroup()
+     */
       group = new ButtonGroup();
 
       //create stuff
 
       /**
-	  *"Use screen coordinates" as a new JRadioButton for screen.
-	  *@see JRadioButton
-	  */
+     *"Use screen coordinates" as a new JRadioButton for screen.
+     *@see JRadioButton
+     */
       useScreen = new JRadioButton("Use screen coordinates");
       useScreen.setBounds(20,20,200,30);
       useScreen.addActionListener(this);
@@ -101,19 +101,19 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
       content.add(useScreen);
 
       /**
-	  *"Use selection coordinates" as a new JRadioButton for screen
-	  *@see JRadioButton
-	  */
+     *"Use selection coordinates" as a new JRadioButton for screen
+     *@see JRadioButton
+     */
       useSelected = new JRadioButton("Use selection coordinates");
       useSelected.setBounds(20,50,200,30);
       useSelected.addActionListener(this);
       group.add(useSelected);
       content.add(useSelected);
-	  
-	 /**
-	  *"Use specified coordinates" as a new JRadioButton for screen
-	  *@see JRadioButton
-	  */
+
+    /**
+     *"Use specified coordinates" as a new JRadioButton for screen
+     *@see JRadioButton
+     */
       useCustom = new JRadioButton("Use specified coordinates");
       useCustom.setBounds(20,80,200,30);
       useCustom.addActionListener(this);
@@ -121,85 +121,85 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
       content.add(useCustom);
 
       /**Label latitude
-	  * @see  JLabel()
-	  */
+     * @see  JLabel()
+     */
       JLabel l2 = new JLabel("Lat");
       l2.setBounds(40,110,70,30);
       content.add(l2);
 
       /**Create a latitude box.
-	  *@see JTextField()
-	  */
+     *@see JTextField()
+     */
       centerLat = new JTextField();
       centerLat.setBounds(78,115,45,20);
       centerLat.addActionListener(this);
       content.add(centerLat);
 
       /**Create a longitude label called "Long".
-	  *@see JLabel()
-	  */
+     *@see JLabel()
+     */
       JLabel l3 = new JLabel("Long");
       l3.setBounds(130,110,70,30);
       content.add(l3);
 
       /** Create a longitude box.
-	  *@see JTextField()
-	  */
+     *@see JTextField()
+     */
       centerLong = new JTextField();
       centerLong.setBounds(170,115,45,20);
       centerLong.addActionListener(this);
       content.add(centerLong);
 
       /**
-	  * Create width label named "Width".
-	  *@see JLabel()
-	  */
+     * Create width label named "Width".
+     *@see JLabel()
+     */
       JLabel l5 = new JLabel("Width");
       l5.setBounds(40,140,70,30);
       content.add(l5);
 
       /**
-	  *Create width box.
-	  *@see JTextField()
-	  */
+     *Create width box.
+     *@see JTextField()
+     */
       centerWidth = new JTextField();
       centerWidth.setBounds(78,145,45,20);
       centerWidth.addActionListener(this);
       content.add(centerWidth);
 
       /**
-	  *Create a height label named "Height".
-	  *@see JLabel()
-	  */
+     *Create a height label named "Height".
+     *@see JLabel()
+     */
       JLabel l6 = new JLabel("Height");
       l6.setBounds(130,140,70,30);
       content.add(l6);
 
       /**
-	  *Create a height box.
-	  *@see JTextField() 
-	  */
+     *Create a height box.
+     *@see JTextField()
+     */
       centerHeight = new JTextField();
       centerHeight.setBounds(170,145,45,20);
       centerHeight.addActionListener(this);
       content.add(centerHeight);
 
       /**
-	  *Create a zoom scroll pane.
-	  *@see JPanel()
-	  */
+     *Create a zoom scroll pane.
+     *@see JPanel()
+     */
       JPanel scrollPanePanel = new JPanel();
       scrollPanePanel.setLayout(new BorderLayout());
       scrollPanePanel.setBounds(40,190,170,25);
       scrollPanePanel.setPreferredSize(new Dimension(170,25));
-      content.add(scrollPanePanel, BorderLayout.CENTER);
+//      content.add(scrollPanePanel, BorderLayout.CENTER);
 
       Object[] listObj = {new ZoomListObj("Zoom Level ",1),new ZoomListObj("Zoom Level ",2),new ZoomListObj("Zoom Level ",3),new ZoomListObj("Zoom Level ",4),new ZoomListObj("Zoom Level ",5),new ZoomListObj("Zoom Level ",6),new ZoomListObj("Zoom Level ",7),new ZoomListObj("Zoom Level ",8),new ZoomListObj("Zoom Level ",9),new ZoomListObj("Zoom Level ",10),new ZoomListObj("Zoom Level ",11),new ZoomListObj("Zoom Level ",12),new ZoomListObj("Zoom Level ",13),new ZoomListObj("Zoom Level ",14),new ZoomListObj("Zoom Level ",15)};
       /**
-	  * Set the zoom level cell's width to 50
-	  *@see JComboBox()
-	  */
-	  zoomLevel = new JComboBox(listObj);
+     * Set the zoom level cell's width to 50
+     *@see JComboBox()
+     */
+     zoomLevel = new JComboBox(listObj);
 
 
 //      JScrollPane scrollPane = new JScrollPane(zoomLevel);
@@ -212,21 +212,21 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
       zoomLevel.setOpaque(true);
 
       /**
-	  *Cache the zoom scroll pane.
-	  *@see JPanel()
-	  */
+     *Cache the zoom scroll pane.
+     *@see JPanel()
+     */
       JPanel scrollPanePanel2 = new JPanel();
       scrollPanePanel2.setLayout(new BorderLayout());
       scrollPanePanel2.setBounds(40,220,170,25);
       scrollPanePanel2.setPreferredSize(new Dimension(170,25));
-      content.add(scrollPanePanel2, BorderLayout.CENTER);
+//      content.add(scrollPanePanel2, BorderLayout.CENTER);
 
       Object[] listObj2 = {new ZoomListObj("No Cache Zoom ",-1,false), new ZoomListObj("Cache Zoom Level ",1),new ZoomListObj("Cache Zoom Level ",2),new ZoomListObj("Cache Zoom Level ",3),new ZoomListObj("Cache Zoom Level ",4),new ZoomListObj("Cache Zoom Level ",5),new ZoomListObj("Cache Zoom Level ",6),new ZoomListObj("Cache Zoom Level ",7),new ZoomListObj("Cache Zoom Level ",8),new ZoomListObj("Cache Zoom Level ",9),new ZoomListObj("Cache Zoom Level ",10),new ZoomListObj("Cache Zoom Level ",11),new ZoomListObj("Cache Zoom Level ",12),new ZoomListObj("Cache Zoom Level ",13),new ZoomListObj("Cache Zoom Level ",14),new ZoomListObj("Cache Zoom Level ",15)};
       /**
-	  *Set the cacheLevel FixedCellWidth to 50
-	  *@see JComboBox()
-	  */
-	  cacheLevel = new JComboBox(listObj2);
+     *Set the cacheLevel FixedCellWidth to 50
+     *@see JComboBox()
+     */
+     cacheLevel = new JComboBox(listObj2);
 
 
 //      JScrollPane scrollPane2 = new JScrollPane(cacheLevel);
@@ -243,17 +243,17 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
 
 
       /**
-	  * Create a new save button
-	  *@see JButton()
-	  */
+     * Create a new save button
+     *@see JButton()
+     */
       save = new JButton("Save");
       save.setBounds(140,270,80,30);
       content.add(save);
       save.addActionListener(this);
 
       /**Create a new cancel button
-	  *@see JButton()
-	  */
+     *@see JButton()
+     */
       cancel = new JButton("Cancel");
       cancel.setBounds(20,270,100,30);
       content.add(cancel);
@@ -282,13 +282,13 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
       centerLong.setText(screenRect.center.getY()+"");
 
       /**
-	  *Update the width of the screen
-	  */
+     *Update the width of the screen
+     */
       outputSize.width = (int)screenRect.width;
       /**
-	  *Update the height of the screen
-	  */
-	 outputSize.height = (int)screenRect.height;
+     *Update the height of the screen
+     */
+    outputSize.height = (int)screenRect.height;
       updateDimensions();
    }
 /**
@@ -302,11 +302,11 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
       centerLong.setText(selectedRect.center.getY()+"");
 
       /**update width of the outputted when selected
-	  */
+     */
       outputSize.width = (int)selectedRect.width;
-      /**update height of the outputted when selected 
-	  */
-	  outputSize.height = (int)selectedRect.height;
+      /**update height of the outputted when selected
+     */
+     outputSize.height = (int)selectedRect.height;
       updateDimensions();
    }
 /**
@@ -317,7 +317,7 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
       setEnabledCustom(true);
    }
 /**
-* A method the updates the dimensions 
+* A method the updates the dimensions
 */
    private void updateDimensions(){
       ZoomListObj selectedZoom = (ZoomListObj)zoomLevel.getSelectedItem();
@@ -328,8 +328,8 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
       centerHeight.setText(height+"");
    }
 /**
-*A method that sets the enabled custom values to true. 
-*@param value The amount the latitude, longitude, width and height will be set. 
+*A method that sets the enabled custom values to true.
+*@param value The amount the latitude, longitude, width and height will be set.
 */
    private void setEnabledCustom(boolean value){
       centerLat.setEnabled(value);
@@ -339,7 +339,7 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
    }
 /**
 *A method that enables the user to save.
-*@exception It is thrown when choosing extension from "png" and "jpg" and neither is taken. 
+*@exception It is thrown when choosing extension from "png" and "jpg" and neither is taken.
 */
    public void save(){
       //build the image
@@ -408,7 +408,7 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
 
    /**
 * A method that detects the type of action event done by the user (save, cancel, useScreen, useSelected, useCustom).
-*@param e It is the type of action event the user pursues. 
+*@param e It is the type of action event the user pursues.
 */
    public void actionPerformed(ActionEvent e){
       Object sourceObject = e.getSource();
@@ -420,14 +420,14 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
    }
 
 
-   
+
 /**
 * A method for a mouse event when the mouse is released.
 *
 */
    public void mouseReleased(MouseEvent e){}
 /**
-* A method for a mouse event when the mouse is pressed. 
+* A method for a mouse event when the mouse is pressed.
 *
 */
    public void mousePressed(MouseEvent e){}
@@ -444,12 +444,12 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
 /**
 *
 *A method for a mouse event when the mouse is clicked.
-*/  
+*/
   public void mouseClicked(MouseEvent e){}
 
 /**
 *
-*A method for an event when any item state is changed.  
+*A method for an event when any item state is changed.
 *@param evt It is the event that is detected to show that an item is changed.
 */
    public void itemStateChanged(ItemEvent evt) {
