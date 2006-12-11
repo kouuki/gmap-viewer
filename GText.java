@@ -17,7 +17,7 @@ import java.awt.geom.*;
 *<ul>
 * <li>GDrawableObject</ul>
 */
-public class GText implements GDrawableObject{
+public class GText implements GDrawableObject, Serializable{
 
    private GPhysicalPoint point;
    private String text;
@@ -29,9 +29,9 @@ public class GText implements GDrawableObject{
    */
    private static final int padding = 2;
   /**
-   * A constructor for the GText class. 
+   * A constructor for the GText class.
    *@param point The actual point in the map.
-   *@param text The String text that is going to be placed in the map. 
+   *@param text The String text that is going to be placed in the map.
    */
    public GText(GPhysicalPoint point, String text){
       this.point = point;
@@ -61,17 +61,17 @@ public class GText implements GDrawableObject{
       return text;
    }
   /**
-   *A method that sets text that is given. 
+   *A method that sets text that is given.
    *@param text The text to be written in the map.
    */
    public void setText(String text){
       this.text = text;
    }
   /**
-   *A method that returns the rectangle created. 
+   *A method that returns the rectangle created.
    *@param p The physical point in the map.
    *@param zoom The zoom amoun t/level of the rectangle.
-   *@return The rectangle is returned with appropriated values. 
+   *@return The rectangle is returned with appropriated values.
    */
    public Rectangle getRectangle(GPhysicalPoint p, int zoom){
       //check for nulls to prevent null pointer exceptions
@@ -85,12 +85,12 @@ public class GText implements GDrawableObject{
 
       return new Rectangle(pointOnScreen.x - padding,(int)(pointOnScreen.y-textRectangle.getHeight()+maxDescent) - padding,(int)textRectangle.getWidth() + 2*padding,(int)textRectangle.getHeight()+maxDescent+2*padding);
    }
-   
+
   /**
    *A method that enables the drawing of objects to the map.
    *@param image Creates the graphics content.
    *@param p The physical point in the map.
-   *@param zoom The zoom amount/level 
+   *@param zoom The zoom amount/level
    */
    public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
       //check for nulls to prevent null pointer exceptions

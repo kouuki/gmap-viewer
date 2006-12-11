@@ -22,7 +22,7 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
    private GUI gui;
 
    //image AND icon object
-   private BufferedImage image;
+   transient private BufferedImage image;
    private JLabel label;
 
    //stuff to keep track of
@@ -37,11 +37,11 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
    private int showCachedZoomLevel;
 
    //this alphacomposite is controls transparency
-   private AlphaComposite opacity30 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
-   private AlphaComposite opacity70 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);
+   transient private AlphaComposite opacity30 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
+   transient private AlphaComposite opacity70 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f);
 
    //a thread for drawing stuff
-   private DrawThread drawingThread;
+   transient private DrawThread drawingThread;
 
    /**
     * Selection mode.
@@ -88,7 +88,7 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
    private int mode;
 
    //buffered image
-   private BufferedImage googleLogo;
+   transient private BufferedImage googleLogo;
 
    //mouse depressed
    private boolean mouseIsPressed;
@@ -230,7 +230,7 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
             g2d.drawImage(googleLogo, image.getWidth()-googleLogo.getWidth(), image.getHeight()-googleLogo.getHeight(), googleLogo.getWidth(), googleLogo.getHeight(),null);
             g2d.setComposite(temp);
 
-            gui.getProgressMeter().release(parent);
+            if(!gui.getProgressMeter().release(parent)) return ;
 
             //timer stop
             System.out.println("Draw time = " + (LibGUI.getTime() - start));
@@ -239,13 +239,13 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
    //         BufferedImage toDraw = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
    //         Graphics2D g = toDraw.createGraphics();
    //
-   //         .drawImage(image, 0, 0, image.getWidth(), getHeight(), null);
-   //         g.drawLine(getSize().width/2, 0, getSize().width/2, getSize().height);
-   //         g.drawLine(0, getSize().height/2, getSize().width, getSize().height/2);
+            g2d.drawImage(image, 0, 0, image.getWidth(), getHeight(), null);
+            g2d.drawLine(getSize().width/2, 0, getSize().width/2, getSize().height);
+            g2d.drawLine(0, getSize().height/2, getSize().width, getSize().height/2);
    //
    //         //update icon bounds
    //         label.setBounds(0,0,getSize().width, getSize().height);
-
+   //END TEMP
             //image = toDraw;
             updateScreen();
 

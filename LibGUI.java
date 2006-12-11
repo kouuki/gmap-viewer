@@ -15,7 +15,7 @@ import java.awt.geom.*;
 
 /** Class defining a library for performing other common Java operations necessary for GUI operations */
 public class LibGUI{
-   /** 
+   /**
     * Method to load a buffered image
     * @param location     The location of the image
     * @param dimension    The dimension of the image
@@ -43,7 +43,7 @@ public class LibGUI{
 
       }catch(Exception e){return null;}
    }
-   /** 
+   /**
     * Method to load a buffered image by location reference
     * @param location      The location of the image
     * @return              The buffered image
@@ -63,12 +63,18 @@ public class LibGUI{
          if(getData != null)
             if(!getData.equals(""))
                urlString += "?" + getData;
+
+
+         //System.out.println("{"+urlString+"}");
+
          URL url = new URL(urlString);
          URLConnection connection = url.openConnection();
-         connection.setDoOutput(true);
-         PrintWriter out = new PrintWriter(connection.getOutputStream());
-         out.print(postData);
-         out.close();
+         if(!postData.equals("")){
+            connection.setDoOutput(true);
+            PrintWriter out = new PrintWriter(connection.getOutputStream());
+            out.print(postData);
+            out.close();
+         }
          BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
          int inputLine;
@@ -88,7 +94,7 @@ public class LibGUI{
    public static String getURL(String urlString){
       return getURL(urlString, "", "");
    }
-   /** 
+   /**
     * Method to get the current time reference
     * @return              The current time reference
     */
@@ -96,5 +102,53 @@ public class LibGUI{
       Date date = new Date();
       return date.getTime();
    }
+
+   /**
+    * Method that saves the state of an object to a file using an output stream.
+    * @param file The file to be created.
+    * @param object The serializable object to be saved.
+    */
+   public static void saveStateToFile(File file, Serializable object){
+      FileOutputStream fos = null;
+      ObjectOutputStream out = null;
+      try{
+         fos = new FileOutputStream(file);
+         out = new ObjectOutputStream(fos);
+         out.writeObject(object);
+         out.close();
+      }
+      catch(IOException ex)
+      {
+         System.out.println("Problem saving state to file.");
+         ex.printStackTrace();
+      }
+   }
+
+   /**
+    * Method that retrieves the state of an object to a file using an input stream.
+    * @param file The file to opened.
+    * @return The serializable object restored.
+    */
+   public static Serializable openStateFromFile(File file){
+      Serializable obj = null;
+      FileInputStream fis = null;
+      ObjectInputStream in = null;
+      try{
+         fis = new FileInputStream(file);
+         in = new ObjectInputStream(fis);
+         obj = (Serializable)in.readObject();
+         in.close();
+      }
+      catch(IOException ex)
+      {
+         ex.printStackTrace();
+      }
+      catch(ClassNotFoundException ex)
+      {
+         ex.printStackTrace();
+      }
+      return obj;
+   }
+
 
 }

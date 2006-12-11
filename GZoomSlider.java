@@ -9,6 +9,7 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import java.io.Serializable;
 
 /**
  * GZoomSlider is a graphical component that allows the user to zoom in or out
@@ -112,7 +113,7 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
    /**
     * The graphical representation of the arrows.
     */
-   static class Arrow {
+   static class Arrow implements Serializable{
 
       /*
        * The direction the arrow is facing.

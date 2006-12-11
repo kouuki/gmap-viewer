@@ -1,8 +1,10 @@
+import java.io.Serializable;
+
 /**
  * Class CenteredRectangle represents a rectangle of size w,h centered on
  * a GPhysicalPoint.
  */
-public class CenteredRectangle {
+public class CenteredRectangle implements Serializable{
    /** Declaration of the center position of the rectangular shape */
    public GPhysicalPoint center;
    /** Declaration of the width of the rectangle */

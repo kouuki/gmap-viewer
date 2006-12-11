@@ -1,4 +1,6 @@
-class ZoomListObj{
+import java.io.Serializable;
+
+class ZoomListObj implements Serializable{
    private int zoom;
    private String message;
    private boolean showZoomInt;

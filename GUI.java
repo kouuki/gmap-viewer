@@ -48,7 +48,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    /**
     * The global parameter for tabs.
     */
-    private GPane[] tabs;
+   private GPane[] tabs;
 
    /**
     * The global parameter for popup window object.
@@ -90,7 +90,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
     * The global parameter for progress bar panel for building and setting up the frame.
     */
    private JPanel toolBarPanel;
-   private BorderLayout toolBarLayout;
+   transient private BorderLayout toolBarLayout;
 
    /**
     * The global parameter for the toolBar

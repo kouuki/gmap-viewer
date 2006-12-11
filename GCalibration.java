@@ -13,9 +13,9 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
-class GCalibration{
+class GCalibration implements Serializable{
 
-  /**
+   /*
    * GCalibration accepts two calibration points in pixels and lat/long
    * it then provides methods that can convert between them
    *
@@ -25,22 +25,17 @@ class GCalibration{
    */
 
    //calibration points supplied by user
-   private Point2D.Double physicalOnEquator;
+   private DoublePoint physicalOnEquator;
    private Point pixelOnEquator;
-   private Point2D.Double physical2;
+   private DoublePoint physical2;
    private Point pixel2;
 
 
    //mercator projection data
    private double M;
    private double B;
-	/**Method to create two calibrated pixel points based on two physical points
-	 *@param phyiscalOnEquator A physical point located on the Equator
-	 *@param pixelOnEquator The corresponding pixel point on the Equator
-	 *@param physical2 A second physical point located anywhere
-	 *@param pixel2 The second corresponding pixel point
-	 */
-   public GCalibration(Point2D.Double physicalOnEquator, Point pixelOnEquator, Point2D.Double physical2, Point pixel2){
+
+   public GCalibration(DoublePoint physicalOnEquator, Point pixelOnEquator, DoublePoint physical2, Point pixel2){
       //store input
       this.physicalOnEquator = physicalOnEquator;
       this.pixelOnEquator = pixelOnEquator;
@@ -55,7 +50,7 @@ class GCalibration{
    }
 
    //Test method
-   public GCalibration(Point2D.Double physicalOnEquator, Point pixelOnEquator, Point2D.Double physical2, Point pixel2, Point2D.Double physical3, Point pixel3){
+   public GCalibration(DoublePoint physicalOnEquator, Point pixelOnEquator, DoublePoint physical2, Point pixel2, DoublePoint physical3, Point pixel3){
       //store input
       this.physicalOnEquator = physicalOnEquator;
       this.pixelOnEquator = pixelOnEquator;
@@ -84,11 +79,8 @@ class GCalibration{
      System.out.println("M: " + M);
    }
 
-	/**Method to convert a Point2D to a pixel point
-	 *@param physical The physical point to be converted
-	 *@return The converted pixel point
-	 */
-   public Point getPixelPoint(Point2D.Double physical){
+
+   public Point getPixelPoint(DoublePoint physical){
       //compute x
       double xm = (pixelOnEquator.x - pixel2.x)/(degToRad(physicalOnEquator.y) - degToRad(physical2.y));
       double xb = pixelOnEquator.x - xm * degToRad(physicalOnEquator.y);
@@ -103,11 +95,8 @@ class GCalibration{
 
       return new Point((int)xy, (int)yy);
    }
-	/**Method to get a physical point from a pixel point
-	 *@param pixel The pixel to be converted to a physical point
-	 *@return The corresponding physical point
-	 */
-   public Point2D.Double getPhysicalPoint(Point pixel){
+
+   public DoublePoint getPhysicalPoint(Point pixel){
       //compute x
       double xm = (degToRad(physicalOnEquator.y) - degToRad(physical2.y))/(pixelOnEquator.x - pixel2.x);
       double xb = degToRad(physicalOnEquator.y) - xm * pixelOnEquator.x;
@@ -119,22 +108,15 @@ class GCalibration{
 
       xy = radToDeg(xy);
       yy = radToDeg(yy);
-      return new Point2D.Double(yy, xy);
+      return new DoublePoint(yy, xy);
    }
 
 
    //helpers for doing repetitive mathematics
-   /**Method to convert degrees to radians
-    *@param degrees The degree value to convert
-    *@return The converted value in radians
-    */
    public static double degToRad(double degrees){
       return degrees * Math.PI/180.0;
    }
-   /**Method to convert radians to degrees
-    *@param radians The degree value to convert
-    *@return The converted value in degrees
-    */
+
    public static double radToDeg(double radians){
       return radians * 180.0/Math.PI;
    }
@@ -142,13 +124,13 @@ class GCalibration{
 
    public static void main(String[] args){
       //make points
-      Point2D.Double physical1 = new Point2D.Double(0.0,55.0);
+      DoublePoint physical1 = new DoublePoint(0.0,55.0);
       Point pixel1 = new Point(45148,65792);
-      Point2D.Double physical2 = new Point2D.Double(40.0,0.0);
+      DoublePoint physical2 = new DoublePoint(40.0,0.0);
       Point pixel2 = new Point(65536,49621);
 
       //make calibration object
-//      GCalibration test = new GCalibration(new Point2D.Double(40.0,0.0), new Point((int)(45148*Math.pow(2,0)),(int)(65792*Math.pow(2,0))), new Point2D.Double(40.0,0.0), new Point((int)(65536*Math.pow(2,0)),(int)(49621*Math.pow(2,0))));
+//      GCalibration test = new GCalibration(new DoublePoint(40.0,0.0), new Point((int)(45148*Math.pow(2,0)),(int)(65792*Math.pow(2,0))), new DoublePoint(40.0,0.0), new Point((int)(65536*Math.pow(2,0)),(int)(49621*Math.pow(2,0))));
       GCalibration test = new GCalibration(physical1, pixel1, physical2, pixel2);
 
       //test using calibration points
