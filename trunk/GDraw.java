@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 /** Class defining the instance of the drawing mechanism for the map view */
-public class GDraw implements Serializable{
+public class GDraw implements Serializable, GDrawableObject{
    /** Declaration for the instance of an array of GDrawableObjects */
    private GDrawableObject[] objects;
    /** Declaration for the size of the object array */
@@ -80,7 +80,7 @@ public class GDraw implements Serializable{
    /**
     * Method for drawing the GDrawableObjects to the current map view
     * @param image   The buffered image to render to the screen
-    * @param p       The defined point for where the object is located
+    * @param p       The upper left corner of the viewable window
     * @param zoom    The current zoom level of the map view
     */
    public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
@@ -113,6 +113,47 @@ public class GDraw implements Serializable{
       g.drawLine(selectionRectangle.x, selectionRectangle.y+selectionRectangle.height, selectionRectangle.x + 5, selectionRectangle.y+selectionRectangle.height);
       g.drawLine(selectionRectangle.x, selectionRectangle.y+selectionRectangle.height, selectionRectangle.x, selectionRectangle.y+selectionRectangle.height - 5);
    }
+
+   /**
+    * Method returns a rectangle that encompasses the entire product.
+    * @param p       The upper left corner of the viewable window
+    * @param zoom    The current zoom level of the map view
+    * @return        The rectangle. Origin is the upper left corner of the screen.
+    */
+   public Rectangle getRectangle(GPhysicalPoint p, int zoom){
+      //return a null rectangle if empty
+      if(objectsSize == 0) return null;
+
+      //this is a counter variable that will be shared by two for loops
+      int testObject = 0;
+
+      //initialize return
+      Rectangle toReturn = null;
+      Rectangle thisRectangle;
+
+      //check each object to see if its getRectangle is not null
+      for(testObject = 0; testObject < objectsSize; testObject++){
+         thisRectangle = objects[testObject].getRectangle(p,zoom);
+         if(thisRectangle != null){
+            toReturn = thisRectangle;
+            break;
+         }
+      }
+
+      //if we didnt find a non-null child, return null
+      if(toReturn == null) return null;
+
+      //union the first rectangle with each subrectangle
+      for(testObject = testObject; testObject < objectsSize; testObject++){
+         thisRectangle = objects[testObject].getRectangle(p,zoom);
+         if(thisRectangle != null){
+            toReturn = toReturn.union(thisRectangle);
+         }
+      }
+
+      return toReturn;
+   }
+
    /**
     * Method to test whether an object resides on a given point
     * @param testPoint  The point to test
