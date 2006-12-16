@@ -558,6 +558,9 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
    private GPhysicalPoint tempA;
    private GPhysicalPoint tempB;
    private GMarker tempMarkerA;
+   private GDraw gDrawToAdd;
+   private GText tempDistance;
+   private double runningDistance;
 
    /**
     * @see java.awt.event.MouseListener#mousePressed(MouseEvent)
@@ -586,33 +589,51 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
             if(mode == SELECTION_MODE)
                mouseRectanglePosition = new Rectangle(clickLocation.x,clickLocation.y,clickLocation.x,clickLocation.y);
             else if(mode == DRAW_LINE_MODE && clickCount == 0){
-               clickCount = 1;
+               clickCount++;
                tempA = new GPhysicalPoint(c.x, c.y,zoom);
                tempMarkerA = new GMarker(tempA);
                gui.getGMap().getGDraw().add(tempMarkerA);
                draw();
             }
-            else if(mode == DRAW_LINE_MODE && clickCount == 1){
-               clickCount = 0;
+            else if(mode == DRAW_LINE_MODE && clickCount >= 1){
+               //if this is the second click, set up the gDraw
+               if(clickCount == 1){
+                  gDrawToAdd = new GDraw();
+                  gui.getGMap().getGDraw().add(gDrawToAdd);
+                  gui.getGMap().getGDraw().remove(tempMarkerA);
+               }
+               //increment click count and add another line
+               clickCount++;
                tempB = new GPhysicalPoint(c.x, c.y,zoom);
-               gui.getGMap().getGDraw().remove(tempMarkerA);
-               gui.getGMap().getGDraw().add(new GLine(tempA, tempB));
+               gDrawToAdd.add(new GLine(tempA, tempB));
+               tempA = tempB;
                draw();
             }
             else if(mode == DISTANCE_MODE && clickCount == 0){
                clickCount = 1;
+               runningDistance = 0.0;
                tempA = new GPhysicalPoint(c.x, c.y,zoom);
                tempMarkerA = new GMarker(tempA);
                gui.getGMap().getGDraw().add(tempMarkerA);
                draw();
             }
-            else if(mode == DISTANCE_MODE && clickCount == 1){
-               clickCount = 0;
+            else if(mode == DISTANCE_MODE && clickCount >= 1){
+               //if this is the second click, set up the gDraw
+               if(clickCount == 1){
+                  gDrawToAdd = new GDraw();
+                  gui.getGMap().getGDraw().add(gDrawToAdd);
+                  gui.getGMap().getGDraw().remove(tempMarkerA);
+               }
+
+               //increment click count and draw another line
+               clickCount++;
                tempB = new GPhysicalPoint(c.x, c.y,zoom);
-               gui.getGMap().getGDraw().remove(tempMarkerA);
-               gui.getGMap().getGDraw().add(new GLine(tempA, tempB));
-               GText distance = new GText(tempB, ""+Math.round(GLib.computeDistance(tempA, tempB)*1000)/1000);
-               gui.getGMap().getGDraw().add(distance);
+               gDrawToAdd.add(new GLine(tempA, tempB));
+               gDrawToAdd.remove(tempDistance);
+               runningDistance += GLib.computeDistance(tempA, tempB);
+               tempDistance = new GText(tempB, ""+Math.round(runningDistance*1000.0)/1000.0);
+               gDrawToAdd.add(tempDistance);
+               tempA = tempB;
                draw();
             }
             else if(mode == DRAW_MARKER_MODE){
