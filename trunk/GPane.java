@@ -6,6 +6,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.image.*;
+import java.io.*;
 
 /**
  * The GPane class.
@@ -84,6 +85,14 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
     * Clicking the mouse in two places will calculate and display the distance.
     */
    public static final int DISTANCE_MODE = 5;
+
+   /**
+    * Draw image mode.
+    *
+    * Clicking the mouse in two places will place an image on the map.
+    */
+   public static final int IMAGE_MODE = 6;
+
 
    private int mode;
 
@@ -239,9 +248,9 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
    //         BufferedImage toDraw = new BufferedImage(image.getWidth(),image.getHeight(),BufferedImage.TYPE_INT_RGB);
    //         Graphics2D g = toDraw.createGraphics();
    //
-            g2d.drawImage(image, 0, 0, image.getWidth(), getHeight(), null);
-            g2d.drawLine(getSize().width/2, 0, getSize().width/2, getSize().height);
-            g2d.drawLine(0, getSize().height/2, getSize().width, getSize().height/2);
+   //         g2d.drawImage(image, 0, 0, image.getWidth(), getHeight(), null);
+   //         g2d.drawLine(getSize().width/2, 0, getSize().width/2, getSize().height);
+   //         g2d.drawLine(0, getSize().height/2, getSize().width, getSize().height/2);
    //
    //         //update icon bounds
    //         label.setBounds(0,0,getSize().width, getSize().height);
@@ -337,6 +346,14 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
     */
    public Rectangle getMouseRectanglePosition(){
       return mouseRectanglePosition;
+   }
+
+   /**
+    * Gets the BufferedImage of the visible map, without the selection rectangle.
+    * @return The visible map.
+    */
+   public BufferedImage getImage(){
+      return image;
    }
 
    /**
@@ -535,11 +552,22 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
          int y = centerPixels.y - (getSize().height/2);
 
          if(mode == SELECTION_MODE || mode == DRAGGING_MODE){
+            //get the index of what was clicked
             int clicked = gui.getGMap().getGDraw().inside(new Point(e.getX(),e.getY()), new GPhysicalPoint(x,y,zoom), zoom);
-            if(clicked != gui.getGMap().getGDraw().getSelected()){
-               gui.getGMap().getGDraw().setSelected(clicked);
-               draw();
+            //get the object that was clicked
+            GDrawableObject clickedObj = null;
+
+            //remove all selected objects
+            gui.getGMap().getGDraw().getSelected().removeAll();
+
+            //figure out if we're selecting something
+            if(clicked != -1){
+               clickedObj = gui.getGMap().getGDraw().get(clicked);
+               gui.getGMap().getGDraw().getSelected().add(clickedObj);
             }
+
+            //redraw
+            draw();
          }
       }
    }
@@ -566,6 +594,9 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
     * @see java.awt.event.MouseListener#mousePressed(MouseEvent)
     */
    public void mousePressed(MouseEvent e){
+      //get the key focus
+      this.requestFocusInWindow();
+
       //update mouse dragged
       mouseIsPressed = true;
       mouseDraggedThisClick = false;
@@ -606,7 +637,41 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
                clickCount++;
                tempB = new GPhysicalPoint(c.x, c.y,zoom);
                gDrawToAdd.add(new GLine(tempA, tempB));
-               tempA = tempB;
+               tempA = (GPhysicalPoint)tempB.clone();
+               draw();
+            }
+            else if(mode == IMAGE_MODE && clickCount == 0){
+               clickCount++;
+               tempA = new GPhysicalPoint(c.x, c.y,zoom);
+               tempMarkerA = new GMarker(tempA);
+               gui.getGMap().getGDraw().add(tempMarkerA);
+               draw();
+            }
+            else if(mode == IMAGE_MODE && clickCount >= 1){
+               //if this is the second click, set up the gDraw
+               if(clickCount == 1){
+                  gDrawToAdd = new GDraw();
+                  gui.getGMap().getGDraw().add(gDrawToAdd);
+                  gui.getGMap().getGDraw().remove(tempMarkerA);
+               }
+               //increment click count and add another line
+               clickCount = 0;
+               tempB = new GPhysicalPoint(c.x, c.y,zoom);
+
+               //set extension
+               String extension = "png";
+
+               //file chooser
+               String filename = File.separator+extension;
+               JFrame frame= new JFrame();
+               JFileChooser fileChooser = new JFileChooser(new File(filename));
+
+               // Show save dialog; this method does not return until the dialog is closed
+               fileChooser.showSaveDialog(frame);
+               File outputFile = fileChooser.getSelectedFile();
+               BufferedImage loadedImage = LibGUI.loadImage(outputFile.getPath());
+
+               if(outputFile != null && loadedImage != null) gDrawToAdd.add(new GImage(tempA, tempB, loadedImage));
                draw();
             }
             else if(mode == DISTANCE_MODE && clickCount == 0){
@@ -622,7 +687,6 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
                if(clickCount == 1){
                   gDrawToAdd = new GDraw();
                   gui.getGMap().getGDraw().add(gDrawToAdd);
-                  gui.getGMap().getGDraw().remove(tempMarkerA);
                }
 
                //increment click count and draw another line
@@ -633,7 +697,7 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
                runningDistance += GLib.computeDistance(tempA, tempB);
                tempDistance = new GText(tempB, ""+Math.round(runningDistance*1000.0)/1000.0);
                gDrawToAdd.add(tempDistance);
-               tempA = tempB;
+               tempA = (GPhysicalPoint)tempB.clone();
                draw();
             }
             else if(mode == DRAW_MARKER_MODE){
@@ -682,15 +746,44 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
     */
    public void mouseReleased(MouseEvent e){
       mouseIsPressed = false;
-      if(!mouseDraggedThisClick){
-         mouseRectanglePosition = null;
-         gui.getGMap().getGDataSource().downloadQueue();
-      }
-      //download adjacent
-      gui.getGMap().getGDataSource().downloadQueue();
 
-      //update
-      updateScreen();
+      int m = e.getModifiers();
+      if(m == 16){
+
+         //if we didn't drag the map on this clip, do this stuff
+         if(!mouseDraggedThisClick){
+            mouseRectanglePosition = null;
+            gui.getGMap().getGDataSource().downloadQueue();
+         }
+
+         //if there is a selection rectangle, check and see what is selected
+         if(mouseRectanglePosition != null){
+            //get location
+            Point centerPixels = center.getPixelPoint(zoom);
+            int x = centerPixels.x - (getSize().width/2);
+            int y = centerPixels.y - (getSize().height/2);
+            GPhysicalPoint upperLeft = new GPhysicalPoint(x,y,zoom);
+
+            //clear the selection
+            gui.getGMap().getGDraw().getSelected().removeAll();
+
+            //loop through each object in gdraw and see if its contained by selection
+            int size = gui.getGMap().getGDraw().getSize();
+            for(int i=0;i<size;i++){
+               if(mouseRectanglePosition.contains(gui.getGMap().getGDraw().get(i).getRectangle(upperLeft, zoom))){
+                  //add this one
+                  gui.getGMap().getGDraw().getSelected().add(gui.getGMap().getGDraw().get(i));
+               }
+            }
+            draw();
+         }
+
+         //download adjacent
+         gui.getGMap().getGDataSource().downloadQueue();
+
+         //update
+         updateScreen();
+      }
   }
 
    /**
@@ -708,7 +801,51 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
    /**
     * @see java.awt.event.KeyListener#keyPressed(KeyEvent)
     */
-   public void keyPressed(KeyEvent k){
+   private static final double KEY_MOVE_INTERVAL = 0.000093291274983;
+
+   public void keyPressed(KeyEvent keyEvent){
+      int k = keyEvent.getKeyCode();
+
+      double interval = KEY_MOVE_INTERVAL*Math.pow(2,zoom-1);
+
+      if(k == 37){
+         //left
+         moveSelectedObjects(-1.0*interval,0);
+         draw();
+      }else if(k == 38){
+         //up
+         moveSelectedObjects(0,1.0*interval);
+         draw();
+      }else if(k == 39){
+         //right
+         moveSelectedObjects(1.0*interval,0);
+         draw();
+      }else if(k == 40){
+         //down
+         moveSelectedObjects(0,-1.0*interval);
+         draw();
+      }else if(k == 127){
+         //delete
+         deleteSelectedObjects();
+         draw();
+      }
+
+   }
+
+   private void moveSelectedObjects(double latitude, double longitude){
+      int size = gui.getGMap().getGDraw().getSelected().getSize();
+      for(int i=0;i<size;i++){
+         GDrawableObject gd = (GDrawableObject)gui.getGMap().getGDraw().getSelected().get(i);
+         gd.move(latitude, longitude);
+      }
+   }
+
+   private void deleteSelectedObjects(){
+      int size = gui.getGMap().getGDraw().getSelected().getSize();
+      for(int i=0;i<size;i++){
+         GDrawableObject gd = (GDrawableObject)gui.getGMap().getGDraw().getSelected().get(i);
+         gui.getGMap().getGDraw().remove(gd);
+      }
    }
 
    /**

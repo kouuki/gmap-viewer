@@ -195,17 +195,17 @@ public class GPhysicalPoint implements Cloneable, Serializable{
 
    //clone
    /**
-    * Creates a new clone of this object
+    * Creates a clone of this object. Clone is a deep copy.
     */
    public Object clone(){
-      return new GPhysicalPoint(point);
+      return new GPhysicalPoint((DoublePoint)point.clone());
    }
 
    /**
     * Converts this object to a string
     */
    public String toString(){
-      return point.x + ", " + point.y;
+      return "GPhysicalPoint{"+point.x + ", " + point.y + "}";
    }
 
 

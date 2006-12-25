@@ -12,6 +12,8 @@ import com.sun.image.codec.jpeg.*;
 import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
+import java.awt.datatransfer.*;
+
 
 /** Class defining a library for performing other common Java operations necessary for GUI operations */
 public class LibGUI{
@@ -139,16 +141,40 @@ public class LibGUI{
          obj = (Serializable)in.readObject();
          in.close();
       }
-      catch(IOException ex)
-      {
+      catch(IOException ex){
          ex.printStackTrace();
       }
-      catch(ClassNotFoundException ex)
-      {
+      catch(ClassNotFoundException ex){
          ex.printStackTrace();
       }
       return obj;
    }
 
+    /** If an image is on the system clipboard, this method returns it;
+      * otherwise it returns null. */
+    public static BufferedImage paste() {
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+
+        try {
+            if (t != null && t.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+                BufferedImage text = (BufferedImage)t.getTransferData(DataFlavor.imageFlavor);
+                BufferedImage toReturn = new BufferedImage(text.getWidth(), text.getHeight(), BufferedImage.TYPE_INT_RGB);
+                Graphics2D g = toReturn.createGraphics();
+                g.drawImage(text, 0, 0, null);
+                return toReturn;
+            }
+        } catch (UnsupportedFlavorException e) {
+        } catch (IOException e) {
+        }
+        return null;
+    }
+
+    /** This method writes a image to the system clipboard. */
+    public static void copy(BufferedImage image) {
+        TransferableImage tImage = new TransferableImage(image);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(tImage, null);
+    }
+
 
 }
+

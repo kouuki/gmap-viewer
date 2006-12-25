@@ -1,238 +1,158 @@
 import java.awt.*;
-import java.awt.geom.*;
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import java.io.*;
+import java.util.*;
 import java.awt.image.*;
-import java.io.Serializable;
+import javax.imageio.*;
+import java.beans.*; //Property change stuff
+import javax.swing.table.*;
+import com.sun.image.codec.jpeg.*;
+import java.net.*;
+import javax.imageio.ImageIO;
+import java.awt.geom.*;
 
-/**
- * Class defining the instance for a line object. It implements GDrawableObject.
- */
-public class GLine implements GDrawableObject, Serializable{
+/** Class defining the instance for a line object. A line is simply two GMarkers. */
+public class GLine extends GCustomObject implements GDrawableObject{
+   /** Two GMarkers */
+   private GMarker point1;
+   private GMarker point2;
    /**
-    * Declaration for a line on the map
+    * Constructor for GLine.
+    * @param point1, point2
     */
-   Line2D line;
-
-   /**
-    * Holds the zoom level
-    */
-   int zoom;
-
-   /**
-    * GLine constructor that takes in two points and a zoom level.
-    *
-    * @param p1 Point where the line starts
-    * @param p2 Point where the line ends
-    * @param zoom Zoom level
-    */
-   public GLine(Point2D p1, Point2D p2, int zoom){
-      line = new Line2D.Double(p1, p2);
-      this.zoom = zoom;
-   }
-    /** GLine constructor that takes in two points.  It applies a default zoom level of 1.
-    *
-    * @param p1 Point where the line starts
-    * @param p2 Point where the line ends
-    */
-   public GLine(GPhysicalPoint p1, GPhysicalPoint p2){
-     this.zoom = 1;
-     //System.out.println("(" + p1.getPixelPoint(zoom).x + ", " + p1.getPixelPoint(zoom).y + ") " + "(" + p2.getPixelPoint(zoom).x + ", " + p2.getPixelPoint(zoom).y);
-     line = new Line2D.Double(p1.getPixelPoint(zoom), p2.getPixelPoint(zoom));
+   public GLine(GMarker point1, GMarker point2){
+      this.point1 = point1;
+      this.point2 = point2;
    }
    /**
-    * Takes in a buffered image and draws a line on it.
-    *
-    * @param image The buffered image
-    * @param p The upper left pixel of the buffered image
-    * @param zoom The zoom level
+    * Constructor for GLine using GPhysicalPoints.
+    * @param point1, point2
     */
-   public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
-      Dimension imageDim = new Dimension(image.getWidth(), image.getHeight());
-     //imageRect is the currently viewable image window.
-      Rectangle imageRect = new Rectangle(p.getPixelX(zoom) - 1, p.getPixelY(zoom) - 1, imageDim.width - 2, imageDim.height - 2);
-      Graphics g = image.getGraphics();
-
-      int power = this.zoom - zoom;
-      Line2D cLine = new Line2D.Double(line.getX1()*Math.pow(2, power), line.getY1()*Math.pow(2,power), line.getX2()*Math.pow(2,power), line.getY2()*Math.pow(2,power));
-
-      //DEBUG
-      //System.out.println("Method Running");
-      //System.out.println(p.getPixelX(zoom) + " "  + p.getPixelY(zoom) + " " + imageDim.width + " " + imageDim.height);
-      System.out.println("(" + cLine.getX1() + "," + cLine.getY1() + ") (" + cLine.getX2() + "," + cLine.getY2() + ")");
-
-      //If line does not intersect the image, return image w/o modification
-      if(cLine.intersects(imageRect)){
-
-         //will contain drawing coordinates for image (will take p as point (0,0)
-         int x1 = -1;
-         int y1 = -1;
-         int x2 = -1;
-         int y2 = -1;
-
-         double slope;
-
-   /*
-         try{
-            slope = (-(int)cLine.getY2() + (int)cLine.getY1())/((int)cLine.getX2() - (int)cLine.getX1());
-         }catch(java.lang.ArithmeticException e){
-            if((-(int)cLine.getY2() + (int)cLine.getY1()) > 0){
-               slope = 999999999.0;
-            }else{
-               slope = -999999999.0;
-            }
-         }
-         double yIntercept = -(int)cLine.getY2() - slope*(int)cLine.getX2();
-   */
-      //Represents the lines of the edges of the imageRect object
-      Line2D upLine =  new Line2D.Double(imageRect.x, imageRect.y, imageRect.x + imageRect.width, imageRect.y);
-      Line2D rightLine = new Line2D.Double(imageRect.x + imageRect.width, imageRect.y, imageRect.x + imageRect.width, imageRect.y + imageRect.height);
-      Line2D downLine = new Line2D.Double(imageRect.x + imageRect.width, imageRect.y + imageRect.height, imageRect.x, imageRect.y + imageRect.height);
-      Line2D leftLine = new Line2D.Double(imageRect.x, imageRect.y + imageRect.height, imageRect.x, imageRect.y);
-
-
-         if(imageRect.contains(cLine.getX1(), cLine.getY1())){
-            x1 = (int)cLine.getX1();
-            y1 = (int)cLine.getY1();
-            if(imageRect.contains(cLine.getX2(), cLine.getY2())){
-               x2 = (int)cLine.getX2();
-               y2 = (int)cLine.getY2();
-            }
-            else{
-               if(upLine.intersectsLine(cLine)){
-                  y2 = imageRect.y;
-              x2 = (int)MathLib.intersectPointX(upLine, cLine);
-               }else if(rightLine.intersectsLine(cLine)){
-                  x2 = imageRect.x + imageRect.width;
-              y2 = (int)MathLib.intersectPointY(rightLine, cLine);
-               }else if(downLine.intersectsLine(cLine)){
-                  y2 = imageRect.y + imageRect.height;
-                  x2 = (int)MathLib.intersectPointX(downLine, cLine);
-               }else if(leftLine.intersectsLine(cLine)){
-                  x2 = imageRect.x;
-                  y2 = (int)MathLib.intersectPointY(leftLine, cLine);
-               }
-            }
-         }
-         else{
-            if(imageRect.contains(cLine.getX2(), cLine.getY2())){
-               x2 = (int)cLine.getX2();
-               y2 = (int)cLine.getY2();
-            if(upLine.intersectsLine(cLine)){
-                  y1 = imageRect.y;
-              x1 = (int)MathLib.intersectPointX(upLine, cLine);
-               }else if(rightLine.intersectsLine(cLine)){
-                  x1 = imageRect.x + imageRect.width;
-              y1 = (int)MathLib.intersectPointY(rightLine, cLine);
-               }else if(downLine.intersectsLine(cLine)){
-                  y1 = imageRect.y + imageRect.height;
-                  x1 = (int)MathLib.intersectPointX(downLine, cLine);
-               }else if(leftLine.intersectsLine(cLine)){
-                  x1 = imageRect.x;
-                  y1 = (int)MathLib.intersectPointY(leftLine, cLine);
-               }
-            }
-            else{
-               if(upLine.intersectsLine(cLine)){
-                  if(x1 < 0 && y1 < 0){
-                     y1 = imageRect.y;
-                     x1 = (int)MathLib.intersectPointX(upLine, cLine);
-                  }
-                  else{
-                     y2 = imageRect.y;
-                     x2 = (int)MathLib.intersectPointX(upLine, cLine);
-                  }
-               }
-               if(rightLine.intersectsLine(cLine)){
-                  if(x1 < 0 && y1 < 0){
-                     x1 = imageRect.x + imageRect.width;
-                     y1 = (int)MathLib.intersectPointY(rightLine, cLine);
-                  }
-                  else{
-                     x2 = imageRect.x + imageRect.width;
-                     y2 = (int)MathLib.intersectPointY(rightLine, cLine);
-                  }
-               }
-               if(downLine.intersectsLine(cLine)){
-                  if(x1 < 0 && y1 < 0){
-                     y1 = imageRect.y + imageRect.height;
-                     x1 = (int)MathLib.intersectPointX(downLine, cLine);
-                  }
-                  else{
-                     y2 = imageRect.y + imageRect.height;
-                     x2 = (int)MathLib.intersectPointX(downLine, cLine);
-                  }
-               }
-               if(leftLine.intersectsLine(cLine)){
-                  if(x1 < 0 && y1 < 0){
-                     x1 = imageRect.x;
-                     y1 = (int)MathLib.intersectPointY(leftLine, cLine);
-                  }
-                  else{
-                     x2 = imageRect.x;
-                     y2 = (int)MathLib.intersectPointY(leftLine, cLine);
-                  }
-               }
-            }
-         }
-
-         x1 -= (int)p.getPixelX(zoom);
-         y1 -= (int)p.getPixelY(zoom);
-
-         x2 -= (int)p.getPixelX(zoom);
-         y2 -= (int)p.getPixelY(zoom);
-
-         //DEBUG
-         System.out.println(x1 + " " + y1);
-         System.out.println(x2 + " " + y2);
-
-         //int [] xPoints = {x1 - 2, x1 + 2, x2 + 2, x2 + 2, x2 - 2};
-         //int [] yPoints = {y1 - 2, y1 - 2, y2 - 2, y2 + 2, y2 + 2};
-         //int nPoints = 5;
-         //Polygon polyLine = new Polygon(xPoints, yPoints, nPoints);
-
-       g.setColor(new Color(0,0,155));
-
-       //Draws a line b/w each pixel of a 3 by 3 square surrounding the center pixel.
-         g.drawLine(x1,y1,x2,y2);
-       g.drawLine(x1-1,y1,x2-1,y2);
-       g.drawLine(x1,y1-1,x2,y2-1);
-       g.drawLine(x1-1,y1-1,x2-1,y2-1);
-       g.drawLine(x1+1,y1,x2-1,y2);
-       g.drawLine(x1,y1+1,x2,y2+1);
-       g.drawLine(x1+1,y1+1,x2+1,y2+1);
-       g.drawLine(x1+1,y1-1,x2+1,y2-1);
-       g.drawLine(x1-1,y1+1,x2-1,y2+1);
-      }
+   public GLine(GPhysicalPoint point1, GPhysicalPoint point2){
+      this.point1 = new GMarker(point1);
+      this.point2 = new GMarker(point2);
    }
    /**
-    * Returns a rectangle the encompasses the entire line.
-    *
-    * @param p The point at which the line is
-    * @param zoom The zoom level
-    * @returns A rectangle the encompasses the entire line
+    * Default constructor for GMarker. Creates a line with an empty GMarker
+    */
+   public GLine(){
+      this(new GMarker(), new GMarker());
+   }
+
+   /**
+    * Gets the first GMarker.
+    * @return        The first GMarker.
+    */
+   public GMarker getPoint1(){
+      return point1;
+   }
+
+   /**
+    * Gets the 2nd GMarker.
+    * @return        The 2nd GMarker.
+    */
+   public GMarker getPoint2(){
+      return point2;
+   }
+
+
+   /** Method to set the point on the map to place the 1st marker */
+   public void setPoint1(GMarker point){
+      this.point1 = point;
+   }
+
+   /** Method to set the point on the map to place the 1st marker. Uses a GPhysicalPoint */
+   public void setPoint1(GPhysicalPoint point){
+      this.point1 = new GMarker(point);
+   }
+
+   /** Method to set the point on the map to place the 2nd marker */
+   public void setPoint2(GMarker point){
+      this.point2 = point;
+   }
+
+   /** Method to set the point on the map to place the 2nd marker. Uses a GPhysicalPoint */
+   public void setPoint2(GPhysicalPoint point){
+      this.point2 = new GMarker(point);
+   }
+
+
+   /**
+    * Method defining a rectangle object for the current map view
+    * @param p       The point to place the marker
+    * @param zoom    The current zoom level for the map
+    * @return        The rectangle object defined for the current map view
     */
    public Rectangle getRectangle(GPhysicalPoint p, int zoom){
-      int width = (int)line.getX2() - (int)line.getX1();
-      int height = (int)line.getY2() - (int)line.getY1();
+      //check for nulls to prevent null pointer exceptions
+      if(p == null) return null;
 
-      width *= Math.pow(2, this.zoom - zoom);
-      height *= Math.pow(2, this.zoom - zoom);
+      //build a point data element that represents the upper-left corner of the screen
+      Point screen = new Point(p.getPixelX(zoom), p.getPixelY(zoom));
 
-      int x, y;
+      //get the coordinate of the point on our visible screen
+      Point pointOnScreen1 = new Point(point1.getPoint().getPixelX(zoom) - screen.x, point1.getPoint().getPixelY(zoom) - screen.y);
+      Point pointOnScreen2 = new Point(point2.getPoint().getPixelX(zoom) - screen.x, point2.getPoint().getPixelY(zoom) - screen.y);
 
-      if(width < 0){
-         x = (int)(line.getX2()*Math.pow(2, this.zoom - zoom)) - p.getPixelX(zoom);
-      }else{
-         x = (int)(line.getX1()*Math.pow(2, this.zoom - zoom)) - p.getPixelX(zoom);
-      }
-      if(height < 0){
-         y = (int)(line.getY2()*Math.pow(2, this.zoom - zoom)) - p.getPixelY(zoom);
-      }else{
-         y = (int)(line.getY1()*Math.pow(2, this.zoom - zoom)) - p.getPixelY(zoom);
-      }
-      //System.out.println(x + ":" + y + ":" + width + ":" + height);
-      Rectangle rect = new Rectangle(x, y, Math.abs(width), Math.abs(height));
+      //compute x, y, w, h
+      int x = Math.min(pointOnScreen1.x, pointOnScreen2.x);
+      int y = Math.min(pointOnScreen1.y, pointOnScreen2.y);
+      int w = Math.max(pointOnScreen1.x, pointOnScreen2.x) - x;
+      int h = Math.max(pointOnScreen1.y, pointOnScreen2.y) - y;
 
-      return rect;
+      //rectangle
+      return new Rectangle(x-5,y-5,w+10,h+10);
    }
+   /**
+    * Method to draw the marker object to the screen
+    * @param image   The map image to be rendered
+    * @param p       The point to place the marker
+    * @param zoom    The current zoom level for the map
+    */
+   public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
+      //check for nulls to prevent null pointer exceptions
+      if(p == null || image == null) return ;
+
+      //build a rectangle data element that represents the visible area of the screen
+      Rectangle screen = new Rectangle(p.getPixelX(zoom), p.getPixelY(zoom), image.getWidth(), image.getHeight());
+
+      //if the point is not on the screen return here
+      if(!screen.contains(point1.getPoint().getPixelX(zoom), point1.getPoint().getPixelY(zoom)) && !screen.contains(point2.getPoint().getPixelX(zoom), point2.getPoint().getPixelY(zoom))) return ;
+
+      //create a graphics context
+      Graphics2D g = image.createGraphics();
+
+      //get the coordinate of the point on our visible screen
+      Point pointOnScreen1 = new Point(point1.getPoint().getPixelX(zoom) - screen.x, point1.getPoint().getPixelY(zoom) - screen.y);
+      Point pointOnScreen2 = new Point(point2.getPoint().getPixelX(zoom) - screen.x, point2.getPoint().getPixelY(zoom) - screen.y);
+
+      //draw it
+      g.setColor(new Color(0,0,155));
+      g.setStroke(new BasicStroke(3));
+      g.drawLine(pointOnScreen1.x, pointOnScreen1.y, pointOnScreen2.x, pointOnScreen2.y);
+   }
+
+   /**
+    * Method moves every item by latitude, longitude.
+    * @param lat The amount to add to this items latitude
+    * @param lat The amount to add to this items longitude
+    */
+
+   public void move(double latitude, double longitude){
+      point1.move(latitude, longitude);
+      point2.move(latitude, longitude);
+   }
+
+
+   /**
+   * Prints out GLine{ GPhysicalPoint}
+   */
+
+   public String toString(){
+      return "GLine{ "+point1+","+point2+" }";
+   }
+
 
 }

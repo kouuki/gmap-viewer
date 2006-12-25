@@ -17,9 +17,13 @@ public class GMenuBar extends JMenuBar{
 
    public GMenuBar(GUI gui){
       //file
-      //JMenuItem[] fileMenu = {new JMenuActionSaveState(gui), new JMenuActionOpenState(gui), new JMenuActionExport(gui), new JMenuActionExit(gui)};
-      JMenuItem[] fileMenu = {new JMenuActionExport(gui), new JMenuActionExit(gui)};
+      JMenuItem[] fileMenu = {new JMenuActionSaveGDraw(gui), new JMenuActionOpenGDraw(gui), new JMenuActionExport(gui), new JMenuActionExit(gui)};
+      //JMenuItem[] fileMenu = {new JMenuActionExport(gui), new JMenuActionExit(gui)};
       add(new JMenuGroup("File",gui,fileMenu));
+
+      //edit
+      JMenuItem[] editMenu = {new JMenuActionCopy(gui), new JMenuActionPaste(gui)};
+      add(new JMenuGroup("Edit",gui,editMenu));
 
       //pane
       JMenuItem[] paneMenu = {new JMenuActionNewPane(gui),new JMenuActionSetPaneTitle(gui),new JMenuActionRemovePane(gui)};
@@ -27,8 +31,10 @@ public class GMenuBar extends JMenuBar{
 
       //view
       JMenuItem[] zoomMenu = {new JMenuRadioButtonActionZoom("Level 1",gui,1),new JMenuRadioButtonActionZoom("Level 2",gui,2),new JMenuRadioButtonActionZoom("Level 3",gui,3),new JMenuRadioButtonActionZoom("Level 4",gui,4),new JMenuRadioButtonActionZoom("Level 5",gui,5),new JMenuRadioButtonActionZoom("Level 6",gui,6),new JMenuRadioButtonActionZoom("Level 7",gui,7),new JMenuRadioButtonActionZoom("Level 8",gui,8),new JMenuRadioButtonActionZoom("Level 9",gui,9),new JMenuRadioButtonActionZoom("Level 10",gui,10),new JMenuRadioButtonActionZoom("Level 11",gui,11),new JMenuRadioButtonActionZoom("Level 12",gui,12),new JMenuRadioButtonActionZoom("Level 13",gui,13),new JMenuRadioButtonActionZoom("Level 14",gui,14),new JMenuRadioButtonActionZoom("Level 15",gui,15)};
-      JMenuItem[] viewMenu = {new JMenuActionSetCenter(gui),new JMenuActionSetCenterPixel(gui),new JMenuGroup("Set Zoom",gui,zoomMenu)};
+      JMenuItem[] dataType = {new JMenuRadioButtonActionMap("Map",gui), new JMenuRadioButtonActionSat("Satellite",gui), new JMenuRadioButtonActionHybrid("Hybrid",gui)};
+      JMenuItem[] viewMenu = {new JMenuActionSetCenter(gui),new JMenuActionSetCenterPixel(gui),new JMenuGroup("Set Zoom",gui,zoomMenu),new JMenuGroup("Data Type",gui,dataType)};
       add(new JMenuGroup("View",gui,viewMenu));
+
 
       //cache
       JMenuItem[] cacheZoomMenu = {new JMenuRadioButtonActionCache("None",gui,-1),new JMenuRadioButtonActionCache("Level 1",gui,1),new JMenuRadioButtonActionCache("Level 2",gui,2),new JMenuRadioButtonActionCache("Level 3",gui,3),new JMenuRadioButtonActionCache("Level 4",gui,4),new JMenuRadioButtonActionCache("Level 5",gui,5),new JMenuRadioButtonActionCache("Level 6",gui,6),new JMenuRadioButtonActionCache("Level 7",gui,7),new JMenuRadioButtonActionCache("Level 8",gui,8),new JMenuRadioButtonActionCache("Level 9",gui,9),new JMenuRadioButtonActionCache("Level 10",gui,10),new JMenuRadioButtonActionCache("Level 11",gui,11),new JMenuRadioButtonActionCache("Level 12",gui,12),new JMenuRadioButtonActionCache("Level 13",gui,13),new JMenuRadioButtonActionCache("Level 14",gui,14),new JMenuRadioButtonActionCache("Level 15",gui,15)};
@@ -36,13 +42,12 @@ public class GMenuBar extends JMenuBar{
       JMenuItem[] cacheMenu = {new JMenuGroup("Cache Selected",gui,cacheRectMenu),new JMenuGroup("Set Cache Zoom",gui,cacheZoomMenu), new JMenuActionSetCacheDirectory(gui)};
       add(new JMenuGroup("Cache",gui,cacheMenu));
 
-      //pmeter
-      JMenuItem[] menu = {new JMenuActionPOC(gui), new JMenuActionClearRAM(gui), new JMenuRadioButtonSelectionOn(gui), new JMenuRadioButtonDragOn(gui), new JMenuRadioButtonCalculateDistance(gui), new JMenuRadioButtonAddPoints(gui) ,new JMenuRadioButtonAddLines(gui),new JMenuRadioButtonAddText(gui), new JMenuActionGridlines(gui)};
-      add(new JMenuGroup("Debugging",gui,menu));
+      //debugging
+      //JMenuItem[] menu = {new JMenuActionPOC(gui), new JMenuActionClearRAM(gui), new JMenuRadioButtonSelectionOn(gui), new JMenuRadioButtonDragOn(gui), new JMenuRadioButtonCalculateDistance(gui), new JMenuRadioButtonAddPoints(gui) ,new JMenuRadioButtonAddLines(gui),new JMenuRadioButtonAddText(gui), new JMenuActionGridlines(gui)};
+      //add(new JMenuGroup("Debugging",gui,menu));
 
       //data type
-      JMenuItem[] datatype = {new JMenuRadioButtonActionSat("Satellite",gui), new JMenuRadioButtonActionMap("Map",gui), new JMenuRadioButtonActionHybrid("Hybrid",gui)};
-      add(new JMenuGroup("Data Type",gui,datatype));
+      //add(new JMenuGroup("Data Type",gui,datatype));
 
       //geocoder
       JMenuItem[] geocode = {new JMenuActionGeocode(gui)};

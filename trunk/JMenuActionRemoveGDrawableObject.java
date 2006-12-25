@@ -30,7 +30,12 @@ public class JMenuActionRemoveGDrawableObject extends JMenuAction{
       //remove the GDrawableObject returned
       GUI gui = (GUI)registeredObject;
       GPane pane = gui.getTopPane();
-      gui.getGMap().getGDraw().remove(gui.getGMap().getGDraw().getSelected());
+
+      int size = gui.getGMap().getGDraw().getSelected().getSize();
+      for(int i=0;i<size;i++){
+         GDrawableObject removeThisObj = (GDrawableObject)gui.getGMap().getGDraw().getSelected().get(i);
+         gui.getGMap().getGDraw().remove(removeThisObj);
+      }
       pane.draw();
    }
 }

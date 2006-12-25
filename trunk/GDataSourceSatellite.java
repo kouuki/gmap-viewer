@@ -38,7 +38,7 @@ public class GDataSourceSatellite extends GDataSource{
       String pathToNode = makeRemoteSatName(x,y,zoom);
 
       //System.out.println(pathToNode);
-      return "http://kh"+serverNumber+".google.com/kh?n=404&v=11&t="+pathToNode;
+      return "http://kh"+serverNumber+".google.com/kh?n=404&v=12&t="+pathToNode;
    }
 
    /**
