@@ -14,18 +14,18 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 /** Class defining the instance of the drawing mechanism for the map view */
-public class GDraw implements Serializable, GDrawableObject{
+public class GDraw implements GDrawableObject{
    /** Declaration for the instance of an array of GDrawableObjects */
    private GDrawableObject[] objects;
    /** Declaration for the size of the object array */
    private int objectsSize;
-   /** Declaration for the index of the current object selected */
-   private int selected;
+   /** An ObjectContainer that holds the selected objects. */
+   private ObjectContainer selected;
    /** Constructor for the GDraw instance */
    public GDraw(){
       objects = new GDrawableObject[10];
       objectsSize = 0;
-      selected = -1;
+      selected = new ObjectContainer();
    }
    /**
     * Method for adding a new GDrawableObject
@@ -42,9 +42,9 @@ public class GDraw implements Serializable, GDrawableObject{
     * @param index   The index of the object to remove
     */
    public void remove(int index){
-      if(index == -1) return;
-      if(index == selected) selected = -1;
       if(index == -1 || index >= objectsSize) return;
+      selected.remove(objects[index]);
+      int selectedIndex = selected.getIndex(objects[index]);
       objects[index] = objects[(objectsSize--)-1];
       //System.out.println(this.toString());
    }
@@ -57,6 +57,7 @@ public class GDraw implements Serializable, GDrawableObject{
    }
    /** Method for removing all current GDrawableObjects */
    public void removeAll(){
+      selected.removeAll();
       objects = new GDrawableObject[10];
       objectsSize = 0;
    }
@@ -77,6 +78,17 @@ public class GDraw implements Serializable, GDrawableObject{
       for(int i=0;i<objectsSize;i++) if(object == objects[i]) return i;
       return -1;
    }
+
+   /**
+    * Method for getting size of this GDrawindex of
+    * @return        The size.
+    */
+
+    public int getSize(){
+      return objectsSize;
+    }
+
+
    /**
     * Method for drawing the GDrawableObjects to the current map view
     * @param image   The buffered image to render to the screen
@@ -91,27 +103,31 @@ public class GDraw implements Serializable, GDrawableObject{
          objects[i].draw(image, p, zoom);
 
       //now draw the selection rectangle tickmarks unless nothing is selected
-      if(selected < 0 || selected >= objectsSize) return;
+      if(selected.getSize() == 0) return;
 
-      Rectangle selectionRectangle = objects[selected].getRectangle(p,zoom);
+      for(int i=0;i<selected.getSize();i++){
+         //selection
+         GDrawableObject thisObj = (GDrawableObject)selected.get(i);
+         Rectangle selectionRectangle = thisObj.getRectangle(p,zoom);
 
-      if(selectionRectangle == null) return ;
+         if(selectionRectangle == null) return ;
 
-      Graphics2D g = image.createGraphics();
+         Graphics2D g = image.createGraphics();
 
-      g.setColor(Color.RED);
-      //upper left
-      g.drawLine(selectionRectangle.x, selectionRectangle.y, selectionRectangle.x + 5, selectionRectangle.y);
-      g.drawLine(selectionRectangle.x, selectionRectangle.y, selectionRectangle.x, selectionRectangle.y + 5);
-      //upper right
-      g.drawLine(selectionRectangle.x+selectionRectangle.width, selectionRectangle.y, selectionRectangle.x+selectionRectangle.width - 5, selectionRectangle.y);
-      g.drawLine(selectionRectangle.x+selectionRectangle.width, selectionRectangle.y, selectionRectangle.x+selectionRectangle.width, selectionRectangle.y + 5);
-      //lower right
-      g.drawLine(selectionRectangle.x+selectionRectangle.width, selectionRectangle.y+selectionRectangle.height, selectionRectangle.x+selectionRectangle.width - 5, selectionRectangle.y+selectionRectangle.height);
-      g.drawLine(selectionRectangle.x+selectionRectangle.width, selectionRectangle.y+selectionRectangle.height, selectionRectangle.x+selectionRectangle.width, selectionRectangle.y+selectionRectangle.height - 5);
-      //lower left
-      g.drawLine(selectionRectangle.x, selectionRectangle.y+selectionRectangle.height, selectionRectangle.x + 5, selectionRectangle.y+selectionRectangle.height);
-      g.drawLine(selectionRectangle.x, selectionRectangle.y+selectionRectangle.height, selectionRectangle.x, selectionRectangle.y+selectionRectangle.height - 5);
+         g.setColor(Color.RED);
+         //upper left
+         g.drawLine(selectionRectangle.x, selectionRectangle.y, selectionRectangle.x + 5, selectionRectangle.y);
+         g.drawLine(selectionRectangle.x, selectionRectangle.y, selectionRectangle.x, selectionRectangle.y + 5);
+         //upper right
+         g.drawLine(selectionRectangle.x+selectionRectangle.width, selectionRectangle.y, selectionRectangle.x+selectionRectangle.width - 5, selectionRectangle.y);
+         g.drawLine(selectionRectangle.x+selectionRectangle.width, selectionRectangle.y, selectionRectangle.x+selectionRectangle.width, selectionRectangle.y + 5);
+         //lower right
+         g.drawLine(selectionRectangle.x+selectionRectangle.width, selectionRectangle.y+selectionRectangle.height, selectionRectangle.x+selectionRectangle.width - 5, selectionRectangle.y+selectionRectangle.height);
+         g.drawLine(selectionRectangle.x+selectionRectangle.width, selectionRectangle.y+selectionRectangle.height, selectionRectangle.x+selectionRectangle.width, selectionRectangle.y+selectionRectangle.height - 5);
+         //lower left
+         g.drawLine(selectionRectangle.x, selectionRectangle.y+selectionRectangle.height, selectionRectangle.x + 5, selectionRectangle.y+selectionRectangle.height);
+         g.drawLine(selectionRectangle.x, selectionRectangle.y+selectionRectangle.height, selectionRectangle.x, selectionRectangle.y+selectionRectangle.height - 5);
+      }
    }
 
    /**
@@ -155,6 +171,18 @@ public class GDraw implements Serializable, GDrawableObject{
    }
 
    /**
+    * Method moves every item by latitude, longitude. This is a recursive call to each object's move method.
+    * @param lat The amount to add to this items latitude
+    * @param lat The amount to add to this items longitude
+    */
+
+   public void move(double latitude, double longitude){
+      for(int i=0;i<objectsSize;i++){
+         objects[i].move(latitude, longitude);
+      }
+   }
+
+   /**
     * Method to test whether an object resides on a given point
     * @param testPoint  The point to test
     * @param p          The point of where the object is located
@@ -170,24 +198,18 @@ public class GDraw implements Serializable, GDrawableObject{
       return -1;
    }
    /**
-    * Method to set the current index
+    * Method to set the container of selected objects.
     * @param selected   The index
     */
-   public void setSelected(int selected){
+   public void setSelected(ObjectContainer selected){
       this.selected = selected;
    }
+
    /**
-    * Method to set the index for a selected object
-    * @param object     The object to set the index of
-    */
-   public void setSelected(GDrawableObject object){
-      setSelected(getIndex(object));
-   }
-   /**
-    * Method to get the index
+    * Method to get the container of selected objects.
     * @return  The index for the selected object
     */
-   public int getSelected(){
+   public ObjectContainer getSelected(){
       return selected;
    }
    /** Method to enlarge the array for GDrawableObjects */

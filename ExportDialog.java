@@ -81,6 +81,9 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
      *
      */
       this.setSize(260,350);
+      this.setResizable(false);
+      Point guiLocation = gui.getLocationOnScreen();
+      this.setLocation(guiLocation.x + 40, guiLocation.y + 40);
 
       /**
      *Create select group buttons.

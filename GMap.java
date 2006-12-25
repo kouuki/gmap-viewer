@@ -132,6 +132,16 @@ class GMap implements Serializable{
    }
 
    /**
+   Sets the registered GDraw to gDraw. This method is intended primarily
+   for serialization purposes, and should not be used to modify the state
+   of the GMap. Instead, use the GDraw's public methods.
+   @param gDraw
+        */
+   public void setGDraw(GDraw gDraw){
+      this.gDraw = gDraw;
+   }
+
+   /**
     * Method used to build image asynchronously
     * @param image - Image to paint
     * @param x - x Pixel value

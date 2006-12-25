@@ -13,13 +13,13 @@ import java.net.*;
 import javax.imageio.ImageIO;
 import java.awt.geom.*;
 /**
-* The class JMenuActionSetCenter is a type of JMenuAction that sets the View menu to Set Center or Set Center Pixel. 
+* The class JMenuActionSetCenter is a type of JMenuAction that sets the View menu to Set Center or Set Center Pixel.
 */
 public class JMenuActionSetCenter extends JMenuAction{
 
 /**
 * The method allows the user to set the view of the map towards the center of the given latitude and longitude
-*@param registeredObject The GUI object 
+*@param registeredObject The GUI object
 */
    public JMenuActionSetCenter(GUI registeredObject){super("Set Center",registeredObject);}
 /**
@@ -31,7 +31,9 @@ public class JMenuActionSetCenter extends JMenuAction{
       GPane pane = gui.getTopPane();
       if(pane == null) return;
 
-      String in = pane.getCenter()+"";
+      DoublePoint inPoint = pane.getCenter().getPoint();
+      String in = inPoint.x+", "+inPoint.y;
+
       String message = "";
       GPhysicalPoint newCenter = null;
       while(newCenter == null){

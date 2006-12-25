@@ -2,11 +2,11 @@
  * Provides a static method to compute distance.
  */
 public class GLib{
-   private static final int R = 6367; //R = 6367 km = 3956 mi
+   private static final int R =  3963;   //6367; //R = 6367 km = 3956 mi
 
    /**
     * Computes the distance from point a to point b.
-    * 
+    *
     * @param a Point where the line starts
     * @param b Point where the line ends
     * @return The distance
@@ -20,9 +20,9 @@ public class GLib{
       double c = 2 * Math.atan2(Math.sqrt(f),(Math.sqrt(1-f)));
       double d = R * c;
       return d;
-    }
-   private static double degToRad(double deg)
-   {
+   }
+
+   private static double degToRad(double deg){
       return (deg*(Math.PI / 180));
    }
 

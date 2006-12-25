@@ -17,11 +17,11 @@ import java.awt.geom.*;
 *<ul>
 * <li>GDrawableObject</ul>
 */
-public class GText implements GDrawableObject, Serializable{
+public class GText extends GCustomObject implements GDrawableObject{
 
    private GPhysicalPoint point;
    private String text;
-   private Rectangle2D textRectangle;
+   private Rectangle textRectangle;
    private int maxDescent;
    /**
    * This sets the padding between letters to a final number 2.
@@ -103,7 +103,8 @@ public class GText implements GDrawableObject, Serializable{
       Graphics2D g = image.createGraphics();
 
       //text rectangle
-      textRectangle = g.getFontMetrics().getStringBounds(text,g);
+      Rectangle2D textRectangle2D = g.getFontMetrics().getStringBounds(text,g);
+      textRectangle = new Rectangle((int)textRectangle2D.getX(), (int)textRectangle2D.getY(), (int)textRectangle2D.getWidth(), (int)textRectangle2D.getHeight());
       maxDescent = g.getFontMetrics().getMaxDescent();
 
       //if the point is not on the screen return here
@@ -128,6 +129,17 @@ public class GText implements GDrawableObject, Serializable{
       g.setColor(new Color(0,0,155));
       g.drawString(text,pointOnScreen.x,pointOnScreen.y);
 
+   }
+
+   /**
+    * Method moves every item by latitude, longitude.
+    * @param lat The amount to add to this items latitude
+    * @param lat The amount to add to this items longitude
+    */
+
+   public void move(double latitude, double longitude){
+      point.setX(point.getX() + longitude);
+      point.setY(point.getY() + latitude);
    }
 
 

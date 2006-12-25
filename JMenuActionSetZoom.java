@@ -18,11 +18,13 @@ import java.awt.geom.*;
 */
 public class JMenuActionSetZoom extends JMenuAction{
 
+   private int modeSpecific;
+
 /**
 * The JMenuActionSetZoom constructor.
 *@param registeredObject    The object representing the visible map image.
 */
-   public JMenuActionSetZoom(GUI registeredObject){super("Set Zoom",registeredObject);}
+   public JMenuActionSetZoom(GUI registeredObject){super("Set Zoom", registeredObject);}
 
 /**
 * The method for setting the new Zoom Level image as the top
@@ -45,4 +47,15 @@ public class JMenuActionSetZoom extends JMenuAction{
       }
       if(newZoom != null) pane.setZoom(newZoom.intValue());
    }
+
+/**
+* The paneEvent method decides whether or not to disable/enable this item based
+* on the current mode.
+*/
+
+   public void paneEvent(){
+      GUI gui = (GUI)registeredObject;
+      GPane pane = gui.getTopPane();
+   }
+
 }

@@ -14,16 +14,23 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 /** Class defining the instance for a marker object. It implements GDrawableObject */
-public class GMarker implements GDrawableObject, Serializable{
+public class GMarker extends GCustomObject implements GDrawableObject{
    /** Declaration for a point on the map for the marker */
    private GPhysicalPoint point;
    /**
-    * Method to set the point on the map to place the marker
+    * Constructor for GMarker.
     * @param point   The point defining position of the marker
     */
    public GMarker(GPhysicalPoint point){
       this.point = point;
    }
+   /**
+    * Default constructor for GMarker. Sets point to 0.0, 0.0.
+    */
+   public GMarker(){
+      this(new GPhysicalPoint(0.0,0.0));
+   }
+
    /**
     * Method to get the point on the map to locate the marker
     * @return        The point on the map where the marker is
@@ -60,6 +67,9 @@ public class GMarker implements GDrawableObject, Serializable{
     * @param zoom    The current zoom level for the map
     */
    public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
+      //update
+      super.draw(image,p,zoom);
+
       //check for nulls to prevent null pointer exceptions
       if(p == null || image == null) return ;
 
@@ -76,8 +86,28 @@ public class GMarker implements GDrawableObject, Serializable{
       Point pointOnScreen = new Point(point.getPixelX(zoom) - screen.x, point.getPixelY(zoom) - screen.y);
 
       //draw it
-      g.setColor(new Color(0,0,155));
-      g.fillOval(pointOnScreen.x - 5,pointOnScreen.y - 5,10,10);
+      g.setColor(getColor());
+      //g.fillOval(pointOnScreen.x - 5,pointOnScreen.y - 5,10,10);
+      g.fillOval(pointOnScreen.x - getStroke(),pointOnScreen.y - getStroke(), 2*getStroke(), 2*getStroke());
+   }
+
+   /**
+    * Method moves every item by latitude, longitude.
+    * @param lat The amount to add to this items latitude
+    * @param lat The amount to add to this items longitude
+    */
+
+   public void move(double latitude, double longitude){
+      point.setX(point.getX() + longitude);
+      point.setY(point.getY() + latitude);
+   }
+
+   /**
+   * Prints out GMarker{ GPhysicalPoint}
+   */
+
+   public String toString(){
+      return "GMarker{"+point+"}";
    }
 
 }

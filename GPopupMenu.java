@@ -88,6 +88,10 @@ public class GPopupMenu extends JPopupMenu{
       group.add(rb);
       this.add(rb);
 
+      rb = new JMenuRadioButtonAddImages(gui);
+      group.add(rb);
+      this.add(rb);
+
       // Define the radio button to be selected by default
       this.setSelected(rb2);
    }
@@ -111,7 +115,7 @@ public class GPopupMenu extends JPopupMenu{
     * is enabled or not depending if the right click occured on an object.
     */
    public void update(){
-      if(gui.getGMap().getGDraw().getSelected() == -1){
+      if(gui.getGMap().getGDraw().getSelected().getSize() == 0){
          removeObject.setEnabled(false);
       }else{
          removeObject.setEnabled(true);
