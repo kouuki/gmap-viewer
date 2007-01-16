@@ -24,7 +24,7 @@ class GTabbedPane extends JTabbedPane implements MouseListener, ActionListener{
 
    //default
    public GTabbedPane(GUI gui){
-      super();
+      super(JTabbedPane.BOTTOM);
 
       //init gui
       this.gui = gui;

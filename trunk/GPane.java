@@ -277,11 +277,11 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
    }
 
    /**
-    * Makes a synchronous call to repaint
+    * Makes an asynchronous call to repaint
     */
    public void updateScreen(){
-      this.paintImmediately(0,0,this.getWidth(), this.getHeight());
-      gui.repaint();
+      //this.paintImmediately(0,0,this.getWidth(), this.getHeight());
+      this.repaint();
    }
 
    /**
@@ -432,10 +432,9 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
     * @param zoom
     */
    public void setZoom(int zoom){
-      if (zoom >= GDataImage.ZOOM_MIN && zoom <= GDataImage.ZOOM_MAX) {
-         this.zoom = zoom;
-         draw();
-      }
+      if(zoom < 1 || zoom > 15) return;
+      this.zoom = zoom;
+      draw();
    }
 
    /**
@@ -594,7 +593,7 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
     * @see java.awt.event.MouseListener#mousePressed(MouseEvent)
     */
    public void mousePressed(MouseEvent e){
-      //get the key focus
+      //get the focus whenever its clicked
       this.requestFocusInWindow();
 
       //update mouse dragged
@@ -737,7 +736,7 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
       }
       else if(m == 4){
          //right click
-         gui.getTabbedPane().showPopupMenu(e.getX(), e.getY()+25);
+         gui.getTabbedPane().showPopupMenu(e.getX(), e.getY());
       }
    }
 
@@ -775,6 +774,9 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
                   gui.getGMap().getGDraw().getSelected().add(gui.getGMap().getGDraw().get(i));
                }
             }
+            //update selection
+            updateSelection();
+
             draw();
          }
 
@@ -807,22 +809,41 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
       int k = keyEvent.getKeyCode();
 
       double interval = KEY_MOVE_INTERVAL*Math.pow(2,zoom-1);
+      int selectedSize = gui.getGMap().getGDraw().getSelected().getSize();
+      Point p = center.getPixelPoint(getZoom());
+      int jumpDistance = 10;
 
       if(k == 37){
          //left
-         moveSelectedObjects(-1.0*interval,0);
+         if(selectedSize != 0) moveSelectedObjects(-1.0*interval,0);
+         else p.x += (jumpDistance*-1);
+         center.setPixelPoint(p,getZoom());
          draw();
       }else if(k == 38){
          //up
-         moveSelectedObjects(0,1.0*interval);
+         if(selectedSize != 0) moveSelectedObjects(0,1.0*interval);
+         else p.y += (jumpDistance*-1);
+         center.setPixelPoint(p,getZoom());
          draw();
       }else if(k == 39){
          //right
-         moveSelectedObjects(1.0*interval,0);
+         if(selectedSize != 0) moveSelectedObjects(1.0*interval,0);
+         else p.x += (jumpDistance*1);
+         center.setPixelPoint(p,getZoom());
          draw();
       }else if(k == 40){
          //down
-         moveSelectedObjects(0,-1.0*interval);
+         if(selectedSize != 0) moveSelectedObjects(0,-1.0*interval);
+         else p.y += (jumpDistance*1);
+         center.setPixelPoint(p,getZoom());
+         draw();
+      }else if(k == 33 || (k == 10 && keyEvent.getModifiers() == 0)){
+         //zoom in
+         setZoom(getZoom()-1);
+         draw();
+      }else if(k == 34 || (k == 10 && keyEvent.getModifiers() == 1)){
+         //zoom out
+         setZoom(getZoom()+1);
          draw();
       }else if(k == 127){
          //delete
@@ -830,6 +851,13 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
          draw();
       }
 
+   }
+
+   private void updateSelection(){
+      //boolean[] isType = {true, true, true, true};
+      //Object[] objType[] = {}
+
+      //gui.getGMap().getGDraw().getSelected().getSize();
    }
 
    private void moveSelectedObjects(double latitude, double longitude){

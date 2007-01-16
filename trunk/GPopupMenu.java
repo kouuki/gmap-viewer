@@ -60,6 +60,17 @@ public class GPopupMenu extends JPopupMenu{
       // New separator between actions and the radio buttons
       this.add( new JSeparator() );
 
+      //copy
+      menuItem = new JMenuActionCopy(gui);
+      this.add(menuItem);
+
+      //paste
+      menuItem = new JMenuActionPaste(gui);
+      this.add(menuItem);
+
+      // New separator between actions and the radio buttons
+      this.add( new JSeparator() );
+
       // New button group for the radio buttons
       ButtonGroup group = new ButtonGroup();
 
@@ -91,6 +102,13 @@ public class GPopupMenu extends JPopupMenu{
       rb = new JMenuRadioButtonAddImages(gui);
       group.add(rb);
       this.add(rb);
+
+      // New separator between actions and the radio buttons
+      this.add( new JSeparator() );
+
+      //paste
+      menuItem = new JMenuActionShowProperties(gui);
+      this.add(menuItem);
 
       // Define the radio button to be selected by default
       this.setSelected(rb2);
