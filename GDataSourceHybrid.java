@@ -72,6 +72,9 @@ public class GDataSourceHybrid extends GDataSource{
       } catch(Exception e) {
       }
 
+      //if we're offline, return here and do not connect
+      if(!remoteConnection) return null;
+
       /* try accessing remote image */
       try{
          System.out.print("Load remote image ("+x+","+y+") zoom="+zoom);

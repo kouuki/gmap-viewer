@@ -20,6 +20,9 @@ public class Geocoder{
     * Method to geocode a string into a GPhysicalPoint
     * @return              The GPhysicalPoint of this location.
     */
+
+
+
    public static GPhysicalPoint geocode(String str){
       //connect to server
       String xmlReturn = "";

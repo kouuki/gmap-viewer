@@ -109,6 +109,12 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
     */
    private GZoomSlider slider;
 
+   /*
+    * A properties dialog box that can be accessed by everyone.
+    */
+
+   private GPropertiesDialog gPropertiesDialog;
+
    /**
     * The main method that creates a new window with the GUI class characteristics.
     *
@@ -150,6 +156,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
 
       //progress meter
       embeddedProgressMeter = new EmbeddedProgressMeter();
+
+      //properties dialog
+      gPropertiesDialog = new GPropertiesDialog(this);
 
       //notifier
       notifier = new PaneListenerNotifier();
@@ -225,9 +234,11 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
 
       //initialize sizes
       tabbedPanel.setBounds(0,sizeOfToolbar,screenSize.width,screenSize.height - sizeOfProgressBar - sizeOfToolbar);
+             pane.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar-sizeOfToolbar);
+
       progressBarPanel.setBounds(0,screenSize.height - sizeOfProgressBar,screenSize.width-widthOfMessagePanel,sizeOfProgressBar);
       messagePanel.setBounds(screenSize.width-widthOfMessagePanel,screenSize.height - sizeOfProgressBar,widthOfMessagePanel,sizeOfProgressBar);
-      pane.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar-sizeOfToolbar);
+
       slider.setBounds(screenSize.width-25, 30+sizeOfToolbar, 50, 50);
       toolBarPanel.setBounds(0,0,screenSize.width,sizeOfToolbar);
       toolBarPanel.setPreferredSize(new Dimension(screenSize.width, sizeOfToolbar));
@@ -368,13 +379,25 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       return embeddedProgressMeter;
    }
 
+   /**
+    * It gets the zoom slider.
+    *
+    *@return the zoom slider.
+    */
+
    public GZoomSlider getSlider(){
       return slider;
    }
 
-   //public ProgressMeter getProgressMeter(){
-   //   return globalProgressMeter;
-   //}
+   /**
+    * Provides access to the properties dialog.
+    *
+    *@return the properties dialog.
+    */
+
+   public GPropertiesDialog getGPropertiesDialog(){
+      return gPropertiesDialog;
+   }
 
 
    /*

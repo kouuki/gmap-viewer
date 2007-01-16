@@ -17,12 +17,6 @@ import java.awt.geom.*;
 /**This class gets the image for GData to display on the screen
  */
 class GDataImage implements Serializable{
-/**This is for the zoom variable min starting no less than one
- */
-   public static int ZOOM_MIN = 1;
-   /**Theres zoom variables for max at 15
-    */
-   public static int ZOOM_MAX = 15;
 
    transient private BufferedImage image;
    private int x;

@@ -12,6 +12,13 @@ import javax.imageio.ImageIO;
  */
 
 public abstract class GDataSource {
+   /**This is for the zoom variable min starting no less than one
+    */
+   public static int ZOOM_MIN = 1;
+   /**Theres zoom variables for max at 15
+    */
+   public static int ZOOM_MAX = 15;
+
    /**
     * The dimension of images returned by this data source.
     */
@@ -35,6 +42,7 @@ public abstract class GDataSource {
    protected ArrayList<String> ramCacheQueue;
    protected int lastPointer;
    protected Thread downloadThread;
+   protected boolean remoteConnection;
 
    /**
     * Constructor
@@ -47,6 +55,7 @@ public abstract class GDataSource {
       lastPointer = 0;
       this.downloadQueue = new ConcurrentLinkedQueue<GDataImage>();
       this.queueSize = 0;
+      remoteConnection = true;
       verifyCacheDirectories();
    }
 
@@ -166,6 +175,23 @@ public abstract class GDataSource {
    }
 
    /**
+    * Get method for the connection status.
+    * @return Connection status
+    */
+   public boolean getRemoteConnection(){
+      return remoteConnection;
+   }
+
+   /**
+    * Set method for the connection status.
+    * @return Connection status
+    */
+   public void setRemoteConnection(boolean remoteConnection){
+      this.remoteConnection = remoteConnection;
+   }
+
+
+   /**
     * This method will return the image corresponding to the specified point
     * and zoom level. The image could be in any of three places: RAM, memory,
     * or the Google servers. This method checks the RAM before the memory and
@@ -234,6 +260,10 @@ public abstract class GDataSource {
          }
       } catch(Exception e) {
       }
+
+      //if we're offline, return here and do not connect
+      if(!remoteConnection) return null;
+
 
       // try accessing remote image
       try{
@@ -385,7 +415,7 @@ public abstract class GDataSource {
     */
    protected void queueHigherLevels(int x, int y, int zoom)
    {
-      if (zoom >= GDataImage.ZOOM_MIN && zoom < GDataImage.ZOOM_MAX) {
+      if (zoom >= ZOOM_MIN && zoom < ZOOM_MAX) {
          queueHigherLevels(x/2, y/2, zoom+1);
          queue(new GDataImage(null, x/2, y/2, zoom+1));
       }
@@ -406,7 +436,7 @@ public abstract class GDataSource {
     * them.
     */
    protected void verifyCacheDirectories(){
-      for (int i = GDataImage.ZOOM_MIN; i <= GDataImage.ZOOM_MAX; i++) {
+      for (int i = ZOOM_MIN; i <= ZOOM_MAX; i++) {
          File thisFile = new File(cacheDirectory+File.separator+i);
          if(!thisFile.exists()) thisFile.mkdirs();
       }
