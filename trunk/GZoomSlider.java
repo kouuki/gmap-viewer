@@ -1,12 +1,12 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import java.io.Serializable;
@@ -26,8 +26,8 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
    public GZoomSlider(GUI gui) {
       super();
       this.gui = gui;
-      this.upArrow = new Arrow(0, 0, 10, Arrow.Orientation.UP);
-      this.downArrow = new Arrow(0, 15, 10, Arrow.Orientation.DOWN);
+      this.upArrow = new Arrow(0, 0, 15, Arrow.Orientation.UP);
+      this.downArrow = new Arrow(0, 20, 15, Arrow.Orientation.DOWN);
 
       this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       this.setOpaque(false);
@@ -44,7 +44,7 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
      * @param g
      */
    protected void paintComponent(Graphics g) {
-      //super.paintComponent(g);
+      super.paintComponent(g);
       this.upArrow.draw(g);
       this.downArrow.draw(g);
    }
@@ -63,14 +63,6 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
     */
    public void mouseClicked(MouseEvent arg0) {
-      int mouseX = arg0.getX();
-      int mouseY = arg0.getY();
-
-      if (this.upArrow.contains(mouseX, mouseY)) {
-         this.gui.getTopPane().setZoom(this.gui.getTopPane().getZoom() - 1);
-      } else if (this.downArrow.contains(mouseX, mouseY)) {
-         this.gui.getTopPane().setZoom(this.gui.getTopPane().getZoom() + 1);
-      }
    }
 
    /*
@@ -97,7 +89,14 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
     */
    public void mousePressed(MouseEvent arg0) {
       // TODO Auto-generated method stub
-
+      int mouseX = arg0.getX();
+      int mouseY = arg0.getY();
+      if (this.upArrow.contains(mouseX, mouseY)) {
+         upArrow.setDepressed(true);
+      } else if (this.downArrow.contains(mouseX, mouseY)) {
+         downArrow.setDepressed(true);
+      }
+      repaint();
    }
 
    /*
@@ -106,8 +105,18 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
     */
    public void mouseReleased(MouseEvent arg0) {
       // TODO Auto-generated method stub
+      int mouseX = arg0.getX();
+      int mouseY = arg0.getY();
 
-   }
+      if (this.upArrow.contains(mouseX, mouseY)) {
+         this.gui.getTopPane().setZoom(this.gui.getTopPane().getZoom() - 1);
+      } else if (this.downArrow.contains(mouseX, mouseY)) {
+         this.gui.getTopPane().setZoom(this.gui.getTopPane().getZoom() + 1);
+      }
+      upArrow.setDepressed(false);
+      downArrow.setDepressed(false);
+      repaint();
+  }
 
 
    /**
@@ -139,6 +148,11 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
        * The direction the arrow is facing.
        */
       private Orientation orientation;
+
+      /**
+       * Whether or not its depressed.
+       */
+      private boolean depressed;
 
       /*
        * The Java2D polygon representation of this arrow.
@@ -206,6 +220,21 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
       }
 
       /**
+       * Modifier for the <tt>depressed</tt> property.
+       */
+      public void setDepressed(boolean depressed) {
+         this.depressed = depressed;
+      }
+
+      /**
+       * Accessor for the <tt>depressed</tt> property.
+       */
+      public boolean getDepressed() {
+         return depressed;
+      }
+
+
+      /**
        * A triangular arrow.
        * @param x top left horizontal coordinate
        * @param y top left vertical coordinate
@@ -246,6 +275,7 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
        * Paints the arrow's triangular polygon onto the screen.
        * @param graphics
        */
+
       public void draw(Graphics graphics) {
          Graphics2D g = (Graphics2D) graphics;
 
@@ -272,8 +302,22 @@ public class GZoomSlider extends JPanel implements PaneListener, MouseListener {
                break;
          }
 
+         //depressed
+         int translation = 0;
+         if(depressed) translation = 2;
+
+         //apply the translation
+         for(int i=0;i<xs.length;i++){
+            xs[i] += translation;
+            ys[i] += translation;
+         }
+
          this.polygon = new Polygon(xs, ys, xs.length);
          g.fillPolygon(this.polygon);
+         Color tempColor = graphics.getColor();
+         graphics.setColor(Color.WHITE);
+         g.drawPolygon(this.polygon);
+         graphics.setColor(tempColor);
       }
    }
 }
