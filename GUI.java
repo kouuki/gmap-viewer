@@ -239,7 +239,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       progressBarPanel.setBounds(0,screenSize.height - sizeOfProgressBar,screenSize.width-widthOfMessagePanel,sizeOfProgressBar);
       messagePanel.setBounds(screenSize.width-widthOfMessagePanel,screenSize.height - sizeOfProgressBar,widthOfMessagePanel,sizeOfProgressBar);
 
-      slider.setBounds(screenSize.width-25, 30+sizeOfToolbar, 50, 50);
+      slider.setBounds(screenSize.width-30, 10+sizeOfToolbar, 50, 50);
       toolBarPanel.setBounds(0,0,screenSize.width,sizeOfToolbar);
       toolBarPanel.setPreferredSize(new Dimension(screenSize.width, sizeOfToolbar));
 
@@ -255,7 +255,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       progressBarPanel.setBounds(0,container.getHeight() - sizeOfProgressBar,container.getWidth()-widthOfMessagePanel,sizeOfProgressBar);
       messagePanel.setBounds(container.getWidth()-widthOfMessagePanel,container.getHeight() - sizeOfProgressBar,widthOfMessagePanel,sizeOfProgressBar);
       pane.setBounds(0,0,container.getWidth(),container.getHeight() - sizeOfProgressBar - sizeOfToolbar);
-      slider.setBounds(container.getWidth()-25, 30+sizeOfToolbar, 50, 50);
+      slider.setBounds(container.getWidth()-30, 10+sizeOfToolbar, 50, 50);
       toolBarPanel.setPreferredSize(new Dimension(container.getWidth(), sizeOfToolbar));
       toolBarPanel.setBounds(0,0,container.getWidth(),sizeOfToolbar);
       toolBarLayout.layoutContainer(toolBarPanel);
