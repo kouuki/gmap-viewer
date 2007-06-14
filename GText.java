@@ -37,6 +37,9 @@ public class GText extends GCustomObject implements GDrawableObject{
       this.point = point;
       this.text = text;
       this.textRectangle = null;
+      setColor(new Color(0,0,0));
+      setBackground(new Color(255,255,255));
+      setStroke(1);
    }
 
      /**
@@ -120,13 +123,14 @@ public class GText extends GCustomObject implements GDrawableObject{
 
       //draw bg
       Rectangle bgRect = getRectangle(p,zoom);
-      g.setColor(Color.WHITE);
+      g.setColor(getBackground());
       g.fillRect(bgRect.x,bgRect.y,bgRect.width,bgRect.height);
-      g.setColor(Color.BLACK);
+      g.setColor(getColor());
+      g.setStroke(new BasicStroke(getStroke()));
       g.drawRect(bgRect.x,bgRect.y,bgRect.width,bgRect.height);
 
       //draw it
-      g.setColor(new Color(0,0,155));
+      g.setColor(getColor());
       g.drawString(text,pointOnScreen.x,pointOnScreen.y);
 
    }

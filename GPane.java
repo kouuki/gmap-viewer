@@ -93,7 +93,7 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
     */
    public static final int IMAGE_MODE = 6;
 
-
+   private boolean smartClick;
    private int mode;
 
    //buffered image
@@ -157,6 +157,9 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
       addMouseWheelListener(this);
       addKeyListener(this);
 
+      //smart click
+      smartClick = false;
+
       //initialize draw thread to null
       drawingThread = null;
 
@@ -170,7 +173,7 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
     * @param gui
     */
    public GPane(GUI gui){
-      this(gui, new GPhysicalPoint(29.8265419861086, -82.35763549804688), 13, false, -1, SELECTION_MODE);
+      this(gui, new GPhysicalPoint(29.8265419861086, -82.35763549804688), 10, false, (GPhysicalPoint.MIN_ZOOM - 1), SELECTION_MODE);
    }
 
    /**
@@ -206,7 +209,7 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
 
             //set cached zoom level
             int useCachedZoomLevel = showCachedZoomLevel;
-            if(!showCachedZoom) useCachedZoomLevel = -1;
+            if(!showCachedZoom) useCachedZoomLevel = (GPhysicalPoint.MIN_ZOOM - 1);
 
             //timer start
             long start = LibGUI.getTime();
@@ -273,6 +276,7 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
 
          //notify listener
          gui.getNotifier().firePaneEvent(this);
+         parent.repaint();
       }
    }
 
@@ -410,6 +414,17 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
    }
 
    /**
+    * Gets the status of smartclick. Smart click is a feature that
+    * automatically maps your click on the image to the center
+    * of a given road.
+    * @return smartClick
+    */
+   public boolean getSmartClick(){
+      return smartClick;
+   }
+
+
+   /**
     * Sets the center using a physical point.
     * @param center
     */
@@ -432,7 +447,10 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
     * @param zoom
     */
    public void setZoom(int zoom){
-      if(zoom < 1 || zoom > 15) return;
+      if(zoom < GPhysicalPoint.MIN_ZOOM || zoom > GPhysicalPoint.MAX_ZOOM) return;
+      //if the pane show cached zoom is more than 4 away, turn it off
+      if(getShowCachedZoom() && (showCachedZoomLevel >= zoom || zoom - showCachedZoomLevel > 4))
+         setShowCachedZoom(false);
       this.zoom = zoom;
       draw();
    }
@@ -453,6 +471,16 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
    public void setShowCachedZoom(boolean showCachedZoom){
       this.showCachedZoom = showCachedZoom;
       draw();
+   }
+
+   /**
+    * Sets smart click on or off. Smart click is a feature that
+    * automatically maps your click on the image to the center
+    * of a given road.
+    * @param smartClick
+    */
+   public void setSmartClick(boolean smartClick){
+      this.smartClick = smartClick;
    }
 
    /**
@@ -519,6 +547,9 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
          Point original = getCenterPixel();
 
          if(mode == SELECTION_MODE){
+            //check for nulls
+            if(mouseRectanglePosition == null || clickLocation == null) return ;
+
             //update dragged boolean
             mouseDraggedThisClick = true;
             //do computations relating to selection
@@ -529,6 +560,7 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
             updateScreen();
          }else if(mode == DRAGGING_MODE){
             //do computations relating to dragging the center
+            if(original == null || center == null || clickLocation == null) return ;
             center.setPixelPoint(new Point(original.x + (clickLocation.x - e.getX()), original.y + (clickLocation.y - e.getY())), zoom);
             clickLocation.x = e.getX();
             clickLocation.y = e.getY();
@@ -605,6 +637,10 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
 
       clickLocation.x = mouseX;
       clickLocation.y = mouseY;
+
+      //smart click
+      if(smartClick) clickLocation = GLib.smartPoint(image, clickLocation, 0.0, 25);
+
       int m = e.getModifiers();
       if(m == 16){
 

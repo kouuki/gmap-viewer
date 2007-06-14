@@ -23,6 +23,9 @@ public class GMarker extends GCustomObject implements GDrawableObject{
     */
    public GMarker(GPhysicalPoint point){
       this.point = point;
+      setColor(new Color(0,0,155));
+      setBackground(new Color(255,255,255));
+      setStroke(2);
    }
    /**
     * Default constructor for GMarker. Sets point to 0.0, 0.0.

@@ -175,6 +175,5 @@ public class LibGUI{
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(tImage, null);
     }
 
-
 }
 

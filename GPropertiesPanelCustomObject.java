@@ -18,9 +18,9 @@ import java.awt.geom.*;
 * defined in GCustomObject.
 */
 
-public class GPropertiesPanelCustomObject extends GPropertiesPanel{
+public class GPropertiesPanelCustomObject extends GPropertiesPanel implements ActionListener{
    //The registered object
-   private GCustomObject object;
+   private GMap gMap;
 
    //The components used to work on it
    private JTextField stroke;
@@ -31,10 +31,10 @@ public class GPropertiesPanelCustomObject extends GPropertiesPanel{
    /**
    * Constructor simply passes work on to the JPanel
    */
-   public GPropertiesPanelCustomObject(GCustomObject object){
+   public GPropertiesPanelCustomObject(GMap gMap){
       //save info and register the object
       super();
-      this.object = object;
+      this.gMap = gMap;
 
       //from here on, we're setting up the JPanel
       this.setLayout(null);
@@ -62,6 +62,7 @@ public class GPropertiesPanelCustomObject extends GPropertiesPanel{
       color = new JButton();
       color.setBounds(20,120,40,25);
       color.setBackground(Color.BLACK);
+      color.addActionListener(this);
       this.add(color);
 
       JLabel backgroundLabel = new JLabel("Background Color");
@@ -71,6 +72,7 @@ public class GPropertiesPanelCustomObject extends GPropertiesPanel{
       background = new JButton();
       background.setBounds(20,160,40,25);
       background.setBackground(Color.BLACK);
+      background.addActionListener(this);
       this.add(background);
 
    }
@@ -82,8 +84,44 @@ public class GPropertiesPanelCustomObject extends GPropertiesPanel{
     */
 
    public void apply(){
-      System.out.println("apply was clicked");
+      ObjectContainer objContainer = gMap.getGDraw().getSelected();
+      int howMany = objContainer.getSize();
+      for(int i=0;i < howMany;i++){
+         applyObject((GDrawableObject)objContainer.get(i));
+      }
+   }
 
+   private void applyObject(GDrawableObject obj){
+      if(obj instanceof GCustomObject){
+         GCustomObject customObject = (GCustomObject) obj;
+         //text
+         try{
+            customObject.setFloat(Float.parseFloat(opacity.getText()));
+         }catch(Exception e){}
+         customObject.setColor(color.getBackground());
+         customObject.setBackground(background.getBackground());
+         try{
+            customObject.setStroke(Integer.parseInt(stroke.getText()));
+         }catch(Exception e){}
+      }else if(obj instanceof GDraw){
+         GDraw draw = (GDraw)obj;
+         for(int i=0;i<draw.getSize();i++){
+            applyObject((GDrawableObject)draw.get(i));
+         }
+      }
+   }
+
+   public void actionPerformed(ActionEvent e){
+      if(e.getSource() == color){
+         //change foreground
+         Color newColor = JColorChooser.showDialog(this,"Choose Background Color",color.getBackground());
+         if(newColor == null) return;
+         color.setBackground(newColor);
+      }else if(e.getSource() == background){
+         Color newColor = JColorChooser.showDialog(this,"Choose Background Color",background.getBackground());
+         if(newColor == null) return;
+         background.setBackground(newColor);
+      }
    }
 
 }

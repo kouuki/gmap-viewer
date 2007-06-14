@@ -32,6 +32,9 @@ public class GPhysicalPoint implements Cloneable, Serializable{
    private DoublePoint point;
    public static GCalibration[] calibrationPoints;
 
+   public static final int MAX_ZOOM = 15;
+   public static final int MIN_ZOOM = -2;
+
    //constructors
    /**
     * Constructor
@@ -80,14 +83,15 @@ public class GPhysicalPoint implements Cloneable, Serializable{
     * @param calibration Calibration is a number to corresponds to zoom levels, different pixel/meter ratios
     */
    public Point getPixelPoint(int calibration){
-      //convert to zero indexing
-      calibration--;
       //validate
-      if(calibration < 0 || calibration > calibrationPoints.length - 1) return null;
-      if(calibrationPoints[calibration] == null) return null;
+      if(calibration < MIN_ZOOM || calibration > MAX_ZOOM) return null;
+      if(calibrationPoints[calibration-MIN_ZOOM] == null) return null;
+
+      //convert to zero indexing
+      //calibration--;
 
       //now valid, use appropriate calibrator
-      return calibrationPoints[calibration].getPixelPoint(point);
+      return calibrationPoints[calibration-MIN_ZOOM].getPixelPoint(point);
    }
 
    /**
@@ -164,14 +168,15 @@ public class GPhysicalPoint implements Cloneable, Serializable{
     * @param calibration Calibration is a number to corresponds to zoom levels, different pixel/meter ratios
     */
    public void setPixelPoint(Point setPoint, int calibration){
-      //convert to zero indexing
-      calibration--;
       //validate
-      if(calibration < 0 || calibration > calibrationPoints.length - 1) return ;
-      if(calibrationPoints[calibration] == null) return ;
+      if(calibration < MIN_ZOOM || calibration > MAX_ZOOM) return ;
+      if(calibrationPoints[calibration-MIN_ZOOM] == null) return ;
+
+      //convert to zero indexing
+      //calibration--;
 
       //now valid, use appropriate calibrator
-      point = calibrationPoints[calibration].getPhysicalPoint(setPoint);
+      point = calibrationPoints[calibration-MIN_ZOOM].getPhysicalPoint(setPoint);
    }
 
 
@@ -211,14 +216,14 @@ public class GPhysicalPoint implements Cloneable, Serializable{
 
    //calibrate
    private void calibrate(){
-      calibrationPoints = new GCalibration[15];
-      for(int i=0;i<calibrationPoints.length;i++)
-         calibrationPoints[i] = new GCalibration(
+      calibrationPoints = new GCalibration[1 + MAX_ZOOM - MIN_ZOOM];
+      for(int i=MIN_ZOOM;i<=MAX_ZOOM;i++)
+         calibrationPoints[i-MIN_ZOOM] = new GCalibration(
             new DoublePoint(0.0,0.0),
 //            new Point((int)(8388608*Math.pow(2,-1*i)), (int)(8421376*Math.pow(2,-1*i))),
-            new Point((int)(8388608*Math.pow(2,-1*i)), (int)(8388608*Math.pow(2,-1*i))),
+            new Point((int)(8388608*Math.pow(2,-1*(i-1))), (int)(8388608*Math.pow(2,-1*(i-1)))),
             new DoublePoint(40.6931341533081, -74.0478515625),
-            new Point((int)(4937728*Math.pow(2,-1*i)),(int)(6309120*Math.pow(2,-1*i))));
+            new Point((int)(4937728*Math.pow(2,-1*(i-1))),(int)(6309120*Math.pow(2,-1*(i-1)))));
 
 //8376347
    }
