@@ -44,6 +44,8 @@ public class GPopupMenu extends JPopupMenu{
       JMenuItem menuItem;
       // Declaration of the general JMenuRadioButton
       JRadioButtonMenuItem rb, rb2;
+      // Declaration of the general JCheckBoxMenuItem
+      JCheckBoxMenuItem cb;
       // Instantiation of the PopupMenu
       popup = new JPopupMenu();
 
@@ -102,6 +104,15 @@ public class GPopupMenu extends JPopupMenu{
       rb = new JMenuRadioButtonAddImages(gui);
       group.add(rb);
       this.add(rb);
+
+      // New separator between actions and the radio buttons
+      this.add( new JSeparator() );
+
+      /*
+      cb = new JMenuCheckBoxSmartClick(gui);
+      this.add(cb);
+      */
+
 
       // New separator between actions and the radio buttons
       this.add( new JSeparator() );

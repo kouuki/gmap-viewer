@@ -9,8 +9,8 @@ import javax.imageio.ImageIO;
 /** Class defining the characteristics for the map mode data source. It extends the abstract class GDataSource */
 public class GDataSourceMap extends GDataSource{
 
-   /** 
-    * Constructor for a new GDataSourceMap 
+   /**
+    * Constructor for a new GDataSourceMap
     * @param cacheDirectory  The directory to store cache files for map mode
     */
    public GDataSourceMap(String cacheDirectory){
@@ -28,7 +28,7 @@ public class GDataSourceMap extends GDataSource{
       int serverNumber = (int)Math.round(Math.random()*3.0);
       //System.out.print(" [map]");
       //System.out.print("{http://mt"+serverNumber+".google.com/mt?n=404&v=w2.79&x="+x+"&y="+y+"&zoom="+zoom+"}");
-      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2.79&x="+x+"&y="+y+"&zoom="+zoom;
+      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2.52&x="+x+"&y="+y+"&zoom="+zoom;
    }
 
 }

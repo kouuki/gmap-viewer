@@ -30,7 +30,6 @@ class GCalibration implements Serializable{
    private DoublePoint physical2;
    private Point pixel2;
 
-
    //mercator projection data
    private double M;
    private double B;

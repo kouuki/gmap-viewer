@@ -197,7 +197,7 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
       scrollPanePanel.setPreferredSize(new Dimension(170,25));
 //      content.add(scrollPanePanel, BorderLayout.CENTER);
 
-      Object[] listObj = {new ZoomListObj("Zoom Level ",1),new ZoomListObj("Zoom Level ",2),new ZoomListObj("Zoom Level ",3),new ZoomListObj("Zoom Level ",4),new ZoomListObj("Zoom Level ",5),new ZoomListObj("Zoom Level ",6),new ZoomListObj("Zoom Level ",7),new ZoomListObj("Zoom Level ",8),new ZoomListObj("Zoom Level ",9),new ZoomListObj("Zoom Level ",10),new ZoomListObj("Zoom Level ",11),new ZoomListObj("Zoom Level ",12),new ZoomListObj("Zoom Level ",13),new ZoomListObj("Zoom Level ",14),new ZoomListObj("Zoom Level ",15)};
+      Object[] listObj = {new ZoomListObj("Zoom Level ",-2),new ZoomListObj("Zoom Level ",-1),new ZoomListObj("Zoom Level ",0),new ZoomListObj("Zoom Level ",1),new ZoomListObj("Zoom Level ",2),new ZoomListObj("Zoom Level ",3),new ZoomListObj("Zoom Level ",4),new ZoomListObj("Zoom Level ",5),new ZoomListObj("Zoom Level ",6),new ZoomListObj("Zoom Level ",7),new ZoomListObj("Zoom Level ",8),new ZoomListObj("Zoom Level ",9),new ZoomListObj("Zoom Level ",10),new ZoomListObj("Zoom Level ",11),new ZoomListObj("Zoom Level ",12),new ZoomListObj("Zoom Level ",13),new ZoomListObj("Zoom Level ",14),new ZoomListObj("Zoom Level ",15)};
       /**
      * Set the zoom level cell's width to 50
      *@see JComboBox()
@@ -224,7 +224,7 @@ public class ExportDialog extends JDialog implements MouseListener, ActionListen
       scrollPanePanel2.setPreferredSize(new Dimension(170,25));
 //      content.add(scrollPanePanel2, BorderLayout.CENTER);
 
-      Object[] listObj2 = {new ZoomListObj("No Cache Zoom ",-1,false), new ZoomListObj("Cache Zoom Level ",1),new ZoomListObj("Cache Zoom Level ",2),new ZoomListObj("Cache Zoom Level ",3),new ZoomListObj("Cache Zoom Level ",4),new ZoomListObj("Cache Zoom Level ",5),new ZoomListObj("Cache Zoom Level ",6),new ZoomListObj("Cache Zoom Level ",7),new ZoomListObj("Cache Zoom Level ",8),new ZoomListObj("Cache Zoom Level ",9),new ZoomListObj("Cache Zoom Level ",10),new ZoomListObj("Cache Zoom Level ",11),new ZoomListObj("Cache Zoom Level ",12),new ZoomListObj("Cache Zoom Level ",13),new ZoomListObj("Cache Zoom Level ",14),new ZoomListObj("Cache Zoom Level ",15)};
+      Object[] listObj2 = {new ZoomListObj("No Cache Zoom ",-1,false), new ZoomListObj("Cache Zoom Level ",-2),new ZoomListObj("Cache Zoom Level ",-1),new ZoomListObj("Cache Zoom Level ",0),new ZoomListObj("Cache Zoom Level ",1),new ZoomListObj("Cache Zoom Level ",2),new ZoomListObj("Cache Zoom Level ",3),new ZoomListObj("Cache Zoom Level ",4),new ZoomListObj("Cache Zoom Level ",5),new ZoomListObj("Cache Zoom Level ",6),new ZoomListObj("Cache Zoom Level ",7),new ZoomListObj("Cache Zoom Level ",8),new ZoomListObj("Cache Zoom Level ",9),new ZoomListObj("Cache Zoom Level ",10),new ZoomListObj("Cache Zoom Level ",11),new ZoomListObj("Cache Zoom Level ",12),new ZoomListObj("Cache Zoom Level ",13),new ZoomListObj("Cache Zoom Level ",14),new ZoomListObj("Cache Zoom Level ",15)};
       /**
      *Set the cacheLevel FixedCellWidth to 50
      *@see JComboBox()

@@ -38,6 +38,9 @@ public class GPropertiesDialog extends JDialog implements MouseListener, ActionL
       super(gui, "Properties", false);
       objects = new ObjectContainer();
 
+      //gui
+      this.gui = gui;
+
       //set the fixed size
       setSize(260,350);
       setResizable(false);
@@ -63,8 +66,7 @@ public class GPropertiesDialog extends JDialog implements MouseListener, ActionL
       close.setBounds(50,290,80,26);
       this.getContentPane().add(close);
 
-      addPanel(new GPropertiesPanelCustomObject(null), "Object");
-
+      addPanel(new GPropertiesPanelCustomObject(gui.getGMap()), "Object");
 
       //add listeners
       addMouseListener(this);
@@ -115,6 +117,8 @@ public class GPropertiesDialog extends JDialog implements MouseListener, ActionL
       for(int i=0;i<size;i++){
          getPanel(i).apply();
       }
+      //System.out.println("apply from dialog");
+      gui.getTopPane().draw();
    }
 
    private void close(){

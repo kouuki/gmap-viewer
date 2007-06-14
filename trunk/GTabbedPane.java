@@ -42,7 +42,7 @@ class GTabbedPane extends JTabbedPane implements MouseListener, ActionListener{
 
 
    public void showPopupMenu(int x, int y){
-      popupMenu.show(this,x,y);
+      popupMenu.show(this,x+5,y+5);
 //      popupMenu.setBounds(x,y,200,300);
    }
 

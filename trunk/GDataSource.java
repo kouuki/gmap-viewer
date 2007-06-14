@@ -14,10 +14,10 @@ import javax.imageio.ImageIO;
 public abstract class GDataSource {
    /**This is for the zoom variable min starting no less than one
     */
-   public static int ZOOM_MIN = 1;
+   //public static int GPhysicalPoint.MIN_ZOOM = 1;
    /**Theres zoom variables for max at 15
     */
-   public static int ZOOM_MAX = 15;
+   //public static int GPhysicalPoint.MAX_ZOOM = 15;
 
    /**
     * The dimension of images returned by this data source.
@@ -43,6 +43,7 @@ public abstract class GDataSource {
    protected int lastPointer;
    protected Thread downloadThread;
    protected boolean remoteConnection;
+   protected HashMap<String, Boolean> isCachedMap;
 
    /**
     * Constructor
@@ -56,6 +57,7 @@ public abstract class GDataSource {
       this.downloadQueue = new ConcurrentLinkedQueue<GDataImage>();
       this.queueSize = 0;
       remoteConnection = true;
+      isCachedMap = new HashMap<String,Boolean>();
       verifyCacheDirectories();
    }
 
@@ -125,8 +127,11 @@ public abstract class GDataSource {
        }
       });
 
-     downloadThread.setPriority(Thread.MIN_PRIORITY);
-     downloadThread.start();
+     try{
+        downloadThread.setPriority(Thread.MIN_PRIORITY);
+        downloadThread.start();
+     }
+     catch(Exception e){}
    }
 
 
@@ -219,8 +224,11 @@ public abstract class GDataSource {
     * images.
     */
    public BufferedImage getImage(int x, int y, int zoom, boolean findAdjacent) {
+      //System.out.println(x+","+y+","+zoom);
+
       //try to determine if index is invalid
       if(!isValidIndex(x,y,zoom)) return null;
+
 
       /* try getting image from RAM */
       BufferedImage ramImage = getImageFromRAM(x,y,zoom);
@@ -255,7 +263,7 @@ public abstract class GDataSource {
             if (findAdjacent) {
                queueAdjacent(x,y,zoom);
             }
-
+            isCachedMap.put(thisFile, Boolean.TRUE);
             return thumbImage;
          }
       } catch(Exception e) {
@@ -281,13 +289,15 @@ public abstract class GDataSource {
             graphics2D.drawImage(image, 0, 0, sourceSize.width, sourceSize.height, null);
             addImageToRAM(x,y,zoom,thumbImage);
             //save image to cache
-            ImageIO.write(thumbImage, "png", new File(cacheDirectory+File.separator+zoom+File.separator+LibString.minimumSize(x,5)+"_"+LibString.minimumSize(y,5)+".png"));
+            ImageIO.write(thumbImage, "png", new File(makeCachedName(x,y,zoom)));
             System.out.println(" [done!]");
             queueHigherLevels(x, y, zoom);
             if (findAdjacent) {
                queueAdjacent(x,y,zoom);
             }
 
+            //System.out.println("DataImage PUT: "+makeCachedName(x,y,zoom));
+            isCachedMap.put(makeCachedName(x,y,zoom), Boolean.TRUE);
             return thumbImage;
          }
          else
@@ -335,8 +345,14 @@ public abstract class GDataSource {
     */
    //cached or not methods
    public boolean isCached(int x, int y, int zoom){
-      File file = new File(makeCachedName(x,y,zoom));
-      return file.exists();
+      String thisFile = makeCachedName(x,y,zoom);
+      File file = new File(thisFile);
+      boolean response = file.exists();
+      Boolean cached = (Boolean)isCachedMap.get(thisFile);
+      if(cached != null)
+         return cached.booleanValue();
+      isCachedMap.put(thisFile,Boolean.valueOf(response));
+      return response;
    }
 
    /**
@@ -415,7 +431,7 @@ public abstract class GDataSource {
     */
    protected void queueHigherLevels(int x, int y, int zoom)
    {
-      if (zoom >= ZOOM_MIN && zoom < ZOOM_MAX) {
+      if (zoom >= GPhysicalPoint.MIN_ZOOM && zoom < GPhysicalPoint.MAX_ZOOM) {
          queueHigherLevels(x/2, y/2, zoom+1);
          queue(new GDataImage(null, x/2, y/2, zoom+1));
       }
@@ -428,6 +444,8 @@ public abstract class GDataSource {
     * @param zoom The zoom level
     */
    public boolean isValidIndex(int x, int y, int zoom){
+      //System.out.println(""+x+" >= "+0+" && "+x+" < "+Math.pow(2,17-zoom)+" && "+y+" >= "+0+" && "+y+" < "+Math.pow(2,17-zoom)+"");
+      //return true;
       return (x >= 0 && x < Math.pow(2,17-zoom) && y >= 0 && y < Math.pow(2,17-zoom));
    }
 
@@ -436,7 +454,7 @@ public abstract class GDataSource {
     * them.
     */
    protected void verifyCacheDirectories(){
-      for (int i = ZOOM_MIN; i <= ZOOM_MAX; i++) {
+      for (int i = GPhysicalPoint.MIN_ZOOM; i <= GPhysicalPoint.MAX_ZOOM; i++) {
          File thisFile = new File(cacheDirectory+File.separator+i);
          if(!thisFile.exists()) thisFile.mkdirs();
       }

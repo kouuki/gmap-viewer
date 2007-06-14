@@ -157,9 +157,6 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       //progress meter
       embeddedProgressMeter = new EmbeddedProgressMeter();
 
-      //properties dialog
-      gPropertiesDialog = new GPropertiesDialog(this);
-
       //notifier
       notifier = new PaneListenerNotifier();
       notifier.addPaneListener(this);
@@ -178,6 +175,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       ImageIcon iconImage = new ImageIcon("images/ico.png");
       Image iconImageObject = iconImage.getImage();
       setIconImage(iconImageObject);
+
+      //properties dialog
+      gPropertiesDialog = new GPropertiesDialog(this);
 
       //add listeners
       addMouseListener(this);
@@ -527,6 +527,11 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
          //dispatch radio button actions
          if(sourceObject instanceof JMenuRadioButtonAction){
             JMenuRadioButtonAction sourceMenuAction = (JMenuRadioButtonAction)sourceObject;
+            sourceMenuAction.start();
+         }
+         //dispatch check box actions
+         if(sourceObject instanceof JMenuCheckBoxAction){
+            JMenuCheckBoxAction sourceMenuAction = (JMenuCheckBoxAction)sourceObject;
             sourceMenuAction.start();
          }
       }catch(Exception exception){

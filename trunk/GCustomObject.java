@@ -47,7 +47,7 @@ public abstract class GCustomObject implements GDrawableObject{
    * Constructor, sets attributes for GCustomObject.
    */
    public GCustomObject(){
-      this(1.0f, 3, new Color(0,0,155), new Color(175,175,175));
+      this(0.6f, 3, new Color(0,0,155), new Color(175,175,175));
    }
 
 
@@ -71,6 +71,13 @@ public abstract class GCustomObject implements GDrawableObject{
    */
    public float getOpacity(){
       return opacity;
+   }
+
+   /**
+   * Returns the AlphaComposite for this opacity.
+   */
+   public AlphaComposite getAlpha(){
+      return alpha;
    }
 
 

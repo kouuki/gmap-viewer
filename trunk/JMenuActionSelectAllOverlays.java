@@ -14,17 +14,18 @@ import javax.imageio.ImageIO;
 import java.awt.geom.*;
 
 /**
- * Class which handles allowing the user to draw points on the map.
+ * Action Class which allows for quick selection of all the drawable
+ * objects on the map.
  *
  */
-class JMenuActionDeselectOverlays extends JMenuAction {
+class JMenuActionSelectAllOverlays extends JMenuAction {
 
    /**
     * Constructor for creation of paste button.
     * @param registeredObject
     */
-   public JMenuActionDeselectOverlays(GUI registeredObject) {
-      super("Deselect All",registeredObject);
+   public JMenuActionSelectAllOverlays(GUI registeredObject) {
+      super("Select All",registeredObject);
    }
 
    /**
@@ -34,7 +35,10 @@ class JMenuActionDeselectOverlays extends JMenuAction {
       GUI gui = (GUI) registeredObject;
       GPane pane = gui.getTopPane();
       //clear the selection
-      gui.getGMap().getGDraw().getSelected().removeAll();
+      for(int i=0;i<gui.getGMap().getGDraw().getSize();i++)
+         gui.getGMap().getGDraw().getSelected().add(
+            gui.getGMap().getGDraw().get(i)
+         );
       pane.draw();
    }
 

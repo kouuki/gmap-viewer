@@ -202,7 +202,7 @@ class GMap implements Serializable{
     * @param zoom - zoom level used
     */
    public void cacheImage(int x, int y, int w, int h, int zoom, GMapListener listener){
-      paintAsynchronousImage(null,x,y,w,h,zoom,-1,listener);
+      paintAsynchronousImage(null,x,y,w,h,zoom,(GPhysicalPoint.MIN_ZOOM - 1),listener);
    }
 
    /**
@@ -474,7 +474,7 @@ class GMap implements Serializable{
       if(thumbImage == null) return defaultImage;
 
       //if we dont have to paint cache, return here
-      if(cacheZoom == -1 || cacheZoom >= zoom) return thumbImage;
+      if(cacheZoom == (GPhysicalPoint.MIN_ZOOM - 1) || cacheZoom >= zoom) return thumbImage;
 
       BufferedImage paintedImage = new BufferedImage(GDataSource.sourceSize.width, GDataSource.sourceSize.height, BufferedImage.TYPE_INT_ARGB);
       Graphics2D graphics2D = paintedImage.createGraphics();

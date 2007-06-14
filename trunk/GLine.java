@@ -23,16 +23,24 @@ public class GLine extends GCustomObject implements GDrawableObject{
     * @param point1, point2
     */
    public GLine(GMarker point1, GMarker point2){
+	  super();
       this.point1 = point1;
       this.point2 = point2;
+      setColor(new Color(0,0,155));
+      setBackground(new Color(255,255,255));
+      setStroke(3);
    }
    /**
     * Constructor for GLine using GPhysicalPoints.
     * @param point1, point2
     */
    public GLine(GPhysicalPoint point1, GPhysicalPoint point2){
+	  super();
       this.point1 = new GMarker(point1);
       this.point2 = new GMarker(point2);
+      setColor(new Color(0,0,155));
+      setBackground(new Color(255,255,255));
+      setStroke(3);
    }
    /**
     * Default constructor for GMarker. Creates a line with an empty GMarker
@@ -112,6 +120,9 @@ public class GLine extends GCustomObject implements GDrawableObject{
     * @param zoom    The current zoom level for the map
     */
    public void draw(BufferedImage image, GPhysicalPoint p, int zoom){
+      //update the opacity
+      super.draw(image, p, zoom);
+
       //check for nulls to prevent null pointer exceptions
       if(p == null || image == null) return ;
 
@@ -129,8 +140,9 @@ public class GLine extends GCustomObject implements GDrawableObject{
       Point pointOnScreen2 = new Point(point2.getPoint().getPixelX(zoom) - screen.x, point2.getPoint().getPixelY(zoom) - screen.y);
 
       //draw it
-      g.setColor(new Color(0,0,155));
-      g.setStroke(new BasicStroke(3));
+      g.setComposite(getAlpha());
+      g.setColor(getColor());
+      g.setStroke(new BasicStroke(getStroke()));
       g.drawLine(pointOnScreen1.x, pointOnScreen1.y, pointOnScreen2.x, pointOnScreen2.y);
    }
 
