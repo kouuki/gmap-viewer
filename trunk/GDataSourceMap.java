@@ -28,7 +28,7 @@ public class GDataSourceMap extends GDataSource{
       int serverNumber = (int)Math.round(Math.random()*3.0);
       //System.out.print(" [map]");
       //System.out.print("{http://mt"+serverNumber+".google.com/mt?n=404&v=w2.79&x="+x+"&y="+y+"&zoom="+zoom+"}");
-      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2.52&x="+x+"&y="+y+"&zoom="+zoom;
+      return "http://mt"+serverNumber+".google.com/mt?n=404&v=w2.56&x="+x+"&y="+y+"&zoom="+zoom;
    }
 
 }

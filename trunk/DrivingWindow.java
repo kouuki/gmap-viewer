@@ -188,7 +188,7 @@ public class DrivingWindow extends JWindow{
             try{
 
                //set cached zoom level
-               int useCachedZoomLevel = -1;
+               int useCachedZoomLevel = GPhysicalPoint.MIN_ZOOM - 1;
 
                //timer start
                long start = LibGUI.getTime();
