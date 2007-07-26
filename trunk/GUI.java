@@ -23,7 +23,7 @@ import java.awt.geom.*;
 * <li> MouseMotionListener
 * <li> ComponentListener</ul>
 */
-public class GUI extends JFrame implements ActionListener, KeyListener, MouseListener, MouseMotionListener, ComponentListener, PaneListener{
+public class GUI extends JFrame implements ActionListener, WindowListener, KeyListener, MouseListener, MouseMotionListener, ComponentListener, PaneListener{
 
    /**
     * The global parameter for the Google Map Viewer title.
@@ -116,6 +116,12 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    private GPropertiesDialog gPropertiesDialog;
 
    /**
+    * An application state that restores the app to the last way it was closed.
+    */
+
+    private GApplicationState applicationState;
+
+   /**
     * The main method that creates a new window with the GUI class characteristics.
     *
     * @param args the string array
@@ -152,7 +158,6 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       //set parameters
       setTitle(title);
       setSize(screenSize.width,screenSize.height);
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
       //progress meter
       embeddedProgressMeter = new EmbeddedProgressMeter();
@@ -184,6 +189,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       addKeyListener(this);
       addMouseMotionListener(this);
       addComponentListener(this);
+      addWindowListener(this);
    }
 
    /**
@@ -234,7 +240,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
 
       //initialize sizes
       tabbedPanel.setBounds(0,sizeOfToolbar,screenSize.width,screenSize.height - sizeOfProgressBar - sizeOfToolbar);
-             pane.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar-sizeOfToolbar);
+      pane.setBounds(0,0,screenSize.width,screenSize.height - sizeOfProgressBar-sizeOfToolbar);
 
       progressBarPanel.setBounds(0,screenSize.height - sizeOfProgressBar,screenSize.width-widthOfMessagePanel,sizeOfProgressBar);
       messagePanel.setBounds(screenSize.width-widthOfMessagePanel,screenSize.height - sizeOfProgressBar,widthOfMessagePanel,sizeOfProgressBar);
@@ -243,8 +249,11 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       toolBarPanel.setBounds(0,0,screenSize.width,sizeOfToolbar);
       toolBarPanel.setPreferredSize(new Dimension(screenSize.width, sizeOfToolbar));
 
+      //System.out.println(this.getWidth());
+      //update();
+
       //add pane
-      addPane(new GPane(this));
+      //addPane(new GPane(this));
    }
 
    /**
@@ -259,6 +268,38 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       toolBarPanel.setPreferredSize(new Dimension(container.getWidth(), sizeOfToolbar));
       toolBarPanel.setBounds(0,0,container.getWidth(),sizeOfToolbar);
       toolBarLayout.layoutContainer(toolBarPanel);
+   }
+
+   /**
+    * Set the current application state to one saved on the hard drive.
+    */
+   public void restoreApplicationState(){
+      //application state
+      applicationState = new GApplicationState(this, "userstate.gmv");
+      try{
+         applicationState.restoreState();
+      }catch(Exception e1){
+         try{
+            GApplicationState defaultState = new GApplicationState(this, "defaultstate.gmv");
+            defaultState.restoreState();
+         }catch(Exception e2){
+            System.out.println("Problem: application state could not be loaded from userstate.gmv or defaultstate.gmv.");
+         }
+      }
+      //gdraw
+      try{
+         GDraw newGDraw = (GDraw)LibGUI.openStateFromFile(new File("usergdraw.gmv"));
+         newGDraw.getSize();
+         getGMap().setGDraw(newGDraw);
+      }catch(Exception e1){
+         try{
+            GDraw newGDrawDefault = (GDraw)LibGUI.openStateFromFile(new File("defaultgdraw.gmv"));
+            if(newGDrawDefault == null) newGDrawDefault = new GDraw();
+            getGMap().setGDraw(newGDrawDefault);
+         }catch(Exception e2){
+         }
+      }
+
    }
 
    /**
@@ -320,15 +361,15 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
       this.gmap = gmap;
    }
 
-
    /**
-    * It gets the current size of the JFrame.
+    * It gets the application state object.
     *
-    *@return screenSize is the returned screen size of JFrame.
+    *@return application state
     */
-   public Dimension getScreenSize(){
-      return screenSize;
+   public GApplicationState getApplicationState(){
+      return applicationState;
    }
+
 
    /**
     * It gets the tabbed pane.
@@ -546,6 +587,25 @@ public class GUI extends JFrame implements ActionListener, KeyListener, MouseLis
    public void paneEvent(Object o){
       repaint();
    }
+
+
+   public void windowActivated(WindowEvent e){}
+   public void windowClosed(WindowEvent e){}
+   public void windowClosing(WindowEvent e){
+      try{
+         LibGUI.saveStateToFile(new File("usergdraw.gmv"), getGMap().getGDraw());
+         applicationState.saveState();
+      }catch(Exception ex){}
+      System.exit(0);
+   }
+   public void windowDeactivated(WindowEvent e){}
+   public void windowDeiconified(WindowEvent e){}
+   public void windowIconified(WindowEvent e){}
+   public void windowOpened(WindowEvent e){
+      //application state restore
+      restoreApplicationState();
+   }
+
 }
 
 
