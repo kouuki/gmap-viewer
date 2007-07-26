@@ -183,11 +183,26 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
       drawThreadScheduler();
    }
 
+   //a bit to determine if at least one more recent draw has been
+   //suppressed
+   private boolean drawWaiting;
+
    private void drawThreadScheduler(){
       boolean suppressThread = (drawingThread != null);
       if(suppressThread) suppressThread = drawingThread.isAlive();
 
       if(!suppressThread){
+         drawWaiting = false;
+         drawingThread = new DrawThread(this);
+         drawingThread.start();
+      }else{
+         drawWaiting = true;
+      }
+   }
+
+   void drawThreadWaiting(){
+      if(drawWaiting){
+         drawWaiting = false;
          drawingThread = new DrawThread(this);
          drawingThread.start();
       }
@@ -277,6 +292,9 @@ public class GPane extends JPanel implements ActionListener, KeyListener, Compon
          //notify listener
          gui.getNotifier().firePaneEvent(this);
          parent.repaint();
+
+         //see if a new draw is needed to keep the screen up to date
+         drawThreadWaiting();
       }
    }
 

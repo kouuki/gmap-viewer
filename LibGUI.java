@@ -121,8 +121,8 @@ public class LibGUI{
       }
       catch(IOException ex)
       {
-         System.out.println("Problem saving state to file.");
-         ex.printStackTrace();
+         //System.out.println("Problem saving state to file.");
+         //ex.printStackTrace();
       }
    }
 
@@ -142,10 +142,10 @@ public class LibGUI{
          in.close();
       }
       catch(IOException ex){
-         ex.printStackTrace();
+         //ex.printStackTrace();
       }
       catch(ClassNotFoundException ex){
-         ex.printStackTrace();
+         //ex.printStackTrace();
       }
       return obj;
    }

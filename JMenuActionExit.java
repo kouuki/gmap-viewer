@@ -15,14 +15,14 @@ import java.awt.geom.*;
 
 /**
  * Class which defines the exit action for the menu.
- * 
+ *
  * Exits the program when activated.
- * 
+ *
  */
 class JMenuActionExit extends JMenuAction {
    /**
     * Create new instance of JMenuActionExit
-    * 
+    *
     * @param registeredObject
     */
    public JMenuActionExit(GUI registeredObject) {
@@ -33,6 +33,9 @@ class JMenuActionExit extends JMenuAction {
     * run method which causes the program to exit when called.
     */
    public void run() {
-      System.exit(1);
+      GUI gui = (GUI)registeredObject;
+      gui.getApplicationState().saveState();
+      LibGUI.saveStateToFile(new File("usergdraw.gmv"), gui.getGMap().getGDraw());
+      System.exit(0);
    }
 }

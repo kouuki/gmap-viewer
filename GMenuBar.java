@@ -17,7 +17,7 @@ public class GMenuBar extends JMenuBar{
 
    public GMenuBar(GUI gui){
       //file
-      JMenuItem[] fileMenu = {new JMenuActionSaveGDraw(gui), new JMenuActionOpenGDraw(gui), new JMenuActionExport(gui), new JMenuCheckBoxOnline(gui), new JMenuActionExit(gui)};
+      JMenuItem[] fileMenu = {new JMenuActionSaveGDraw(gui), new JMenuActionOpenGDraw(gui), new JMenuActionExport(gui), new JMenuActionResetUI(gui), new JMenuCheckBoxOnline(gui), new JMenuActionExit(gui)};
       //JMenuItem[] fileMenu = {new JMenuActionExport(gui), new JMenuActionExit(gui)};
       add(new JMenuGroup("File",gui,fileMenu));
 
